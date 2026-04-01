@@ -1,0 +1,34 @@
+# Discounty: Full Screen & Layout List
+
+## Global & Entry
+- **app/index.tsx**: Main entry point (auth/role redirect logic).
+- **app/_layout.tsx**: Global wrapper (Providers, Error Boundaries).
+
+## Auth Flow (auth)
+- **app/(auth)/_layout.tsx**: Auth layout wrapper.
+- **app/(auth)/index.tsx**: Login / Primary Auth splash.
+- **app/(auth)/pending.tsx**: Provider approval waiting screen.
+- **app/(auth)/onboarding/index.tsx**: Role Selection ("Customer" vs "Provider").
+- **app/(auth)/onboarding/customer.tsx**: Customer onboarding forms.
+- **app/(auth)/onboarding/provider.tsx**: Provider business details forms.
+
+## Customer Flow (customer)
+- **app/(customer)/_layout.tsx**: Primary tab/drawer navigator.
+- **app/(customer)/index.tsx**: Root redirect for customers.
+- **app/(customer)/feed.tsx**: Main deals feed.
+- **app/(customer)/map.tsx**: Interactive nearby deals map.
+- **app/(customer)/profile.tsx**: User profile & settings.
+- **app/(customer)/redemptions.tsx**: Claimed deals history.
+- **app/(customer)/deals/[id].tsx**: Deal details & redemption trigger.
+- **app/(customer)/feedback/[redemptionId].tsx**: Review/feedback submission.
+- **app/(customer)/provider/[id].tsx**: Public business profile view.
+
+## Provider Flow (provider)
+- **app/(provider)/_layout.tsx**: Business tab/drawer navigator.
+- **app/(provider)/index.tsx**: Root redirect for providers.
+- **app/(provider)/dashboard.tsx**: Metrics overview & active deals.
+- **app/(provider)/scanner.tsx**: QR code scanner for redemptions.
+- **app/(provider)/profile.tsx**: Provider account & settings.
+- **app/(provider)/deals/create.tsx**: New deal creation.
+- **app/(provider)/edit/[id].tsx**: Edit active deal.
+- **app/(provider)/reviews/index.tsx**: Manage customer reviews.

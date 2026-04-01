@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Discounty - Redemption History</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700&amp;family=Manrope:wght@500;600;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#fffbff",
+              "on-tertiary-fixed": "#002116",
+              "on-primary-fixed-variant": "#920020",
+              "error-container": "#ffdad6",
+              "on-tertiary-fixed-variant": "#00513b",
+              "surface-container-lowest": "#ffffff",
+              "background": "#f9f9ff",
+              "surface-container": "#e8eeff",
+              "tertiary-fixed-dim": "#60dcaf",
+              "tertiary": "#00694d",
+              "surface": "#f9f9ff",
+              "primary-fixed": "#ffdad9",
+              "inverse-on-surface": "#ecf0ff",
+              "tertiary-fixed": "#7ef9ca",
+              "surface-container-highest": "#dde2f3",
+              "error": "#ba1a1a",
+              "on-primary-fixed": "#410008",
+              "primary-fixed-dim": "#ffb3b2",
+              "on-error": "#ffffff",
+              "surface-container-low": "#f1f3ff",
+              "secondary-fixed": "#dae4ed",
+              "on-secondary-fixed": "#141d23",
+              "inverse-primary": "#ffb3b2",
+              "secondary-container": "#dae4ed",
+              "on-primary": "#ffffff",
+              "tertiary-container": "#008562",
+              "on-secondary-fixed-variant": "#3f4850",
+              "outline-variant": "#e4bdbc",
+              "secondary": "#565f68",
+              "surface-container-high": "#e2e8f9",
+              "on-surface": "#161c28",
+              "inverse-surface": "#2a303d",
+              "surface-variant": "#dde2f3",
+              "surface-tint": "#bc0d2e",
+              "on-tertiary": "#ffffff",
+              "primary": "#b9082c",
+              "surface-bright": "#f9f9ff",
+              "outline": "#906f6f",
+              "on-error-container": "#93000a",
+              "on-background": "#161c28",
+              "on-secondary-container": "#5c656e",
+              "surface-dim": "#d4daeb",
+              "secondary-fixed-dim": "#bec8d1",
+              "primary-container": "#dd2d42",
+              "on-tertiary-container": "#f5fff8",
+              "on-surface-variant": "#5b403f"
+            },
+            fontFamily: {
+              "headline": ["Epilogue"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .squircle-card {
+            border-radius: 3rem;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f9f9ff] dark:bg-[#141d23] flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden">
+<img alt="Profile Avatar" class="w-full h-full object-cover" data-alt="close-up portrait of a smiling young professional man with short dark hair in a clean studio setting with soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTiVCXAd7GnaoOB3OlJKlnlktEy7_dREIK1FwkJBBxi3cnGHqDNfZsTg4GEyG9dH5o8jXQM76IgKlLvsmLsmuhhN8bdNx4UF0E64Lw9C5Gy2ljQmVjONGshoaX1h02Dsh7gbG2s8JDg9u5kjfhgQR3mVXlRQWmnG0nbAAG_wf4EqA7ioNRE0VQ1X9w4a9e2Hq4OlckMHd1FxWwzmtBimVdwn45Mx5-jCYd3e-qNl8wQd6gf72sHTU1k0XdXrM0RWGQhDEzo2Gokvta"/>
+</div>
+<h1 class="font-headline font-bold tracking-tighter text-2xl text-[#1e272e] dark:text-white">Discounty</h1>
+</div>
+<button class="w-10 h-10 flex items-center justify-center hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-[#1e272e] dark:text-[#f1f3ff]" data-icon="notifications">notifications</span>
+</button>
+</header>
+<main class="mt-24 px-6 max-w-2xl mx-auto">
+<!-- Hero Savings Card (Vibrant Coral Gradient) -->
+<section class="relative overflow-hidden p-8 squircle-card bg-gradient-to-br from-[#b9082c] to-[#dd2d42] text-white shadow-[0_20px_40px_rgba(185,8,44,0.15)] mb-10">
+<div class="relative z-10">
+<p class="font-label text-[0.6875rem] uppercase tracking-[0.15em] opacity-80 mb-1">Lifetime Savings</p>
+<h2 class="font-headline text-5xl font-bold tracking-tighter mb-6">$1,248.50</h2>
+<div class="flex items-end justify-between">
+<div>
+<p class="font-label text-[0.6875rem] uppercase tracking-[0.15em] opacity-80 mb-1">Redemptions</p>
+<p class="font-headline text-2xl">42</p>
+</div>
+<div class="bg-white/20 backdrop-blur-md px-4 py-2 rounded-full flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="trending_up">trending_up</span>
+<span class="text-xs font-bold font-label tracking-wide">+12% this month</span>
+</div>
+</div>
+</div>
+<!-- Decorative Elements -->
+<div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+<div class="absolute -left-10 -bottom-10 w-32 h-32 bg-black/10 rounded-full blur-2xl"></div>
+</section>
+<!-- Section Title -->
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-headline text-xl font-bold tracking-tight">Recent Activity</h3>
+<button class="text-primary font-bold text-sm font-label hover:opacity-70 transition-opacity">View All</button>
+</div>
+<!-- Redemption List (Asymmetric Layout / Bento feel) -->
+<div class="grid grid-cols-1 gap-4">
+<!-- Item 1 -->
+<div class="bg-surface-container-low p-5 squircle-card flex items-center justify-between group hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center overflow-hidden shadow-sm">
+<img alt="Cafe Logo" class="w-full h-full object-cover" data-alt="minimalist aesthetic coffee shop interior with warm wood tones and professional espresso machine in soft focus" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYomvLnmsUGvWducLXtZ2ShJOrJhegLoL209q2wuKcMcS06GnvejAXuvIuHOKk0tEVMvfdOeKljXJIUj-AJeE8oO6iU9ubTZgtRROhbS-LpG3qsrxugDIFmyh5H6JoYc_iGzRprpnhfM13anoYRnJ06KNgZQQuR-uGF1Uj2vPSu5g-8tcbAyPYBrX6UwHjK9Agu5721Icl75CEIPpywJmL-pmANBiOB7bDTODllHTNqfuRF7PK6B-xqjL9Skms_bO75uDfEJRr4owM"/>
+</div>
+<div>
+<h4 class="font-headline text-base font-bold text-on-surface">The Roasted Bean</h4>
+<p class="font-label text-xs text-secondary opacity-80">Oct 24, 2023 • 2:15 PM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline text-lg font-bold text-tertiary">-$4.50</p>
+<p class="font-label text-[10px] uppercase text-secondary font-bold tracking-wider">SAVED</p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container-low p-5 squircle-card flex items-center justify-between group hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center overflow-hidden shadow-sm">
+<img alt="Gym Logo" class="w-full h-full object-cover" data-alt="modern luxury fitness center with rows of high-end equipment and dramatic cool blue ambient lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1j3-XQeiC9vYts0wi7GLNuIwnVIt0KMIicsFRZMBMfcFnxTwjo5PjDpfWFOff8WMXBmuSG0agM6dFvnPAlVYvR0FO4860jRVUc4QY7utKESVNZQA_BqiYP4KvHagxocPHCgJIEjoFYgqfpngRZHr7T2fuNObhP48x44r7Wa2WP-7f5uVfhpJx9ZkEiVT7KS8HWDDHVswhGbokYVpd8Lvt7tmuctBpUdmGzZeX_e3PlXCnrydXUWHiVD7daHW6RKOWeiWOixx1yx6O"/>
+</div>
+<div>
+<h4 class="font-headline text-base font-bold text-on-surface">Peak Performance Gym</h4>
+<p class="font-label text-xs text-secondary opacity-80">Oct 22, 2023 • 9:00 AM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline text-lg font-bold text-tertiary">-$25.00</p>
+<p class="font-label text-[10px] uppercase text-secondary font-bold tracking-wider">SAVED</p>
+</div>
+</div>
+<!-- Item 3 - Featured Styling -->
+<div class="bg-on-secondary-fixed text-white p-6 squircle-card flex items-center justify-between shadow-lg">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center overflow-hidden backdrop-blur-sm border border-white/5">
+<img alt="Burger Joint" class="w-full h-full object-cover" data-alt="close-up of a gourmet double cheeseburger with melting cheese and fresh lettuce on a toasted brioche bun" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzJN9PzSNcLknvtd00Zs-FFUI1rhg_CgNzB_an2UU1i1r43HlA3-CzjtvqyJwVLOz-BKxGX7mWAh3_rjLOZ7Rzk3nxwbqoQVRlBjaVH5wcPv7j28FIfP5TmeARg4AGCHvTmW42mQJhvicEcmcgCJ1UPS0uOJ9nYAUmr4HltbEtiG3JRsh3WWFYpQZi2LIQf4XD6ZAIPihwbsR4kpKOJ4L0fm8jfE0dULoyQZGLU-F2gfzq8ZckMa9O7IvcYmv1mFYCebarUgqAiHHN"/>
+</div>
+<div>
+<h4 class="font-headline text-base font-bold">Urban Bites Grill</h4>
+<p class="font-label text-xs text-white/60">Oct 20, 2023 • 7:45 PM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline text-xl font-bold text-[#FF4757]">-$12.20</p>
+<div class="flex items-center justify-end gap-1">
+<span class="material-symbols-outlined text-[10px] text-white/40" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<p class="font-label text-[10px] uppercase text-white/40 font-bold tracking-wider">EXCLUSIVE</p>
+</div>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="bg-surface-container-low p-5 squircle-card flex items-center justify-between group hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center overflow-hidden shadow-sm">
+<img alt="Clothing Store" class="w-full h-full object-cover" data-alt="clean high-end clothing boutique interior with organized racks of minimalist neutral-toned garments and soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGeB69-L46NnBrl9fMkW3fgmRImD1IoMuHf86rWw-tvU5uUDzS_iM_X3BC2L3XEH1glmDRn9eVDQy6xYFmouXeSpslUoaN-hgLXl48ezMXubU4Vf1N106hQrU9BM6qYonpQ0n-tG3lPY3DhLhQhi3OF7XU3eCLTwu_GmxNfNxj8yttiajX-OnAL_S-VTT6kH7RrydqFCB0VEjE70KcRoX9pGeE6EL0TTRxHedD88hrqipvBxszBf4nEQGmoxmH9-X8zWrjcF56n2DB"/>
+</div>
+<div>
+<h4 class="font-headline text-base font-bold text-on-surface">Thread &amp; Needle</h4>
+<p class="font-label text-xs text-secondary opacity-80">Oct 18, 2023 • 4:30 PM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline text-lg font-bold text-tertiary">-$18.00</p>
+<p class="font-label text-[10px] uppercase text-secondary font-bold tracking-wider">SAVED</p>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="bg-surface-container-low p-5 squircle-card flex items-center justify-between group hover:bg-surface-container-high transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center overflow-hidden shadow-sm">
+<img alt="Dining" class="w-full h-full object-cover" data-alt="elegant upscale restaurant dining room with white tablecloths, crystal glassware, and warm ambient candlelight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2hEcHK3VvswXXTiNhyOCd1HPT6ZDCbEddUp10O58QSG3K5W_IfinAk2-vEy0HRJCxx2Qc25WFrsNw9YONP-F84HUGItv5Wo_hNwgaNlmowBfzlbE0k7AqNofo1O7H63_KaAT8bxK__YqRfvgs6M-JNcWI5ERZaqsIZhK-RXP5UDKzUO-V8yuZ7AGjnRXfIMM3t6xIvmvv_0uyJqemRR0N9sk3GV5n5waj3G909B1bleotO9zcne6-dT8_OvYcw2h31GWnz7nNOaR1"/>
+</div>
+<div>
+<h4 class="font-headline text-base font-bold text-on-surface">Lumière Dining</h4>
+<p class="font-label text-xs text-secondary opacity-80">Oct 15, 2023 • 8:15 PM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-headline text-lg font-bold text-tertiary">-$34.50</p>
+<p class="font-label text-[10px] uppercase text-secondary font-bold tracking-wider">SAVED</p>
+</div>
+</div>
+</div>
+<!-- Pagination / Footer Spacer -->
+<div class="py-12 flex justify-center">
+<button class="flex items-center gap-2 bg-surface-container-high text-on-surface-variant px-6 py-3 rounded-full font-label text-xs font-bold tracking-widest uppercase hover:bg-surface-container-highest transition-colors">
+<span>Load More</span>
+<span class="material-symbols-outlined text-sm" data-icon="expand_more">expand_more</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-end px-4 pb-6 pt-2 bg-[#141d23]/70 dark:bg-[#000000]/70 backdrop-blur-xl z-50 rounded-t-[3rem] shadow-[0_-20px_40px_rgba(185,8,44,0.08)]">
+<a class="flex flex-col items-center justify-center text-gray-400 p-2 hover:text-white transition-colors scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="explore">explore</span>
+<span class="font-['Manrope'] font-semibold text-[10px] uppercase tracking-wider">Discover</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-400 p-2 hover:text-white transition-colors scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="favorite">favorite</span>
+<span class="font-['Manrope'] font-semibold text-[10px] uppercase tracking-wider">Saved</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-400 p-2 hover:text-white transition-colors scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="qr_code_scanner">qr_code_scanner</span>
+<span class="font-['Manrope'] font-semibold text-[10px] uppercase tracking-wider">Scan</span>
+</a>
+<!-- Active Tab: Profile (Closest to 'Savings History' intent for user context) -->
+<a class="flex flex-col items-center justify-center bg-gradient-to-br from-[#b9082c] to-[#dd2d42] text-white rounded-full p-3 mb-2 transform -translate-y-2 scale-110 shadow-lg transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-['Manrope'] font-semibold text-[10px] uppercase tracking-wider">Profile</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-400 p-2 hover:text-white transition-colors scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-['Manrope'] font-semibold text-[10px] uppercase tracking-wider">Inbox</span>
+</a>
+</nav>
+</body></html>

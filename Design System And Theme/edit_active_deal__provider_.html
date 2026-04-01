@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Edit Deal - Discounty</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700&amp;family=Manrope:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#fffbff",
+              "on-tertiary-fixed": "#002116",
+              "on-primary-fixed-variant": "#920020",
+              "error-container": "#ffdad6",
+              "on-tertiary-fixed-variant": "#00513b",
+              "surface-container-lowest": "#ffffff",
+              "background": "#f9f9ff",
+              "surface-container": "#e8eeff",
+              "tertiary-fixed-dim": "#60dcaf",
+              "tertiary": "#00694d",
+              "surface": "#f9f9ff",
+              "primary-fixed": "#ffdad9",
+              "inverse-on-surface": "#ecf0ff",
+              "tertiary-fixed": "#7ef9ca",
+              "surface-container-highest": "#dde2f3",
+              "error": "#ba1a1a",
+              "on-primary-fixed": "#410008",
+              "primary-fixed-dim": "#ffb3b2",
+              "on-error": "#ffffff",
+              "surface-container-low": "#f1f3ff",
+              "secondary-fixed": "#dae4ed",
+              "on-secondary-fixed": "#141d23",
+              "inverse-primary": "#ffb3b2",
+              "secondary-container": "#dae4ed",
+              "on-primary": "#ffffff",
+              "tertiary-container": "#008562",
+              "on-secondary-fixed-variant": "#3f4850",
+              "outline-variant": "#e4bdbc",
+              "secondary": "#565f68",
+              "surface-container-high": "#e2e8f9",
+              "on-surface": "#161c28",
+              "inverse-surface": "#2a303d",
+              "surface-variant": "#dde2f3",
+              "surface-tint": "#bc0d2e",
+              "on-tertiary": "#ffffff",
+              "primary": "#b9082c",
+              "surface-bright": "#f9f9ff",
+              "outline": "#906f6f",
+              "on-error-container": "#93000a",
+              "on-background": "#161c28",
+              "on-secondary-container": "#5c656e",
+              "surface-dim": "#d4daeb",
+              "secondary-fixed-dim": "#bec8d1",
+              "primary-container": "#dd2d42",
+              "on-tertiary-container": "#f5fff8",
+              "on-surface-variant": "#5b403f"
+            },
+            fontFamily: {
+              "headline": ["Epilogue"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body selection:bg-primary/20">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f1f3ff] flex justify-between items-center px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/10">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="professional portrait of a creative entrepreneur in a well-lit modern studio setting with warm background tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAk7wEEc_A1-F5x_wD0pjTdwIJFcznMiqiY0-xCAg_1qAMduTdeDpd0Gi2Eb3WPv_3l4yirM5b9eTFp9P-ZsyGmY5dMToJ0OYvYLMmDPnTZSK7EBgoHMa8iCIsodieQUE8MQjfe1vhF6QhWE24aHZFfdgVc9iyd-xUwq_tuRp-u-RwF8ruikMwnSRD-iEZqmV-0jUAZoQUMNlp-CQFscuMg5ibvWft76PNYC2EWlp2Xu8qRdpID0tk6dStAAfWWOJSJYaf-947BlwAP"/>
+</div>
+<h1 class="text-2xl font-headline font-bold tracking-tighter text-[#1e272e]">Discounty</h1>
+</div>
+<button class="text-[#1e272e] hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Form Section -->
+<section class="lg:col-span-7 space-y-8">
+<div class="mb-6">
+<p class="text-primary font-bold font-headline tracking-wider text-sm uppercase mb-2">Deal Manager</p>
+<h2 class="text-4xl font-headline font-bold text-on-secondary-fixed tracking-tight leading-tight">Edit Active Deal</h2>
+</div>
+<div class="bg-surface-container-low rounded-xl p-8 space-y-6">
+<!-- Deal Title -->
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-widest text-on-secondary-fixed-variant ml-1">Deal Title</label>
+<input class="w-full bg-surface-container-lowest border-none ring-1 ring-outline-variant/20 focus:ring-2 focus:ring-primary rounded-xl px-4 py-4 text-on-surface font-medium transition-all" placeholder="Enter deal title..." type="text" value="Summer Artisan Coffee Experience"/>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Discount Percentage -->
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-widest text-on-secondary-fixed-variant ml-1">Discount %</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border-none ring-1 ring-outline-variant/20 focus:ring-2 focus:ring-primary rounded-xl px-4 py-4 text-on-surface font-medium transition-all" placeholder="0" type="number" value="25"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">%</span>
+</div>
+</div>
+<!-- Expiry Date -->
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-widest text-on-secondary-fixed-variant ml-1">Expiry Date</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border-none ring-1 ring-outline-variant/20 focus:ring-2 focus:ring-primary rounded-xl px-4 py-4 text-on-surface font-medium transition-all" type="date" value="2024-08-31"/>
+</div>
+</div>
+</div>
+<!-- Terms & Conditions -->
+<div class="space-y-2">
+<label class="text-xs font-bold uppercase tracking-widest text-on-secondary-fixed-variant ml-1">Terms &amp; Conditions</label>
+<textarea class="w-full bg-surface-container-lowest border-none ring-1 ring-outline-variant/20 focus:ring-2 focus:ring-primary rounded-xl px-4 py-4 text-on-surface font-medium transition-all resize-none" placeholder="Enter terms..." rows="4">Valid for dine-in only. Cannot be combined with other offers. One redemption per customer per visit. Valid until store closing on expiry date.</textarea>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col sm:flex-row gap-4 pt-4">
+<button class="flex-1 bg-gradient-to-br from-[#b9082c] to-[#dd2d42] text-white py-5 rounded-full font-bold text-lg shadow-[0_20px_40px_rgba(185,8,44,0.15)] active:scale-95 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" data-icon="save">save</span>
+                    Save Changes
+                </button>
+<button class="flex-1 bg-on-secondary-fixed text-white py-5 rounded-full font-bold text-lg hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-error" data-icon="delete">delete</span>
+                    Delete Deal
+                </button>
+</div>
+</section>
+<!-- Preview Section -->
+<aside class="lg:col-span-5 relative">
+<div class="sticky top-28 space-y-6">
+<div class="flex items-center justify-between mb-4 px-2">
+<h3 class="text-xl font-headline font-bold text-on-secondary-fixed">Live Preview</h3>
+<span class="px-3 py-1 bg-tertiary/10 text-tertiary text-[10px] font-bold uppercase tracking-tighter rounded-full">Active View</span>
+</div>
+<!-- Preview Card (Asymmetric/Editorial Style) -->
+<div class="relative group">
+<!-- Glass Background Decor -->
+<div class="absolute -inset-4 bg-gradient-to-tr from-primary/5 to-transparent blur-3xl -z-10"></div>
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_30px_60px_rgba(20,29,35,0.08)] border border-white/50">
+<div class="relative h-64 overflow-hidden">
+<img alt="Coffee Deal" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" data-alt="atmospheric close-up of steam rising from a ceramic cup of latte art coffee in a rustic boutique cafe setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA18X6RTrc2JEJLkjjgeIt20UPb-QTt7zaOX-6iHaE3LrGC95W3vXN21lk5Icyom2cgiyID-iPzaWPkMs2zse5d8tYZ7Jg1jd0bH4gGbuc88RAv88sIgjVhKT4_Me7WvyV_Ym9fB2g6Sauw9NmXOHKUapbDl53zpBIOWgzUI58M2RvQwnnzh2u3JoDxbLvs8XD2cf6PWyq63XfGot1409CUPrgieUC4atDeuK9Y5Miiz5g1PJZX6gfR3ySx89ShZd8JrJ4WzRqUz7u0"/>
+<div class="absolute top-4 right-4 bg-primary text-white font-headline font-bold text-2xl px-6 py-2 rounded-xl transform rotate-3 shadow-lg">
+                                -25%
+                            </div>
+<div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-on-secondary-fixed/90 to-transparent">
+<span class="bg-white/20 backdrop-blur-md text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-2 inline-block">Premium Offer</span>
+<h4 class="text-2xl font-headline font-bold text-white leading-tight">Summer Artisan Coffee Experience</h4>
+</div>
+</div>
+<div class="p-8 space-y-6">
+<div class="flex items-center justify-between text-on-surface-variant text-sm font-semibold">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg" data-icon="calendar_today">calendar_today</span>
+<span>Ends Aug 31, 2024</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg" data-icon="location_on">location_on</span>
+<span>Downtown Branch</span>
+</div>
+</div>
+<div class="space-y-3">
+<p class="text-xs font-bold text-on-secondary-fixed-variant uppercase tracking-widest">Terms of Use</p>
+<p class="text-on-surface-variant text-sm leading-relaxed italic">"Valid for dine-in only. Cannot be combined with other offers. One redemption per customer per visit..."</p>
+</div>
+<div class="pt-4 border-t border-surface-container-high flex gap-4 items-center">
+<div class="flex-1">
+<p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">Estimated Value</p>
+<p class="text-lg font-headline font-bold text-on-secondary-fixed">Save $12.50 avg.</p>
+</div>
+<div class="w-12 h-12 bg-surface-container-high rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-fixed" data-icon="qr_code_2">qr_code_2</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Helpful Tip Tooltip -->
+<div class="mt-6 p-4 bg-surface-container-low rounded-lg flex items-start gap-4">
+<span class="material-symbols-outlined text-primary" data-icon="lightbulb">lightbulb</span>
+<p class="text-xs text-on-surface-variant leading-normal">
+<strong class="text-on-secondary-fixed block mb-1">Editorial Pro Tip</strong>
+                            Adding a clear end date increases the "FOMO" effect for users, typically boosting redemption by up to 40%.
+                        </p>
+</div>
+</div>
+</div>
+</aside>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-end px-4 pb-6 pt-2 bg-[#141d23]/70 backdrop-blur-xl z-50 rounded-t-xl shadow-[0_-20px_40px_rgba(185,8,44,0.08)]">
+<div class="flex flex-col items-center justify-center text-gray-400 p-2 hover:text-white transition-colors cursor-pointer group">
+<span class="material-symbols-outlined group-active:scale-90 transition-transform" data-icon="explore">explore</span>
+<span class="font-label font-semibold text-[10px] uppercase tracking-wider mt-1">Discover</span>
+</div>
+<div class="flex flex-col items-center justify-center text-gray-400 p-2 hover:text-white transition-colors cursor-pointer group">
+<span class="material-symbols-outlined group-active:scale-90 transition-transform" data-icon="favorite">favorite</span>
+<span class="font-label font-semibold text-[10px] uppercase tracking-wider mt-1">Saved</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-gradient-to-br from-[#b9082c] to-[#dd2d42] text-white rounded-full p-3 mb-2 transform -translate-y-2 scale-110 shadow-lg cursor-pointer">
+<span class="material-symbols-outlined" data-icon="qr_code_scanner" style="font-variation-settings: 'FILL' 1;">qr_code_scanner</span>
+<span class="font-label font-semibold text-[8px] uppercase tracking-wider mt-0.5">Scan</span>
+</div>
+<div class="flex flex-col items-center justify-center text-gray-400 p-2 hover:text-white transition-colors cursor-pointer group">
+<span class="material-symbols-outlined group-active:scale-90 transition-transform" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-label font-semibold text-[10px] uppercase tracking-wider mt-1">Inbox</span>
+</div>
+<div class="flex flex-col items-center justify-center text-white p-2 cursor-pointer group">
+<span class="material-symbols-outlined text-primary group-active:scale-90 transition-transform" data-icon="person" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label font-semibold text-[10px] uppercase tracking-wider mt-1 text-primary">Profile</span>
+</div>
+</nav>
+</body></html>

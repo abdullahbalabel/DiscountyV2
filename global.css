@@ -1,0 +1,139 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ── Light Mode — Warm Luxury ── */
+    /* Primary: Rich Burgundy Wine */
+    --color-primary: #862045;
+    --color-on-primary: #ffffff;
+    --color-primary-container: #ffd9de;
+    --color-on-primary-container: #6e1536;
+    --color-primary-fixed: #ffd9de;
+    --color-primary-fixed-dim: #f2b1bc;
+    --color-on-primary-fixed: #3b0013;
+    --color-on-primary-fixed-variant: #6b122f;
+
+    /* Secondary: Warm Gold / Champagne */
+    --color-secondary: #7b5733;
+    --color-on-secondary: #ffffff;
+    --color-secondary-container: #ffdcba;
+    --color-on-secondary-container: #654425;
+    --color-secondary-fixed: #ffdcba;
+    --color-secondary-fixed-dim: #e5c09d;
+    --color-on-secondary-fixed: #2c1600;
+    --color-on-secondary-fixed-variant: #61421f;
+
+    /* Tertiary: Amber / Honey */
+    --color-tertiary: #7d5700;
+    --color-on-tertiary: #ffffff;
+    --color-tertiary-container: #ffdeaa;
+    --color-on-tertiary-container: #654500;
+    --color-tertiary-fixed: #ffdeaa;
+    --color-tertiary-fixed-dim: #ebc07c;
+    --color-on-tertiary-fixed: #271900;
+    --color-on-tertiary-fixed-variant: #5f4100;
+
+    /* Error */
+    --color-error: #ba1a1a;
+    --color-on-error: #ffffff;
+    --color-error-container: #ffdad6;
+    --color-on-error-container: #93000a;
+
+    /* Surfaces: Warm Cream / Ivory */
+    --color-background: #fff8f6;
+    --color-on-background: #231917;
+    --color-surface: #fff8f6;
+    --color-on-surface: #231917;
+    --color-surface-variant: #f5ddd9;
+    --color-on-surface-variant: #564340;
+    --color-surface-dim: #ead1cd;
+    --color-surface-bright: #fff8f6;
+    --color-surface-container-lowest: #ffffff;
+    --color-surface-container-low: #fff0ed;
+    --color-surface-container: #ffe9e5;
+    --color-surface-container-high: #fce3de;
+    --color-surface-container-highest: #f5ddd9;
+    --color-surface-tint: #862045;
+
+    --color-outline: #85736f;
+    --color-outline-variant: #d8c2bd;
+    --color-inverse-surface: #3a2e2b;
+    --color-inverse-on-surface: #ffede9;
+    --color-inverse-primary: #ffb2be;
+  }
+
+  .dark {
+    /* ── Dark Mode — Warm Luxury ── */
+    /* Primary: Soft Rose on dark */
+    --color-primary: #ffb2be;
+    --color-on-primary: #52071f;
+    --color-primary-container: #a01840;
+    --color-on-primary-container: #ffd9de;
+    --color-primary-fixed: #ffd9de;
+    --color-primary-fixed-dim: #ffb2be;
+    --color-on-primary-fixed: #3b0013;
+    --color-on-primary-fixed-variant: #6b122f;
+
+    /* Secondary: Warm Gold brightened */
+    --color-secondary: #e5c09d;
+    --color-on-secondary: #44290a;
+    --color-secondary-container: #5d3f1d;
+    --color-on-secondary-container: #ffdcba;
+    --color-secondary-fixed: #ffdcba;
+    --color-secondary-fixed-dim: #e5c09d;
+    --color-on-secondary-fixed: #2c1600;
+    --color-on-secondary-fixed-variant: #61421f;
+
+    /* Tertiary: Amber / Honey brightened */
+    --color-tertiary: #ebc07c;
+    --color-on-tertiary: #412d00;
+    --color-tertiary-container: #5d4200;
+    --color-on-tertiary-container: #ffdeaa;
+    --color-tertiary-fixed: #ffdeaa;
+    --color-tertiary-fixed-dim: #ebc07c;
+    --color-on-tertiary-fixed: #271900;
+    --color-on-tertiary-fixed-variant: #5f4100;
+
+    /* Error */
+    --color-error: #ffb4ab;
+    --color-on-error: #690005;
+    --color-error-container: #93000a;
+    --color-on-error-container: #ffdad6;
+
+    /* Surfaces: Warm Charcoal */
+    --color-background: #1a110f;
+    --color-on-background: #f1dfda;
+    --color-surface: #1a110f;
+    --color-on-surface: #f1dfda;
+    --color-surface-variant: #534340;
+    --color-on-surface-variant: #d8c2bd;
+    --color-surface-dim: #1a110f;
+    --color-surface-bright: #423634;
+    --color-surface-container-lowest: #140c0a;
+    --color-surface-container-low: #231917;
+    --color-surface-container: #271d1b;
+    --color-surface-container-high: #322825;
+    --color-surface-container-highest: #3d3230;
+    --color-surface-tint: #ffb2be;
+
+    --color-outline: #a08d88;
+    --color-outline-variant: #534340;
+    --color-inverse-surface: #f1dfda;
+    --color-inverse-on-surface: #3a2e2b;
+    --color-inverse-primary: #862045;
+  }
+}
+
+@layer utilities {
+  .editorial-gradient {
+    /* Implemented via expo-linear-gradient in components */
+  }
+  .navy-anchor {
+    background-color: #2c1600;
+  }
+  .glass-effect {
+    /* Handled by Expo BlurView */
+  }
+}

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary": "#ffffff",
+              "on-primary-container": "#fffbff",
+              "on-tertiary-fixed": "#002116",
+              "on-primary-fixed-variant": "#920020",
+              "error-container": "#ffdad6",
+              "on-tertiary-fixed-variant": "#00513b",
+              "surface-container-lowest": "#ffffff",
+              "background": "#f9f9ff",
+              "surface-container": "#e8eeff",
+              "tertiary-fixed-dim": "#60dcaf",
+              "tertiary": "#00694d",
+              "surface": "#f9f9ff",
+              "primary-fixed": "#ffdad9",
+              "inverse-on-surface": "#ecf0ff",
+              "tertiary-fixed": "#7ef9ca",
+              "surface-container-highest": "#dde2f3",
+              "error": "#ba1a1a",
+              "on-primary-fixed": "#410008",
+              "primary-fixed-dim": "#ffb3b2",
+              "on-error": "#ffffff",
+              "surface-container-low": "#f1f3ff",
+              "secondary-fixed": "#dae4ed",
+              "on-secondary-fixed": "#141d23",
+              "inverse-primary": "#ffb3b2",
+              "secondary-container": "#dae4ed",
+              "on-primary": "#ffffff",
+              "tertiary-container": "#008562",
+              "on-secondary-fixed-variant": "#3f4850",
+              "outline-variant": "#e4bdbc",
+              "secondary": "#565f68",
+              "surface-container-high": "#e2e8f9",
+              "on-surface": "#161c28",
+              "inverse-surface": "#2a303d",
+              "surface-variant": "#dde2f3",
+              "surface-tint": "#bc0d2e",
+              "on-tertiary": "#ffffff",
+              "primary": "#b9082c",
+              "surface-bright": "#f9f9ff",
+              "outline": "#906f6f",
+              "on-error-container": "#93000a",
+              "on-background": "#161c28",
+              "on-secondary-container": "#5c656e",
+              "surface-dim": "#d4daeb",
+              "secondary-fixed-dim": "#bec8d1",
+              "primary-container": "#dd2d42",
+              "on-tertiary-container": "#f5fff8",
+              "on-surface-variant": "#5b403f"
+            },
+            fontFamily: {
+              "headline": ["Epilogue"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        font-family: 'Manrope', sans-serif;
+        background-color: #f9f9ff;
+      }
+      .font-headline { font-family: 'Epilogue', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="text-on-surface antialiased pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#f9f9ff] dark:bg-[#141d23] flex justify-between items-center px-6 py-4 w-full">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-high border border-outline-variant/20">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Close up portrait of a smiling young professional man with friendly expression in natural daylight environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBl-GeGtlFhK6VClY3qO-RWmvjAGHpZBN7cBBgkolwARfFUNoFI5Ih_dKw2ege33CWaSwyU4DGXBpwuScaoX7E5U3DS5qHP-wqxV84IffKwvSfn8bgjBWlTPjA63joY23sT3dN8jV-eImjsV8kVKzK4sjpBc7ud4s5ydIock1O9-Ct9WOV5cXVR9YZy1kMicFtz4XdC2aUH628pE0EK4Sa0BZSsM-xo0k2KiY6JsM0JwfjN7l7YyOMks3YR7Boa-JwQ9ccVxrtEbhLg"/>
+</div>
+<span class="text-2xl font-bold tracking-tighter text-[#1e272e] dark:text-white font-headline">Discounty</span>
+</div>
+<button class="w-12 h-12 flex items-center justify-center rounded-full bg-surface-container-low text-[#FF4757] hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</header>
+<main class="mt-16">
+<!-- Hero Section -->
+<section class="relative h-[353px] md:h-[442px] w-full overflow-hidden">
+<img alt="Business Interior" class="w-full h-full object-cover" data-alt="Luxurious modern fitness boutique interior with neon accents, dark industrial walls, and premium equipment in cinematic low lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARzDGrAhxlanXTgKJGu65IKN_VpQm9ckRbLyZQQCghCQrbg3RkM08uW04r_-w5A3NBZG678RvTdi-wuZ5r2nvUOI_ldILZFYhZiXcmJ8DL88-cCRK_gGzdJ8ZDpFQ0TDShoxjCjkL8jtqzjt2Qeau09W3CsqcQoFvIzux1xBH4vBjgQovGXPNiydWG1Ni2WlHP6aIPix6qaRSRDFx8rxm3LaBXuZ0gT-DdGzzqZk7uD1NZdc428oSLlvVxQasceXj03-16iTys8qYm"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-secondary-fixed/80 to-transparent"></div>
+<!-- Floating Business Identity Card -->
+<div class="absolute -bottom-16 left-6 right-6 md:left-12 md:max-w-2xl bg-surface-container-lowest rounded-xl p-6 shadow-[0_20px_40px_rgba(185,8,44,0.08)] flex flex-col md:flex-row gap-6 items-start md:items-center">
+<div class="w-24 h-24 rounded-xl bg-on-secondary-fixed flex items-center justify-center p-4 -mt-12 md:-mt-0 shadow-lg shrink-0">
+<img alt="Logo" class="w-full h-full object-contain" data-alt="Stylized minimalist geometric logo of a gym brand in white on a dark navy square background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuM99EvHgbR4yVMoFjz2P-sq8___VZ9Rd69jz-jMhZsYmrHMkO_1zOVHvxc7pfKVjxYTrR6OJRsvs41sV9I-OIX0V6iXEAS2CVzwM6vJIg-OrElUXkuUXyPgzRZ_UAHKXFE1ovFB33Z4m3B6fi9NPJyayOSmigEt9F814k3rJD1nICDGdiAFKK-6y5dwSPBJ-Tm5LlKtXAcuZjq6dGZPdqDXa2_Qm6L0O69TDySmonLOKf7KtRuEgoRYcwHWQJq71s8GnPD3Ik4W2q"/>
+</div>
+<div class="flex-grow">
+<h1 class="font-headline text-3xl font-bold tracking-tighter text-on-secondary-fixed">Iron &amp; Ivy Studio</h1>
+<div class="flex items-center gap-4 mt-1">
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-sm" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-sm font-bold">4.9</span>
+<span class="text-on-secondary-container text-xs font-medium">(2.4k reviews)</span>
+</div>
+<div class="flex items-center gap-1 text-on-secondary-container">
+<span class="material-symbols-outlined text-sm" data-icon="location_on">location_on</span>
+<span class="text-sm font-medium">Downtown, Arts District</span>
+</div>
+</div>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-white px-8 py-3 rounded-full font-bold shadow-lg hover:scale-95 transition-transform duration-200">
+                    Follow
+                </button>
+</div>
+</section>
+<!-- Content Area -->
+<div class="px-6 md:px-12 mt-24 max-w-7xl mx-auto space-y-12">
+<!-- Active Deals Section -->
+<section>
+<div class="flex justify-between items-end mb-6">
+<h2 class="font-headline text-4xl font-bold tracking-tighter text-on-secondary-fixed">Active Deals</h2>
+<span class="text-primary font-bold text-sm uppercase tracking-widest cursor-pointer hover:opacity-80">View all</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Deal Card 1 -->
+<div class="group bg-surface-container-low rounded-xl overflow-hidden relative border border-outline-variant/10">
+<div class="h-48 w-full relative">
+<img alt="Gym Deal" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Person lifting heavy dumbbells in a moody gym setting with vibrant red backlighting creating dramatic shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDM3KvaqgXFpUJOVWgCtDehX4bbqopKMud9UPJbEJxwQmbHY7fX0m0TkoHgC_Pqbh2Z2ZCOxp2pIny1N9kxDiGzW78kjE7JydNtYice-ECaPuQg74-VbgaQYayfyAiJQxx__EzxGk7jpEewTpKboFQ_V7gtC_VcGfQyF_6QV_YXK0zyVLqp01iUfEhGWMU9T_EZoJGdzP1vBsOt4SWvCxCC6lobiC1HGt-D1egvTYL6BuIwJtUiHca1Tb6mRIf_oKU2oaYAXXeSWR2N"/>
+<div class="absolute top-4 left-4 bg-primary text-white font-headline px-3 py-1 rounded-full text-sm font-bold">
+                                -40% OFF
+                            </div>
+</div>
+<div class="p-6">
+<h3 class="font-headline text-xl font-bold text-on-secondary-fixed mb-2">First Month Membership</h3>
+<p class="text-on-secondary-container text-sm leading-relaxed mb-4">Unlimited access to all equipment and classes for your first 30 days of training.</p>
+<div class="flex justify-between items-center">
+<div>
+<span class="text-primary font-bold text-2xl tracking-tighter">$29.99</span>
+<span class="text-on-secondary-container text-xs line-through ml-2">$49.99</span>
+</div>
+<button class="w-10 h-10 rounded-full bg-on-secondary-fixed text-white flex items-center justify-center shadow-lg group-hover:translate-x-1 transition-transform">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Deal Card 2 -->
+<div class="group bg-surface-container-low rounded-xl overflow-hidden relative border border-outline-variant/10">
+<div class="h-48 w-full relative">
+<img alt="Yoga Deal" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Peaceful yoga instructor performing a stretching pose in a sunlit loft with green plants in the background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMgD33muw84YNSIhMyBn8hqjPhC63gPLyrOWwLwSkNM3Ar5u70iO6bOXI6DkhbvIb_UUo8uMlTbnX8rcgh4uhWPYZZwBIGkdPjWtmVNHDt7ZJHWFZfWBxHEeOKwN6Fo_cDDEC943-Ib50u7uXjKLUvwfPvVDTsYmZdM2VsBFdJllwuZ0u9yXB_jjvMIMXRtaH4guTLIoP9Ay_G3LPVqHAG8yx8x3N6VTYYbkzWkSrY3Y5wtmNIY8ir0bCMAl8UZHV7rDoC65cZxrWL"/>
+<div class="absolute top-4 left-4 bg-primary text-white font-headline px-3 py-1 rounded-full text-sm font-bold">
+                                FLASH DEAL
+                            </div>
+</div>
+<div class="p-6">
+<h3 class="font-headline text-xl font-bold text-on-secondary-fixed mb-2">Private Yoga Session</h3>
+<p class="text-on-secondary-container text-sm leading-relaxed mb-4">One-on-one session with our senior masters. Perfect for form correction and deep stretching.</p>
+<div class="flex justify-between items-center">
+<div>
+<span class="text-primary font-bold text-2xl tracking-tighter">$15.00</span>
+<span class="text-on-secondary-container text-xs line-through ml-2">$45.00</span>
+</div>
+<button class="w-10 h-10 rounded-full bg-on-secondary-fixed text-white flex items-center justify-center shadow-lg group-hover:translate-x-1 transition-transform">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Deal Card 3 (Bento Style) -->
+<div class="bg-on-secondary-fixed rounded-xl p-8 flex flex-col justify-between text-white relative overflow-hidden">
+<div class="relative z-10">
+<span class="text-primary text-xs font-bold uppercase tracking-[0.2em] mb-4 block">Limited Rewards</span>
+<h3 class="font-headline text-3xl font-bold leading-tight mb-4">Refer a friend and get 3 months free.</h3>
+<p class="text-secondary-fixed/70 text-sm">Join the community and earn rewards for every workout partner you bring to Iron &amp; Ivy.</p>
+</div>
+<div class="relative z-10 mt-8">
+<button class="bg-white text-on-secondary-fixed px-6 py-2 rounded-full text-sm font-bold hover:bg-primary hover:text-white transition-colors">
+                                Learn More
+                            </button>
+</div>
+<!-- Abstract Background Detail -->
+<div class="absolute -right-10 -bottom-10 w-40 h-40 bg-primary/20 rounded-full blur-3xl"></div>
+<div class="absolute -left-10 -top-10 w-32 h-32 bg-primary/10 rounded-full blur-2xl"></div>
+</div>
+</div>
+</section>
+<!-- Reviews Section -->
+<section class="pb-12">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+<div class="max-w-md">
+<h2 class="font-headline text-4xl font-bold tracking-tighter text-on-secondary-fixed">Recent Reviews</h2>
+<p class="text-on-secondary-container mt-2">See what our community is saying about their experience at Iron &amp; Ivy.</p>
+</div>
+<div class="flex items-center gap-6 bg-surface-container-high p-4 rounded-xl border border-outline-variant/10">
+<div class="text-center px-4">
+<div class="text-3xl font-bold text-on-secondary-fixed">4.9</div>
+<div class="text-[10px] font-bold text-on-secondary-container uppercase tracking-widest">Global Score</div>
+</div>
+<div class="w-px h-10 bg-outline-variant/30"></div>
+<div class="flex -space-x-3">
+<img alt="Reviewer" class="w-10 h-10 rounded-full border-2 border-surface-container-lowest" data-alt="Portrait of woman with kind eyes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNXtQuYeAs4RviGi1ksdcWRGMejjqP3o1xmBvXkuVhasItL_Tf0qE-C1B_JQ60gcLEyXBohBLkMFBCUnjjoBI1b9ZIoQtYvnqRY2jYAxBVLBqy30FnDlIszhbZKmDPwPdAxxY9u22XOct6UV1Jgv3_lCPV-su8nnKaPeIk3ZJc8JmQVID14zUyRvb7W5s7XJj-vH0PjUYL4b0lpSuig2VYdbKo9SkxmNZbGtbe8T-gezoQWHbWAqvslBxl9bSYExRehMOdv_27nmTz"/>
+<img alt="Reviewer" class="w-10 h-10 rounded-full border-2 border-surface-container-lowest" data-alt="Portrait of smiling young man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRadJvKBbzezEkfM-L034z683luimanxS4LrlVtsSSHov5AEhCrPDBDyBx-M_JYIi-gh6QXNSV0wqPuDZAQevyY0UWY9qxLfqG3QYqirTEB8DfLGvxtOkrVohX2_Dx82hfISOV1SEs58_sJm32f6FiizhC7FwKd5OJxRkfRYRcQKUdBS_mVuJqlax9pKt_RTHtOfHBGycjPzlRSFKcVvmJwzhul8DuA5bzwifA1WJmiuNPI7_3pJ7iqNA37VXVR1yC5ZIiWM8WrHe4"/>
+<img alt="Reviewer" class="w-10 h-10 rounded-full border-2 border-surface-container-lowest" data-alt="Portrait of man looking away" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmzaE4X9NpsDgZwwFiGTd7Ov7bRRow5NRuKPLlY8PdUZTKS9Of9g2TZHg_uVi5ZahLmHav-2NuthPc7oDjypme2k9PMyVH8UTgFheYe5uTKFffrRIrf7blNRdUQiWpOc9KYvsBlqajYfA9lxehKi8AVQYQzdITrdm4AxAUZC3PDPIh1SbbWHuoDVFYvk9zQ73drWI90r5qGydAujXO8Q-qBQVONnvSyOVcxx99RQYjgx_YPEeGOOXlz3AIDGKD2Twb81PkeEUKr-PX"/>
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-white border-2 border-surface-container-lowest">+2k</div>
+</div>
+</div>
+</div>
+<!-- Review Masonry Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/10 hover:shadow-xl transition-shadow duration-300">
+<div class="flex items-center gap-4 mb-6">
+<img alt="Sarah J." class="w-12 h-12 rounded-full object-cover" data-alt="Close up of artistic woman face" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRlp-H7pmN2DRG-NJ5x2vh9FKSeZlo3sqyU67yCQpaxH2HK9XFVHXPeslUj0sWZiKV8ERoos4YAT99ApGawlGncgfL7SwlVbk1mW8Jn2rHprjHou_XAglJMKiECM61hWT6gRFZhu2Jfth8NRcqrPdWI3b3sG7a5xOJAtFsI_DfRz4joQ66DyYBsS-VqPm7Mv6V4HAUYd3FBmUb7_--xn7pD6PU82PcOj67x47DlfI1bI1Czn7XMbbo7hlkYihcdCCohXJxhmXq7w4T"/>
+<div>
+<h4 class="font-bold text-on-secondary-fixed">Sarah Jenkins</h4>
+<p class="text-xs text-on-secondary-container font-medium">Powerlifter • 2 days ago</p>
+</div>
+<div class="ml-auto flex gap-0.5 text-primary">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<p class="text-on-secondary-container italic leading-relaxed">"The atmosphere here is unmatched. It's not just a gym; it's a mood. The equipment is always clean and the staff actually knows your name. Best deal I've found on the app so far!"</p>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-xl border border-outline-variant/10 hover:shadow-xl transition-shadow duration-300">
+<div class="flex items-center gap-4 mb-6">
+<img alt="Marcus T." class="w-12 h-12 rounded-full object-cover" data-alt="Close up of mature man face" src="https://lh3.googleusercontent.com/aida-public/AB6AXuApEblVR0NC5FXmNEil7YMxU_sk4mbMdhLvr3cjrI-JJ4itM2JwxbvJKj4Sk_8lA_24S2LC8-Ahl-Ny0ZL439ehN3SoA07Y-dyfcakw9OA5aNSy_fCmx7PM1JhoLnQ6KwrROT3uAwdbUeqim8sVzEPne6YYdPW0N71QQl6p44fQi8KsGxSZwVoWrNi6tTmNeYAemxKoV5CXMWoUdgEo0MiBJG0mbgHLxXyHTNajfgKsUkLyoWn4xvH09sZ_R-DvUtvYq6oMGFAUbHSh"/>
+<div>
+<h4 class="font-bold text-on-secondary-fixed">Marcus Thorne</h4>
+<p class="text-xs text-on-secondary-container font-medium">Entrepreneur • 5 days ago</p>
+</div>
+<div class="ml-auto flex gap-0.5 text-primary">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+</div>
+<p class="text-on-secondary-container italic leading-relaxed">"The flash deals for private sessions are unbelievable. I've been coming here for 6 months and the quality of coaching hasn't dipped once."</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-end px-4 pb-6 pt-2 bg-[#141d23]/70 dark:bg-[#000000]/70 backdrop-blur-xl z-50 rounded-t-[3rem] shadow-[0_-20px_40px_rgba(185,8,44,0.08)]">
+<a class="flex flex-col items-center justify-center text-gray-400 p-2 hover:text-white transition-colors scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="explore">explore</span>
+<span class="font-['Manrope'] font-semibold text-[10px] uppercase tracking-wider">Discover</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-400 p-2 hover:text-white transition-colors scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="favorite">favorite</span>
+<span class="font-['Manrope'] font-semibold text-[10px] uppercase tracking-wider">Saved</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-gradient-to-br from-[#b9082c] to-[#dd2d42] text-white rounded-full p-3 mb-2 transform -translate-y-2 scale-110 shadow-lg transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="qr_code_scanner">qr_code_scanner</span>
+</a>
+<a class="flex flex-col items-center justify-center text-gray-400 p-2 hover:text-white transition-colors scale-90 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="chat_bubble">chat_bubble</span>
+<span class="font-['Manrope'] font-semibold text-[10px] uppercase tracking-wider">Inbox</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-gradient-to-br from-[#b9082c] to-[#dd2d42] text-white rounded-full p-3 mb-2 transform -translate-y-2 scale-110 shadow-lg transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Manrope'] font-semibold text-[10px] uppercase tracking-wider">Profile</span>
+</a>
+</nav>
+</body></html>

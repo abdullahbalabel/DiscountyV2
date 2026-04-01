@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@700&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed": "#dae4ed",
+              "secondary-fixed-dim": "#bec8d1",
+              "on-error-container": "#93000a",
+              "primary-fixed-dim": "#ffb3b2",
+              "surface-container-lowest": "#ffffff",
+              "error-container": "#ffdad6",
+              "surface-dim": "#d4daeb",
+              "on-secondary-fixed": "#141d23",
+              "on-secondary": "#ffffff",
+              "on-background": "#161c28",
+              "on-tertiary": "#ffffff",
+              "on-primary-container": "#fffbff",
+              "on-error": "#ffffff",
+              "on-surface": "#161c28",
+              "on-primary-fixed-variant": "#920020",
+              "secondary-container": "#dae4ed",
+              "on-tertiary-container": "#f5fff8",
+              "surface-container-high": "#e2e8f9",
+              "surface-container-low": "#f1f3ff",
+              "surface": "#f9f9ff",
+              "on-primary-fixed": "#410008",
+              "primary-fixed": "#ffdad9",
+              "on-tertiary-fixed-variant": "#00513b",
+              "error": "#ba1a1a",
+              "surface-tint": "#bc0d2e",
+              "surface-container": "#e8eeff",
+              "primary": "#b9082c",
+              "background": "#f9f9ff",
+              "outline-variant": "#e4bdbc",
+              "primary-container": "#dd2d42",
+              "tertiary-fixed-dim": "#60dcaf",
+              "tertiary-fixed": "#7ef9ca",
+              "tertiary": "#00694d",
+              "secondary": "#565f68",
+              "inverse-primary": "#ffb3b2",
+              "on-tertiary-fixed": "#002116",
+              "tertiary-container": "#008562",
+              "surface-bright": "#f9f9ff",
+              "inverse-surface": "#2a303d",
+              "outline": "#906f6f",
+              "surface-variant": "#dde2f3",
+              "on-surface-variant": "#5b403f",
+              "on-secondary-fixed-variant": "#3f4850",
+              "on-secondary-container": "#5c656e",
+              "inverse-on-surface": "#ecf0ff",
+              "surface-container-highest": "#dde2f3",
+              "on-primary": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Epilogue"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full flex justify-between items-center px-6 py-4 max-w-7xl mx-auto bg-white/70 dark:bg-slate-900/70 backdrop-blur-md z-50">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface hover:opacity-80 transition-opacity">arrow_back</button>
+<h1 class="font-headline font-bold tracking-tight text-2xl text-[#1E272E] dark:text-white">Create New Deal</h1>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:opacity-80 transition-opacity" data-icon="notifications">notifications</span>
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-high border-2 border-white shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Close-up portrait of a professional male store manager in a bright modern retail environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAB4WGWvEtQsESCE91QTk1l5Yj7F9WAirdiDELo2JcW5qlcs4qASTFm_QpDufa0HumF2X1f6G4OtihYGRsPSV9bQcQSIqTanBCH3N1nMhPskkzsi6dNqA_f7Kubmm524FJenj50VGyFNYT_iqX24pCT3g6wYdutlwgr-S-BQE4yBm4mk8-6paRd9OJ3Byh882x10DCsfG5CDilGbp3EY3S9NknhQKk1sXlzE12tE941eX0SVfWZBvsTOLlgivm5pWveJUqRnb58nLZs"/>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-6 max-w-2xl mx-auto">
+<!-- Progress Stepper -->
+<div class="flex items-center justify-between mb-10 px-2">
+<div class="flex flex-col items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white shadow-[0_10px_20px_rgba(185,8,44,0.15)]">
+<span class="font-bold text-sm">1</span>
+</div>
+<span class="text-[10px] font-label font-bold uppercase tracking-widest text-primary">Details</span>
+</div>
+<div class="h-[2px] flex-1 mx-4 bg-surface-container-highest"></div>
+<div class="flex flex-col items-center gap-2 opacity-40">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="font-bold text-sm">2</span>
+</div>
+<span class="text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant">Review</span>
+</div>
+<div class="h-[2px] flex-1 mx-4 bg-surface-container-highest"></div>
+<div class="flex flex-col items-center gap-2 opacity-40">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="font-bold text-sm">3</span>
+</div>
+<span class="text-[10px] font-label font-bold uppercase tracking-widest text-on-surface-variant">Finish</span>
+</div>
+</div>
+<form class="space-y-8">
+<!-- Image Upload Area -->
+<section class="space-y-3">
+<label class="block font-headline font-bold text-lg text-on-surface ml-1">Cover Image</label>
+<div class="relative group cursor-pointer border-2 border-dashed border-outline-variant/30 rounded-xl overflow-hidden bg-surface-container-low hover:bg-surface-container transition-all duration-300">
+<div class="aspect-[16/9] flex flex-col items-center justify-center p-8">
+<span class="material-symbols-outlined text-4xl text-primary mb-3" data-icon="cloud_upload">cloud_upload</span>
+<p class="font-body font-semibold text-on-surface">Drag &amp; drop your deal image</p>
+<p class="text-xs text-on-surface-variant mt-1">Recommended: 1200x675px (PNG, JPG)</p>
+</div>
+<!-- Hidden input for interaction logic -->
+<input class="absolute inset-0 opacity-0 cursor-pointer" type="file"/>
+</div>
+</section>
+<!-- Text Fields Bento-ish Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="md:col-span-2 space-y-2">
+<label class="block font-label font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1">Deal Title</label>
+<input class="w-full px-6 py-4 rounded-xl bg-surface-container-lowest border-none focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline/50 shadow-sm" placeholder="e.g. Summer Weekend Special" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="block font-label font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1">Discount Percentage</label>
+<div class="relative">
+<input class="w-full px-6 py-4 rounded-xl bg-surface-container-lowest border-none focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline/50 shadow-sm" placeholder="25" type="number"/>
+<span class="absolute right-6 top-1/2 -translate-y-1/2 font-bold text-primary">%</span>
+</div>
+</div>
+<div class="space-y-2">
+<label class="block font-label font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1">Expiry Date</label>
+<div class="relative">
+<input class="w-full px-6 py-4 rounded-xl bg-surface-container-lowest border-none focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline/50 shadow-sm appearance-none" type="date"/>
+<span class="absolute right-6 top-1/2 -translate-y-1/2 material-symbols-outlined text-primary pointer-events-none" data-icon="calendar_today">calendar_today</span>
+</div>
+</div>
+<div class="md:col-span-2 space-y-2">
+<label class="block font-label font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1">Terms &amp; Conditions</label>
+<textarea class="w-full px-6 py-4 rounded-xl bg-surface-container-lowest border-none focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-outline/50 shadow-sm resize-none" placeholder="Mention any restrictions or redemption rules..." rows="4"></textarea>
+</div>
+</div>
+<!-- Preview Card (Editorial Style) -->
+<section class="mt-12 space-y-4">
+<h3 class="font-headline font-bold text-xl text-on-surface ml-1">Card Preview</h3>
+<div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-[0_20px_40px_rgba(185,8,44,0.04)] group transition-transform duration-300 hover:scale-[1.01]">
+<div class="relative h-48">
+<img class="w-full h-full object-cover" data-alt="Vibrant close-up of fresh organic produce in a local marketplace with warm natural lighting and shallow depth of field" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5gE_p01e9Scj_LNyXG0MN2oLdGxyU9Ml5z2vK8eRg32oVYVjgRuQX5WhnaFDJfIqRR7FytXU05L7rdaWusev4zuTE8HBts-rD9qjKnGUjW7lR7I4Vy7cmhFKXbS6zMn72ljX4cyjttkiogCGjXxFlZ-ZkYQYUYBbHzTHEvpvuEBmTYvLcKzpWYtaoIxWhV2iLSYZCOZIl4HsROySR98C8dJdYwQsTqAKBDTOaT6dYcxFKOrihrNTtwRHX3bb57g37DrUGN-wgJwy0"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-surface/80 to-transparent"></div>
+<div class="absolute bottom-4 left-6">
+<span class="bg-primary text-white font-label font-bold text-[10px] px-3 py-1 rounded-full uppercase tracking-tighter">NEW OFFER</span>
+<h4 class="text-white font-headline font-bold text-2xl mt-1 tracking-tight">Summer Weekend Special</h4>
+</div>
+</div>
+<div class="p-6 flex justify-between items-center">
+<div>
+<p class="text-primary font-headline font-bold text-3xl">-25%</p>
+<p class="text-on-surface-variant text-xs font-medium">Valid until Sep 30, 2024</p>
+</div>
+<button class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container" type="button">
+<span class="material-symbols-outlined" data-icon="visibility">visibility</span>
+</button>
+</div>
+</div>
+</section>
+</form>
+</main>
+<!-- Bottom Action Bar -->
+<div class="fixed bottom-0 left-0 w-full z-50 px-6 pb-8 pt-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl">
+<div class="max-w-2xl mx-auto flex gap-4">
+<button class="flex-1 py-4 px-8 rounded-full border-2 border-outline-variant/20 font-body font-bold text-on-surface hover:bg-surface-container-low transition-all">
+                Save Draft
+            </button>
+<button class="flex-[2] py-4 px-8 rounded-full bg-gradient-to-br from-primary to-primary-container font-body font-bold text-white shadow-[0_20px_40px_rgba(185,8,44,0.2)] hover:scale-[1.02] active:scale-[0.96] transition-all">
+                Publish Deal
+            </button>
+</div>
+</div>
+<!-- Hidden BottomNavBar (Suppressed as per rules for task-focused screen) -->
+</body></html>
