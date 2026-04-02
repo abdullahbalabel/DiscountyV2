@@ -205,9 +205,9 @@ export default function EditDealScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-surface items-center justify-center">
+      <View style={{ flex: 1, backgroundColor: isDark ? '#1a110f' : '#fff8f6', alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" color="#862045" />
-        <Text className="text-on-surface-variant font-body mt-4">Loading deal...</Text>
+        <Text style={{ color: isDark ? '#d8c2bd' : '#564340', fontFamily: 'Manrope', marginTop: 16 }}>Loading deal...</Text>
       </View>
     );
   }
@@ -215,27 +215,27 @@ export default function EditDealScreen() {
   const displayImageUri = newImageUri || imageUrl;
 
   return (
-    <View className="flex-1 bg-background">
+    <View style={{ flex: 1, backgroundColor: isDark ? '#1a110f' : '#fff8f6' }}>
       {/* Header */}
-      <View className="w-full px-6 pt-14 pb-4 flex-row justify-between items-center bg-surface">
-        <View className="flex-row items-center gap-4">
+      <View style={{ width: '100%', paddingHorizontal: 24, paddingTop: 56, paddingBottom: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: isDark ? '#1a110f' : '#fff8f6' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
           <AnimatedButton
-            className="w-10 h-10 rounded-full bg-surface-container-high items-center justify-center p-0"
+            style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: isDark ? '#534340' : '#f5ddd9', alignItems: 'center', justifyContent: 'center', padding: 0 }}
             onPress={() => router.back()}
           >
             <MaterialIcons name="arrow-back" size={24} color="#85736f" />
           </AnimatedButton>
           <View>
-            <Text className="font-headline font-bold tracking-tight text-xl text-on-surface">
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: 'bold', letterSpacing: -0.02, fontSize: 20, color: isDark ? '#f1dfda' : '#231917' }}>
               Edit Deal
             </Text>
             {deal && (
-              <View className={`self-start px-2 py-0.5 rounded-full mt-0.5 ${deal.status === 'active' ? 'bg-green-500/10' :
-                  deal.status === 'paused' ? 'bg-amber-500/10' : 'bg-surface-container-high'
-                }`}>
-                <Text className={`text-[10px] font-bold uppercase tracking-wider ${deal.status === 'active' ? 'text-green-600' :
-                    deal.status === 'paused' ? 'text-amber-600' : 'text-on-surface-variant'
-                  }`}>{deal.status}</Text>
+              <View style={{ alignSelf: 'flex-start', paddingHorizontal: 8, paddingTop: 2, paddingBottom: 2, borderRadius: 9999, marginTop: 2, backgroundColor: deal.status === 'active' ? 'rgba(16,185,129,0.1)' :
+                  deal.status === 'paused' ? 'rgba(245,158,11,0.1)' : isDark ? '#534340' : '#f5ddd9'
+                }}>
+                <Text style={{ fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 0.05, color: deal.status === 'active' ? '#16a34a' :
+                    deal.status === 'paused' ? '#d97706' : isDark ? '#d8c2bd' : '#564340'
+                  }}>{deal.status}</Text>
               </View>
             )}
           </View>
@@ -244,12 +244,12 @@ export default function EditDealScreen() {
         {/* Pause/Activate toggle */}
         {deal && (
           <AnimatedButton
-            className={`px-4 py-2 rounded-full ${deal.status === 'active' ? 'bg-amber-500/10' : 'bg-green-500/10'
-              }`}
+            style={{ paddingHorizontal: 16, paddingVertical: 8, borderRadius: 9999, backgroundColor: deal.status === 'active' ? 'rgba(245,158,11,0.1)' : 'rgba(16,185,129,0.1)'
+              }}
             onPress={handleTogglePause}
           >
-            <Text className={`font-body font-bold text-xs uppercase ${deal.status === 'active' ? 'text-amber-600' : 'text-green-600'
-              }`}>
+            <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', color: deal.status === 'active' ? '#d97706' : '#16a34a'
+              }}>
               {deal.status === 'active' ? 'Pause' : 'Activate'}
             </Text>
           </AnimatedButton>
@@ -258,14 +258,14 @@ export default function EditDealScreen() {
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
+        style={{ flex: 1 }}
       >
         <ScrollView contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 24 }}>
 
           {/* Redemption Stats */}
           {redemptionStats && (
             <AnimatedEntrance index={0}>
-              <View className="flex-row gap-3 mb-6">
+              <View style={{ flexDirection: 'row', gap: 12, marginBottom: 24 }}>
                 {[
                   { label: 'Total', value: redemptionStats.total, color: '#6366f1' },
                   { label: 'Claimed', value: redemptionStats.claimed, color: '#f59e0b' },
@@ -273,10 +273,10 @@ export default function EditDealScreen() {
                 ].map((stat) => (
                   <View
                     key={stat.label}
-                    className="flex-1 bg-surface-container-lowest p-4 rounded-2xl border-outline-variant/10 items-center"
+                    style={{ flex: 1, backgroundColor: isDark ? '#322825' : '#ffffff', padding: 16, borderRadius: 16, borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)', alignItems: 'center' }}
                   >
-                    <Text className="font-headline font-bold text-xl text-on-surface">{stat.value}</Text>
-                    <Text className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mt-1">{stat.label}</Text>
+                    <Text style={{ fontFamily: 'Epilogue', fontWeight: 'bold', fontSize: 20, color: isDark ? '#f1dfda' : '#231917' }}>{stat.value}</Text>
+                    <Text style={{ fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 0.1, color: isDark ? '#d8c2bd' : '#564340', marginTop: 4 }}>{stat.label}</Text>
                   </View>
                 ))}
               </View>
@@ -285,35 +285,35 @@ export default function EditDealScreen() {
 
           {/* Image */}
           <AnimatedEntrance index={1}>
-            <Text className="font-headline font-bold text-lg text-on-surface ml-1 mb-2">Cover Image</Text>
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: 'bold', fontSize: 18, color: isDark ? '#f1dfda' : '#231917', marginLeft: 4, marginBottom: 8 }}>Cover Image</Text>
             <AnimatedButton
-              className="w-full border-2 border-dashed border-outline-variant/30 rounded-xl bg-surface-container-low items-center justify-center overflow-hidden mb-6"
+              style={{ width: '100%', borderWidth: 2, borderStyle: 'dashed', borderColor: isDark ? 'rgba(160,141,136,0.3)' : 'rgba(133,115,111,0.3)', borderRadius: 12, backgroundColor: isDark ? '#271d1b' : '#fff0ed', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginBottom: 24 }}
               onPress={pickImage}
             >
               {displayImageUri ? (
-                <View className="w-full aspect-[16/9]">
-                  <Image source={{ uri: displayImageUri }} className="w-full h-full" contentFit="cover" />
-                  <View className="absolute bottom-3 right-3 bg-black/60 rounded-full px-3 py-1 flex-row items-center gap-1">
+                <View style={{ width: '100%', aspectRatio: 16/9 }}>
+                  <Image source={{ uri: displayImageUri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                  <View style={{ position: 'absolute', bottom: 12, right: 12, backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: 9999, paddingHorizontal: 12, paddingVertical: 4, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                     <MaterialIcons name="edit" size={14} color="white" />
-                    <Text className="text-white text-xs font-bold">Change</Text>
+                    <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}>Change</Text>
                   </View>
                 </View>
               ) : (
-                <View className="items-center p-8 aspect-[16/9] justify-center">
+                <View style={{ alignItems: 'center', padding: 32, aspectRatio: 16/9, justifyContent: 'center' }}>
                   <MaterialIcons name="cloud-upload" size={40} color="#862045" />
-                  <Text className="font-body font-semibold text-on-surface mt-2">Tap to upload</Text>
+                  <Text style={{ fontFamily: 'Manrope', fontWeight: '600', color: isDark ? '#f1dfda' : '#231917', marginTop: 8 }}>Tap to upload</Text>
                 </View>
               )}
             </AnimatedButton>
           </AnimatedEntrance>
 
           {/* Form Fields */}
-          <AnimatedEntrance index={2} className="space-y-6 flex flex-col gap-6">
+          <AnimatedEntrance index={2} style={{ gap: 24 }}>
             {/* Title */}
             <View>
-              <Text className="font-label font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1 mb-2">Deal Title</Text>
+              <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Deal Title</Text>
               <TextInput
-                className="w-full px-6 py-4 rounded-xl bg-surface-container-lowest text-on-surface font-medium shadow-sm border-outline-variant/10"
+                style={{ width: '100%', paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12, backgroundColor: isDark ? '#322825' : '#ffffff', color: isDark ? '#f1dfda' : '#231917', fontWeight: '500', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }}
                 placeholderTextColor="#85736f"
                 value={title}
                 onChangeText={setTitle}
@@ -322,9 +322,9 @@ export default function EditDealScreen() {
 
             {/* Description */}
             <View>
-              <Text className="font-label font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1 mb-2">Description</Text>
+              <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Description</Text>
               <TextInput
-                className="w-full px-6 py-4 rounded-xl bg-surface-container-lowest text-on-surface font-medium shadow-sm border-outline-variant/10 h-24 text-left"
+                style={{ width: '100%', paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12, backgroundColor: isDark ? '#322825' : '#ffffff', color: isDark ? '#f1dfda' : '#231917', fontWeight: '500', height: 96, textAlign: 'left', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }}
                 placeholderTextColor="#85736f"
                 placeholder="Describe your deal..."
                 multiline
@@ -336,15 +336,19 @@ export default function EditDealScreen() {
 
             {/* Category Picker */}
             <View>
-              <Text className="font-label font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1 mb-2">Category</Text>
+              <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Category</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                 {categories.map((cat) => (
                   <AnimatedButton
                     key={cat.id}
-                    className={`px-4 py-3 rounded-xl flex-row items-center gap-2 ${selectedCategoryId === cat.id
-                        ? 'bg-primary/10 border-primary'
-                        : 'bg-surface-container-lowest border-outline-variant/10'
-                      }`}
+                    style={{ paddingHorizontal: 16, paddingVertical: 12, borderRadius: 12, flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: selectedCategoryId === cat.id
+                        ? 'rgba(134,32,69,0.1)'
+                        : isDark ? '#322825' : '#ffffff',
+                      borderWidth: 1,
+                      borderColor: selectedCategoryId === cat.id
+                        ? '#862045'
+                        : isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)'
+                      }}
                     onPress={() => setSelectedCategoryId(
                       selectedCategoryId === cat.id ? null : cat.id
                     )}
@@ -354,8 +358,8 @@ export default function EditDealScreen() {
                       size={18}
                       color={selectedCategoryId === cat.id ? '#862045' : '#85736f'}
                     />
-                    <Text className={`font-body font-semibold text-sm ${selectedCategoryId === cat.id ? 'text-primary' : 'text-on-surface-variant'
-                      }`}>
+                    <Text style={{ fontFamily: 'Manrope', fontWeight: '600', fontSize: 14, color: selectedCategoryId === cat.id ? '#862045' : isDark ? '#d8c2bd' : '#564340'
+                      }}>
                       {cat.name}
                     </Text>
                   </AnimatedButton>
@@ -364,26 +368,26 @@ export default function EditDealScreen() {
             </View>
 
             {/* Discount & Expiry */}
-            <View className="flex-row gap-4">
-              <View className="flex-1">
-                <Text className="font-label font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1 mb-2">Discount</Text>
-                <View className="relative flex-row items-center">
+            <View style={{ flexDirection: 'row', gap: 16 }}>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Discount</Text>
+                <View style={{ position: 'relative', flexDirection: 'row', alignItems: 'center' }}>
                   <TextInput
-                    className="flex-1 px-6 py-4 rounded-xl bg-surface-container-lowest text-on-surface font-medium shadow-sm border-outline-variant/10"
+                    style={{ flex: 1, paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12, backgroundColor: isDark ? '#322825' : '#ffffff', color: isDark ? '#f1dfda' : '#231917', fontWeight: '500', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }}
                     keyboardType="numeric"
                     value={discountValue}
                     onChangeText={setDiscountValue}
                     placeholderTextColor="#85736f"
                   />
-                  <Text className="absolute right-6 font-bold text-primary">
+                  <Text style={{ position: 'absolute', right: 24, fontWeight: 'bold', color: '#862045' }}>
                     {discountType === 'percentage' ? '%' : '$'}
                   </Text>
                 </View>
               </View>
-              <View className="flex-1">
-                <Text className="font-label font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1 mb-2">Expiry Date</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Expiry Date</Text>
                 <TextInput
-                  className="w-full px-6 py-4 rounded-xl bg-surface-container-lowest text-on-surface font-medium shadow-sm border-outline-variant/10"
+                  style={{ width: '100%', paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12, backgroundColor: isDark ? '#322825' : '#ffffff', color: isDark ? '#f1dfda' : '#231917', fontWeight: '500', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }}
                   value={endDate}
                   onChangeText={setEndDate}
                   placeholder="YYYY-MM-DD"
@@ -394,9 +398,9 @@ export default function EditDealScreen() {
 
             {/* Max Redemptions */}
             <View>
-              <Text className="font-label font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1 mb-2">Max Redemptions</Text>
+              <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Max Redemptions</Text>
               <TextInput
-                className="w-full px-6 py-4 rounded-xl bg-surface-container-lowest text-on-surface font-medium shadow-sm border-outline-variant/10"
+                style={{ width: '100%', paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12, backgroundColor: isDark ? '#322825' : '#ffffff', color: isDark ? '#f1dfda' : '#231917', fontWeight: '500', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }}
                 keyboardType="number-pad"
                 value={maxRedemptions}
                 onChangeText={setMaxRedemptions}
@@ -406,11 +410,11 @@ export default function EditDealScreen() {
           </AnimatedEntrance>
 
           {/* Action Buttons */}
-          <AnimatedEntrance index={3} className="mt-8">
-            <View className="flex-col gap-4">
+          <AnimatedEntrance index={3} style={{ marginTop: 32 }}>
+            <View style={{ gap: 16 }}>
               <AnimatedButton
                 variant="gradient"
-                className="w-full py-4 rounded-full flex-row items-center justify-center gap-2"
+                style={{ width: '100%', paddingVertical: 16, borderRadius: 9999, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}
                 onPress={handleSave}
                 disabled={saving}
               >
@@ -419,17 +423,17 @@ export default function EditDealScreen() {
                 ) : (
                   <MaterialIcons name="save" size={20} color="white" />
                 )}
-                <Text className="text-white font-bold text-lg">
+                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 18 }}>
                   {saving ? 'Saving...' : 'Save Changes'}
                 </Text>
               </AnimatedButton>
 
               <AnimatedButton
-                className="w-full bg-surface-container-highest py-4 rounded-full flex-row items-center justify-center gap-2"
+                style={{ width: '100%', backgroundColor: isDark ? '#534340' : '#f5ddd9', paddingVertical: 16, borderRadius: 9999, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}
                 onPress={handleDelete}
               >
                 <MaterialIcons name="delete" size={20} color="#ba1a1a" />
-                <Text className="text-error font-bold text-lg">Delete Deal</Text>
+                <Text style={{ color: '#ba1a1a', fontWeight: 'bold', fontSize: 18 }}>Delete Deal</Text>
               </AnimatedButton>
             </View>
           </AnimatedEntrance>

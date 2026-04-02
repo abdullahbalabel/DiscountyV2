@@ -22,203 +22,121 @@ export default function ProviderDashboard() {
 
   const loadData = useCallback(async () => {
     try {
-      const [statsData, profileData] = await Promise.all([
-        fetchProviderStats(),
-        fetchOwnProviderProfile(),
-      ]);
+      const [statsData, profileData] = await Promise.all([fetchProviderStats(), fetchOwnProviderProfile()]);
       setStats(statsData);
       setProfile(profileData);
-    } catch (err) {
-      console.error('Dashboard load error:', err);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
+    } catch (err) { console.error('Dashboard load error:', err); }
+    finally { setLoading(false); setRefreshing(false); }
   }, []);
 
-  useEffect(() => {
-    if (session?.user) loadData();
-  }, [session, loadData]);
+  useEffect(() => { if (session?.user) loadData(); }, [session, loadData]);
+  const onRefresh = useCallback(() => { setRefreshing(true); loadData(); }, [loadData]);
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    loadData();
-  }, [loadData]);
+  const surfaceBg = isDark ? '#1a110f' : '#fff8f6';
+  const surfaceContainerLowest = isDark ? '#322825' : '#ffffff';
+  const surfaceContainerHigh = isDark ? '#534340' : '#f5ddd9';
+  const surfaceContainer = isDark ? '#3d3230' : '#f0e0dc';
+  const onSurface = isDark ? '#f1dfda' : '#231917';
+  const onSurfaceVariant = isDark ? '#d8c2bd' : '#564340';
+  const outlineVariant = isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)';
 
   const quickActions = [
-    {
-      icon: 'add-circle' as const,
-      label: 'Create New Deal',
-      color: '#862045',
-      onPress: () => router.push('/(provider)/create-deal'),
-    },
-    {
-      icon: 'qr-code-scanner' as const,
-      label: 'Scan Customer QR',
-      color: '#00694d',
-      onPress: () => router.push('/(provider)/scan'),
-    },
-    {
-      icon: 'rate-review' as const,
-      label: 'View Reviews',
-      color: '#7b5733',
-      onPress: () => router.push('/(provider)/reviews'),
-    },
+    { icon: 'add-circle' as const, label: 'Create New Deal', color: '#862045', onPress: () => router.push('/(provider)/create-deal') },
+    { icon: 'qr-code-scanner' as const, label: 'Scan Customer QR', color: '#00694d', onPress: () => router.push('/(provider)/scan') },
+    { icon: 'rate-review' as const, label: 'View Reviews', color: '#7b5733', onPress: () => router.push('/(provider)/reviews') },
   ];
 
   if (loading) {
     return (
-      <View className="flex-1 bg-surface items-center justify-center">
+      <View style={{ flex: 1, backgroundColor: surfaceBg, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" color="#862045" />
-        <Text className="text-on-surface-variant font-body mt-3 text-sm">Loading dashboard...</Text>
+        <Text style={{ color: onSurfaceVariant, fontFamily: 'Manrope', marginTop: 12, fontSize: 14 }}>Loading dashboard...</Text>
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-surface">
-      {/* Header */}
-      <View className="w-full px-4 pt-12 pb-2 flex-row justify-between items-center bg-surface">
+    <View style={{ flex: 1, backgroundColor: surfaceBg }}>
+      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: surfaceBg }}>
         <View>
-          <Text className="font-headline font-bold tracking-tight text-lg text-on-surface">
-            Dashboard
-          </Text>
-          {profile && (
-            <Text className="text-on-surface-variant text-[10px] font-body mt-0.5">
-              {profile.business_name}
-            </Text>
-          )}
+          <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: onSurface }}>Dashboard</Text>
+          {profile && <Text style={{ color: onSurfaceVariant, fontSize: 10, fontFamily: 'Manrope', marginTop: 2 }}>{profile.business_name}</Text>}
         </View>
-        <AnimatedButton
-          className="w-8 h-8 rounded-md bg-surface-container-high items-center justify-center p-0"
-          onPress={() => signOut()}
-        >
+        <AnimatedButton style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }} onPress={() => signOut()}>
           <MaterialIcons name="logout" size={18} color="#85736f" />
         </AnimatedButton>
       </View>
 
-      <ScrollView
-        className="flex-1"
-        contentContainerStyle={{ paddingBottom: 12 }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#862045" />
-        }
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 12 }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#862045" />}
       >
-        <View className="px-4 pt-2">
-          {/* Rating Card */}
+        <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
           <AnimatedEntrance index={0} delay={100}>
-            <View className="bg-primary p-4 rounded-md shadow-sm mb-4 mt-2">
-              <View className="flex-row items-center justify-between mb-2">
-                <Text className="text-white font-headline text-sm font-bold">Your Rating</Text>
+            <View style={{ backgroundColor: '#862045', padding: 16, borderRadius: 8, marginBottom: 16, marginTop: 8 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontSize: 14, fontWeight: '700' }}>Your Rating</Text>
                 <MaterialIcons name="star" size={18} color="#FFD700" />
               </View>
-              <Text className="text-white font-headline font-black text-3xl tracking-tighter mb-1">
-                {(stats?.averageRating || 0) > 0
-                  ? stats!.averageRating.toFixed(1)
-                  : '—'}
+              <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '900', fontSize: 30, letterSpacing: -0.5, marginBottom: 4 }}>
+                {(stats?.averageRating || 0) > 0 ? stats!.averageRating.toFixed(1) : '—'}
               </Text>
-              <Text className="text-white/80 font-body text-xs">
+              <Text style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Manrope', fontSize: 12 }}>
                 {stats?.totalReviews || 0} total reviews from customers
               </Text>
             </View>
           </AnimatedEntrance>
 
-          {/* Quick Stats Grid */}
-          <View className="flex-row gap-3 mb-3">
-            <AnimatedEntrance index={1} delay={150} className="flex-1">
-              <View className="bg-surface-container-lowest p-3 rounded-md border-outline-variant/10 shadow-sm">
+          <View style={{ flexDirection: 'row', gap: 12, marginBottom: 12 }}>
+            <AnimatedEntrance index={1} delay={150} style={{ flex: 1 }}>
+              <View style={{ backgroundColor: surfaceContainerLowest, padding: 12, borderRadius: 8, borderWidth: 1, borderColor: outlineVariant }}>
                 <MaterialIcons name="local-offer" size={18} color="#862045" />
-                <Text className="font-headline font-bold text-xl text-on-surface mb-0.5 mt-2">
-                  {stats?.activeDeals || 0}
-                </Text>
-                <Text className="text-on-surface-variant text-[10px] uppercase tracking-widest font-bold">
-                  Active Deals
-                </Text>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginBottom: 2, marginTop: 8 }}>{stats?.activeDeals || 0}</Text>
+                <Text style={{ color: onSurfaceVariant, fontSize: 10, textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700' }}>Active Deals</Text>
               </View>
             </AnimatedEntrance>
-            <AnimatedEntrance index={2} delay={200} className="flex-1">
-              <View className="bg-surface-container-lowest p-3 rounded-md border-outline-variant/10 shadow-sm">
+            <AnimatedEntrance index={2} delay={200} style={{ flex: 1 }}>
+              <View style={{ backgroundColor: surfaceContainerLowest, padding: 12, borderRadius: 8, borderWidth: 1, borderColor: outlineVariant }}>
                 <MaterialIcons name="qr-code" size={18} color="#00694d" />
-                <Text className="font-headline font-bold text-xl text-on-surface mb-0.5 mt-2">
-                  {stats?.totalRedemptions || 0}
-                </Text>
-                <Text className="text-on-surface-variant text-[10px] uppercase tracking-widest font-bold">
-                  Redemptions
-                </Text>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginBottom: 2, marginTop: 8 }}>{stats?.totalRedemptions || 0}</Text>
+                <Text style={{ color: onSurfaceVariant, fontSize: 10, textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700' }}>Redemptions</Text>
               </View>
             </AnimatedEntrance>
           </View>
 
-          {/* Detailed Stats */}
-          <View className="flex-row gap-3 mb-5">
-            <AnimatedEntrance index={3} delay={250} className="flex-1">
-              <View className="bg-surface-container-lowest p-3 rounded-md border-outline-variant/10 shadow-sm">
+          <View style={{ flexDirection: 'row', gap: 12, marginBottom: 20 }}>
+            <AnimatedEntrance index={3} delay={250} style={{ flex: 1 }}>
+              <View style={{ backgroundColor: surfaceContainerLowest, padding: 12, borderRadius: 8, borderWidth: 1, borderColor: outlineVariant }}>
                 <MaterialIcons name="hourglass-top" size={18} color="#f59e0b" />
-                <Text className="font-headline font-bold text-xl text-on-surface mb-0.5 mt-2">
-                  {stats?.claimedRedemptions || 0}
-                </Text>
-                <Text className="text-on-surface-variant text-[10px] uppercase tracking-widest font-bold">
-                  Pending
-                </Text>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginBottom: 2, marginTop: 8 }}>{stats?.claimedRedemptions || 0}</Text>
+                <Text style={{ color: onSurfaceVariant, fontSize: 10, textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700' }}>Pending</Text>
               </View>
             </AnimatedEntrance>
-            <AnimatedEntrance index={4} delay={300} className="flex-1">
-              <View className="bg-surface-container-lowest p-3 rounded-md border-outline-variant/10 shadow-sm">
+            <AnimatedEntrance index={4} delay={300} style={{ flex: 1 }}>
+              <View style={{ backgroundColor: surfaceContainerLowest, padding: 12, borderRadius: 8, borderWidth: 1, borderColor: outlineVariant }}>
                 <MaterialIcons name="check-circle" size={18} color="#10b981" />
-                <Text className="font-headline font-bold text-xl text-on-surface mb-0.5 mt-2">
-                  {stats?.redeemedRedemptions || 0}
-                </Text>
-                <Text className="text-on-surface-variant text-[10px] uppercase tracking-widest font-bold">
-                  Completed
-                </Text>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginBottom: 2, marginTop: 8 }}>{stats?.redeemedRedemptions || 0}</Text>
+                <Text style={{ color: onSurfaceVariant, fontSize: 10, textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700' }}>Completed</Text>
               </View>
             </AnimatedEntrance>
           </View>
 
-          {/* Recent Activity */}
           {stats?.recentRedemptions && stats.recentRedemptions.length > 0 && (
             <AnimatedEntrance index={5} delay={350}>
-              <Text className="font-headline font-bold text-base text-on-surface mb-3">
-                Recent Activity
-              </Text>
-              <View className="bg-surface-container-lowest rounded-md border-outline-variant/10 overflow-hidden mb-5">
+              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface, marginBottom: 12 }}>Recent Activity</Text>
+              <View style={{ backgroundColor: surfaceContainerLowest, borderRadius: 8, overflow: 'hidden', borderWidth: 1, borderColor: outlineVariant, marginBottom: 20 }}>
                 {stats.recentRedemptions.map((redemption, idx) => (
-                  <View
-                    key={redemption.id}
-                    className={`flex-row items-center p-3 ${idx !== stats.recentRedemptions.length - 1
-                      ? 'border-b border-surface-container'
-                      : ''
-                      }`}
-                  >
-                    <View className={`w-8 h-8 rounded-md items-center justify-center mr-3 ${redemption.status === 'redeemed'
-                      ? 'bg-green-500/10'
-                      : 'bg-amber-500/10'
-                      }`}>
-                      <MaterialIcons
-                        name={redemption.status === 'redeemed' ? 'check-circle' : 'hourglass-top'}
-                        size={16}
-                        color={redemption.status === 'redeemed' ? '#10b981' : '#f59e0b'}
-                      />
+                  <View key={redemption.id} style={{ flexDirection: 'row', alignItems: 'center', padding: 12, borderBottomWidth: idx !== stats.recentRedemptions.length - 1 ? 1 : 0, borderBottomColor: surfaceContainer }}>
+                    <View style={{ width: 32, height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginRight: 12, backgroundColor: redemption.status === 'redeemed' ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)' }}>
+                      <MaterialIcons name={redemption.status === 'redeemed' ? 'check-circle' : 'hourglass-top'} size={16} color={redemption.status === 'redeemed' ? '#10b981' : '#f59e0b'} />
                     </View>
-                    <View className="flex-1">
-                      <Text className="font-headline font-semibold text-xs text-on-surface" numberOfLines={1}>
-                        {(redemption.discount as any)?.title || 'Deal'}
-                      </Text>
-                      <Text className="text-on-surface-variant text-[10px] font-body mt-0.5">
-                        {redemption.status === 'redeemed' ? 'Redeemed' : 'Claimed'} •{' '}
-                        {new Date(redemption.claimed_at).toLocaleDateString()}
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ fontFamily: 'Epilogue', fontWeight: '600', fontSize: 12, color: onSurface }} numberOfLines={1}>{(redemption.discount as any)?.title || 'Deal'}</Text>
+                      <Text style={{ color: onSurfaceVariant, fontSize: 10, fontFamily: 'Manrope', marginTop: 2 }}>
+                        {redemption.status === 'redeemed' ? 'Redeemed' : 'Claimed'} • {new Date(redemption.claimed_at).toLocaleDateString()}
                       </Text>
                     </View>
-                    <View className={`px-2 py-0.5 rounded-md ${redemption.status === 'redeemed'
-                      ? 'bg-green-500/10'
-                      : 'bg-amber-500/10'
-                      }`}>
-                      <Text className={`text-[9px] font-bold uppercase tracking-wider ${redemption.status === 'redeemed'
-                        ? 'text-green-600'
-                        : 'text-amber-600'
-                        }`}>
-                        {redemption.status}
-                      </Text>
+                    <View style={{ paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, backgroundColor: redemption.status === 'redeemed' ? 'rgba(16,185,129,0.1)' : 'rgba(245,158,11,0.1)' }}>
+                      <Text style={{ fontSize: 9, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, color: redemption.status === 'redeemed' ? '#10b981' : '#f59e0b' }}>{redemption.status}</Text>
                     </View>
                   </View>
                 ))}
@@ -226,22 +144,19 @@ export default function ProviderDashboard() {
             </AnimatedEntrance>
           )}
 
-          {/* Quick Actions */}
           <AnimatedEntrance index={6} delay={400}>
-            <Text className="font-headline font-bold text-base text-on-surface mb-3">Quick Actions</Text>
-            <View className="flex-col gap-2">
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface, marginBottom: 12 }}>Quick Actions</Text>
+            <View style={{ gap: 8 }}>
               {quickActions.map((action) => (
                 <AnimatedButton
                   key={action.label}
-                  className="flex-row items-center p-3 bg-surface-container-lowest rounded-xl border-outline-variant/10"
+                  style={{ flexDirection: 'row', alignItems: 'center', padding: 12, backgroundColor: surfaceContainerLowest, borderRadius: 12, borderWidth: 1, borderColor: outlineVariant }}
                   onPress={action.onPress}
                 >
-                  <View className="w-8 h-8 rounded-md bg-surface-container-high items-center justify-center mr-3">
+                  <View style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
                     <MaterialIcons name={action.icon} size={18} color={action.color} />
                   </View>
-                  <Text className="flex-1 font-headline font-semibold text-sm text-on-surface">
-                    {action.label}
-                  </Text>
+                  <Text style={{ flex: 1, fontFamily: 'Epilogue', fontWeight: '600', fontSize: 14, color: onSurface }}>{action.label}</Text>
                   <MaterialIcons name="chevron-right" size={20} color="#85736f" />
                 </AnimatedButton>
               ))}

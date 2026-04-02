@@ -7,25 +7,25 @@ export default function ProviderReviewsScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
+  const surfaceBg = isDark ? '#1a110f' : '#fff8f6';
+  const surfaceContainerHigh = isDark ? '#534340' : '#f5ddd9';
+  const onSurface = isDark ? '#f1dfda' : '#231917';
+  const onSurfaceVariant = isDark ? '#d8c2bd' : '#564340';
+
   return (
-    <View className="flex-1 bg-surface">
-      {/* Header */}
-      <View className="w-full px-6 pt-14 pb-4 flex-row justify-between items-center bg-surface">
-        <Text className="font-headline font-bold tracking-tight text-xl text-on-surface">
-          Reviews
-        </Text>
+    <View style={{ flex: 1, backgroundColor: surfaceBg }}>
+      <View style={{ width: '100%', paddingHorizontal: 24, paddingTop: 56, paddingBottom: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: surfaceBg }}>
+        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 20, color: onSurface }}>Reviews</Text>
       </View>
 
-      <View className="flex-1 items-center justify-center px-8">
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
         <AnimatedEntrance index={0}>
-          <View className="items-center">
-            <View className="w-28 h-28 rounded-full items-center justify-center mb-6 bg-surface-container-high">
+          <View style={{ alignItems: 'center' }}>
+            <View style={{ width: 112, height: 112, borderRadius: 56, alignItems: 'center', justifyContent: 'center', marginBottom: 24, backgroundColor: surfaceContainerHigh }}>
               <MaterialIcons name="rate-review" size={56} color="#7b5733" />
             </View>
-            <Text className="font-headline font-bold text-2xl text-on-surface text-center mb-3">
-              No Reviews Yet
-            </Text>
-            <Text className="font-body text-on-surface-variant text-center text-base leading-6 max-w-[280px]">
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 24, color: onSurface, textAlign: 'center', marginBottom: 12 }}>No Reviews Yet</Text>
+            <Text style={{ fontFamily: 'Manrope', color: onSurfaceVariant, textAlign: 'center', fontSize: 16, lineHeight: 24, maxWidth: 280 }}>
               Customer reviews will appear here after they redeem your deals.
             </Text>
           </View>

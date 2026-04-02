@@ -6,13 +6,8 @@ import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
 import { fetchRedemptionById } from '../../../lib/api';
 
-// Conditionally import QR code (not available on web)
 let QRCode: any = null;
-try {
-  QRCode = require('react-native-qrcode-svg').default;
-} catch {
-  // web fallback
-}
+try { QRCode = require('react-native-qrcode-svg').default; } catch {}
 
 export default function QRDisplayScreen() {
   const { redemptionId } = useLocalSearchParams<{ redemptionId: string }>();
@@ -38,9 +33,17 @@ export default function QRDisplayScreen() {
     load();
   }, [redemptionId]);
 
+  const surfaceBg = isDark ? '#1a110f' : '#fff8f6';
+  const surfaceContainerHigh = isDark ? '#534340' : '#f5ddd9';
+  const surfaceContainerLowest = isDark ? '#322825' : '#ffffff';
+  const surfaceContainer = isDark ? '#3d3230' : '#f0e0dc';
+  const onSurface = isDark ? '#f1dfda' : '#231917';
+  const onSurfaceVariant = isDark ? '#d8c2bd' : '#564340';
+  const outlineVariant = isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)';
+
   if (isLoading) {
     return (
-      <View className="flex-1 bg-surface items-center justify-center">
+      <View style={{ flex: 1, backgroundColor: surfaceBg, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" color="#862045" />
       </View>
     );
@@ -48,14 +51,12 @@ export default function QRDisplayScreen() {
 
   if (!redemption) {
     return (
-      <View className="flex-1 bg-surface items-center justify-center px-8">
+      <View style={{ flex: 1, backgroundColor: surfaceBg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
         <MaterialIcons name="error-outline" size={48} color="#85736f" />
-        <Text className="font-headline font-bold text-xl text-on-surface mt-4">Not Found</Text>
-        <Text className="font-body text-on-surface-variant text-center mt-2">
-          This redemption could not be found.
-        </Text>
-        <AnimatedButton className="mt-6 px-6 py-3 bg-primary rounded-md" onPress={() => router.back()}>
-          <Text className="text-white font-bold">Go Back</Text>
+        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginTop: 16 }}>Not Found</Text>
+        <Text style={{ fontFamily: 'Manrope', color: onSurfaceVariant, textAlign: 'center', marginTop: 8 }}>This redemption could not be found.</Text>
+        <AnimatedButton style={{ marginTop: 24, paddingHorizontal: 24, paddingVertical: 12, backgroundColor: '#862045', borderRadius: 8 }} onPress={() => router.back()}>
+          <Text style={{ color: '#fff', fontWeight: '700' }}>Go Back</Text>
         </AnimatedButton>
       </View>
     );
@@ -65,145 +66,121 @@ export default function QRDisplayScreen() {
   const provider = deal?.provider;
   const isRedeemed = redemption.status === 'redeemed';
   const isClaimed = redemption.status === 'claimed';
-  const formattedDiscount = deal?.type === 'percentage'
-    ? `${deal?.discount_value}%`
-    : `$${deal?.discount_value}`;
+  const formattedDiscount = deal?.type === 'percentage' ? `${deal?.discount_value}%` : `$${deal?.discount_value}`;
 
   return (
-    <View className="flex-1 bg-surface">
-      {/* Header */}
-      <View className="w-full px-6 pt-14 pb-4 flex-row justify-between items-center bg-surface">
-        <View className="flex-row items-center gap-4">
-          <AnimatedButton
-            className="w-10 h-10 rounded-md bg-surface-container-high items-center justify-center p-0"
-            onPress={() => router.back()}
-          >
-            <MaterialIcons name="arrow-back" size={24} color="#85736f" />
-          </AnimatedButton>
-          <Text className="font-headline font-bold tracking-tighter text-xl text-on-surface">
-            Your QR Code
-          </Text>
-        </View>
+    <View style={{ flex: 1, backgroundColor: surfaceBg }}>
+      <View style={{ width: '100%', paddingHorizontal: 24, paddingTop: 56, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', gap: 16, backgroundColor: surfaceBg }}>
+        <AnimatedButton
+          style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}
+          onPress={() => router.back()}
+        >
+          <MaterialIcons name="arrow-back" size={24} color="#85736f" />
+        </AnimatedButton>
+        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 20, color: onSurface }}>Your QR Code</Text>
       </View>
 
-      <View className="flex-1 px-6 items-center">
-        {/* Deal Info */}
+      <View style={{ flex: 1, paddingHorizontal: 24, alignItems: 'center' }}>
         <AnimatedEntrance index={0} delay={100}>
-          <View className="items-center mb-8">
-            <Text className="font-headline font-black text-2xl text-on-surface text-center tracking-tight" numberOfLines={2}>
+          <View style={{ alignItems: 'center', marginBottom: 32 }}>
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '900', fontSize: 24, color: onSurface, textAlign: 'center', letterSpacing: -0.5 }} numberOfLines={2}>
               {deal?.title || 'Deal'}
             </Text>
-            <Text className="text-on-surface-variant font-body mt-2 text-center">
+            <Text style={{ color: onSurfaceVariant, fontFamily: 'Manrope', marginTop: 8, textAlign: 'center' }}>
               {provider?.business_name || 'Provider'}
             </Text>
-            <View className="bg-primary-container mt-3 px-5 py-2 rounded-md">
-              <Text className="font-headline font-bold text-white text-lg">{formattedDiscount} OFF</Text>
+            <View style={{ backgroundColor: '#ffd9de', marginTop: 12, paddingHorizontal: 20, paddingVertical: 8, borderRadius: 8 }}>
+              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', color: '#fff', fontSize: 18 }}>{formattedDiscount} OFF</Text>
             </View>
           </View>
         </AnimatedEntrance>
 
-        {/* QR Code Card */}
         <AnimatedEntrance index={1} delay={200}>
-          <View className="rounded-[2.5rem] p-8 items-center shadow-2xl bg-white border-outline-variant/10">
+          <View style={{ borderRadius: 40, padding: 32, alignItems: 'center', backgroundColor: '#fff', borderWidth: 1, borderColor: outlineVariant, shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.1, shadowRadius: 24, elevation: 8 }}>
             {isClaimed && redemption.qr_code_hash ? (
               <>
                 {QRCode && Platform.OS !== 'web' ? (
-                  <QRCode
-                    value={redemption.qr_code_hash}
-                    size={220}
-                    color="#231917"
-                    backgroundColor="white"
-                  />
+                  <QRCode value={redemption.qr_code_hash} size={220} color="#231917" backgroundColor="white" />
                 ) : (
-                  /* Web fallback: show hash as text-based representation */
-                  <View className="w-[220px] h-[220px] items-center justify-center border-2 border-dashed border-outline-variant rounded-2xl">
+                  <View style={{ width: 220, height: 220, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderStyle: 'dashed', borderColor: '#85736f', borderRadius: 16 }}>
                     <MaterialIcons name="qr-code" size={80} color="#231917" />
-                    <Text className="text-on-surface text-xs mt-3 text-center font-mono px-4" numberOfLines={3}>
+                    <Text style={{ color: '#231917', fontSize: 12, marginTop: 12, textAlign: 'center', fontFamily: 'monospace', paddingHorizontal: 16 }} numberOfLines={3}>
                       {redemption.qr_code_hash}
                     </Text>
                   </View>
                 )}
-                <Text className="text-on-surface-variant text-xs mt-4 text-center font-body">
+                <Text style={{ color: onSurfaceVariant, fontSize: 12, marginTop: 16, textAlign: 'center', fontFamily: 'Manrope' }}>
                   Show this to the provider to redeem
                 </Text>
               </>
             ) : isRedeemed ? (
-              <View className="w-[220px] h-[220px] items-center justify-center">
-                <View className="w-20 h-20 rounded-md bg-green-100 items-center justify-center mb-4">
+              <View style={{ width: 220, height: 220, alignItems: 'center', justifyContent: 'center' }}>
+                <View style={{ width: 80, height: 80, borderRadius: 8, backgroundColor: '#dcfce7', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
                   <MaterialIcons name="check-circle" size={48} color="#16a34a" />
                 </View>
-                <Text className="text-green-700 font-headline font-bold text-lg">Redeemed!</Text>
-                <Text className="text-on-surface-variant text-sm mt-2 text-center font-body">
+                <Text style={{ color: '#15803d', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 18 }}>Redeemed!</Text>
+                <Text style={{ color: onSurfaceVariant, fontSize: 14, marginTop: 8, textAlign: 'center', fontFamily: 'Manrope' }}>
                   This deal has been successfully redeemed.
                 </Text>
               </View>
             ) : (
-              <View className="w-[220px] h-[220px] items-center justify-center">
+              <View style={{ width: 220, height: 220, alignItems: 'center', justifyContent: 'center' }}>
                 <MaterialIcons name="error-outline" size={48} color="#85736f" />
-                <Text className="text-on-surface-variant text-sm mt-2 text-center font-body">
-                  QR code not available
-                </Text>
+                <Text style={{ color: onSurfaceVariant, fontSize: 14, marginTop: 8, textAlign: 'center' }}>QR code not available</Text>
               </View>
             )}
           </View>
         </AnimatedEntrance>
 
-        {/* Status Badge */}
         <AnimatedEntrance index={2} delay={300}>
-          <View className={`mt-6 px-5 py-3 rounded-md flex-row items-center gap-2 ${isClaimed
-            ? 'bg-secondary-container'
-            : isRedeemed
-              ? 'bg-tertiary-container'
-              : 'bg-surface-container-high'
-            }`}>
+          <View style={{
+            marginTop: 24, paddingHorizontal: 20, paddingVertical: 12, borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 8,
+            backgroundColor: isClaimed ? '#ffdcba' : isRedeemed ? '#ffdeaa' : surfaceContainerHigh,
+          }}>
             <MaterialIcons
               name={isClaimed ? 'pending' : isRedeemed ? 'check-circle' : 'cancel'}
               size={18}
               color={isClaimed ? '#7b5733' : isRedeemed ? '#16a34a' : '#85736f'}
             />
-            <Text className={`font-bold text-sm uppercase tracking-wider ${isClaimed
-              ? 'text-on-secondary-container'
-              : isRedeemed
-                ? 'text-on-tertiary-container'
-                : 'text-on-surface-variant'
-              }`}>
+            <Text style={{
+              fontWeight: '700', fontSize: 14, textTransform: 'uppercase', letterSpacing: 1,
+              color: isClaimed ? '#654425' : isRedeemed ? '#654500' : onSurfaceVariant,
+            }}>
               {isClaimed ? 'Ready to Scan' : isRedeemed ? 'Redeemed' : redemption.status}
             </Text>
           </View>
         </AnimatedEntrance>
 
-        {/* Rate CTA for redeemed */}
         {isRedeemed && (
           <AnimatedEntrance index={3} delay={400}>
             <AnimatedButton
               variant="gradient"
-              className="mt-8 px-10 py-4 rounded-2xl"
+              style={{ marginTop: 32, paddingHorizontal: 40, paddingVertical: 16, borderRadius: 16 }}
               onPress={() => router.push({ pathname: '/(customer)/rate/[redemptionId]', params: { redemptionId: redemptionId! } } as any)}
             >
-              <View className="flex-row items-center gap-2">
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <MaterialIcons name="star" size={20} color="white" />
-                <Text className="text-white font-headline font-bold text-base">Rate This Experience</Text>
+                <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16 }}>Rate This Experience</Text>
               </View>
             </AnimatedButton>
           </AnimatedEntrance>
         )}
 
-        {/* Instructions */}
         {isClaimed && (
           <AnimatedEntrance index={3} delay={400}>
-            <View className="mt-8 p-5 rounded-2xl bg-surface-container-lowest border-outline-variant/10">
-              <Text className="font-headline font-bold text-base text-on-surface mb-3">How to Redeem</Text>
+            <View style={{ marginTop: 32, padding: 20, borderRadius: 16, backgroundColor: surfaceContainerLowest, borderWidth: 1, borderColor: outlineVariant, width: '100%' }}>
+              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface, marginBottom: 12 }}>How to Redeem</Text>
               {[
                 { icon: 'store', text: 'Visit the store location' },
                 { icon: 'qr-code', text: 'Show this QR code to staff' },
                 { icon: 'check-circle', text: 'Staff scans to confirm' },
                 { icon: 'star', text: 'Rate your experience after' },
               ].map((step, i) => (
-                <View key={i} className="flex-row items-center gap-3 mb-2">
-                  <View className="w-8 h-8 rounded-md bg-primary/10 items-center justify-center">
+                <View key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 8 }}>
+                  <View style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: 'rgba(134,32,69,0.1)', alignItems: 'center', justifyContent: 'center' }}>
                     <MaterialIcons name={step.icon as any} size={16} color="#862045" />
                   </View>
-                  <Text className="text-on-surface-variant text-sm font-body flex-1">{step.text}</Text>
+                  <Text style={{ color: onSurfaceVariant, fontSize: 14, fontFamily: 'Manrope', flex: 1 }}>{step.text}</Text>
                 </View>
               ))}
             </View>

@@ -9,6 +9,7 @@ import { useAuth } from '../../contexts/auth';
 export default function ProfileScreen() {
   const { signOut } = useAuth();
   const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
   const { t, i18n } = useTranslation();
 
   const toggleTheme = () => {
@@ -18,6 +19,14 @@ export default function ProfileScreen() {
   const toggleLanguage = () => {
     i18n.changeLanguage(i18n.language?.startsWith('ar') ? 'en' : 'ar');
   };
+
+  const surfaceBg = isDark ? '#1a110f' : '#fff8f6';
+  const surfaceContainerLowest = isDark ? '#322825' : '#ffffff';
+  const surfaceContainerHigh = isDark ? '#534340' : '#f5ddd9';
+  const surfaceContainer = isDark ? '#3d3230' : '#f0e0dc';
+  const onSurface = isDark ? '#f1dfda' : '#231917';
+  const onSurfaceVariant = isDark ? '#d8c2bd' : '#564340';
+  const borderColor = isDark ? '#3d3230' : '#f0e0dc';
 
   const menuItems = [
     { id: '1', title: 'Personal Information', icon: 'person-outline', color: '#7b5733' },
@@ -44,84 +53,75 @@ export default function ProfileScreen() {
   ];
 
   return (
-    <View className="flex-1 bg-surface">
-      {/* Header */}
-      <View className={`w-full px-4 pt-12 pb-2 flex-row justify-between items-center ${colorScheme === 'dark' ? 'bg-[#2c1600]' : 'bg-surface'}`}>
-        <View className="flex-row items-center gap-2">
-          <Text className="font-headline font-bold tracking-tight text-lg text-on-surface">
-            Profile
-          </Text>
-        </View>
-        <AnimatedButton className="w-8 h-8 rounded-md bg-surface-container-high items-center justify-center p-0">
-          <MaterialIcons name="settings" size={18} color={colorScheme === 'dark' ? '#d8c2bd' : '#564340'} />
+    <View style={{ flex: 1, backgroundColor: surfaceBg }}>
+      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: isDark ? '#2c1600' : surfaceBg }}>
+        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: onSurface }}>Profile</Text>
+        <AnimatedButton style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
+          <MaterialIcons name="settings" size={18} color={isDark ? '#d8c2bd' : '#564340'} />
         </AnimatedButton>
       </View>
 
-      <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 12 }}>
-        <View className="px-4 gap-y-4 pt-2">
-          {/* Profile Card */}
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 12 }}>
+        <View style={{ paddingHorizontal: 16, gap: 16, paddingTop: 8 }}>
           <AnimatedEntrance index={0} delay={100}>
-            <View className="bg-surface-container-lowest p-4 rounded-2xl shadow-sm mb-5 flex-row items-center">
-              <View className="w-12 h-12 rounded-md bg-primary/10 items-center justify-center mr-3">
+            <View style={{ backgroundColor: surfaceContainerLowest, padding: 16, borderRadius: 16, marginBottom: 20, flexDirection: 'row', alignItems: 'center' }}>
+              <View style={{ width: 48, height: 48, borderRadius: 8, backgroundColor: 'rgba(134,32,69,0.1)', alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
                 <MaterialIcons name="person" size={24} color="#862045" />
               </View>
-              <View className="flex-1">
-                <Text className="font-headline font-bold text-base text-on-surface">Alexa Doe</Text>
-                <Text className="text-on-surface-variant font-body text-xs mt-0.5">alexa.doe@example.com</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface }}>Alexa Doe</Text>
+                <Text style={{ color: onSurfaceVariant, fontFamily: 'Manrope', fontSize: 12, marginTop: 2 }}>alexa.doe@example.com</Text>
               </View>
-              <TouchableOpacity className="w-8 h-8 rounded-md bg-surface-container-high items-center justify-center">
-                <MaterialIcons name="edit" size={16} color={colorScheme === 'dark' ? '#d8c2bd' : '#564340'} />
+              <TouchableOpacity style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
+                <MaterialIcons name="edit" size={16} color={isDark ? '#d8c2bd' : '#564340'} />
               </TouchableOpacity>
             </View>
           </AnimatedEntrance>
 
-          {/* Menu Items */}
           <AnimatedEntrance index={1} delay={150}>
-            <Text className="font-headline font-bold text-sm text-on-surface mb-2">Account Settings</Text>
-            <View className="bg-surface-container-lowest rounded-2xl overflow-hidden mb-5">
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: onSurface, marginBottom: 8 }}>Account Settings</Text>
+            <View style={{ backgroundColor: surfaceContainerLowest, borderRadius: 16, overflow: 'hidden', marginBottom: 20 }}>
               {menuItems.map((item, idx) => (
                 <TouchableOpacity
                   key={item.id}
-                  className={`flex-row items-center p-3 ${idx !== menuItems.length - 1 ? 'border-b border-surface-container' : ''}`}
+                  style={{ flexDirection: 'row', alignItems: 'center', padding: 12, borderBottomWidth: idx !== menuItems.length - 1 ? 1 : 0, borderBottomColor: borderColor }}
                 >
-                  <View className="w-8 h-8 rounded-lg bg-surface-container-high items-center justify-center mr-3">
+                  <View style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
                     <MaterialIcons name={item.icon as any} size={16} color={item.color} />
                   </View>
-                  <Text className="flex-1 font-headline font-semibold text-sm text-on-surface">{item.title}</Text>
-                  <MaterialIcons name="chevron-right" size={20} color={colorScheme === 'dark' ? '#a08d88' : '#85736f'} />
+                  <Text style={{ flex: 1, fontFamily: 'Epilogue', fontWeight: '600', fontSize: 14, color: onSurface }}>{item.title}</Text>
+                  <MaterialIcons name="chevron-right" size={20} color={isDark ? '#a08d88' : '#85736f'} />
                 </TouchableOpacity>
               ))}
             </View>
           </AnimatedEntrance>
 
-          {/* Preferences */}
           <AnimatedEntrance index={2} delay={200}>
-            <Text className="font-headline font-bold text-sm text-on-surface mb-2">Preferences</Text>
-            <View className="bg-surface-container-lowest rounded-2xl overflow-hidden mb-5">
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: onSurface, marginBottom: 8 }}>Preferences</Text>
+            <View style={{ backgroundColor: surfaceContainerLowest, borderRadius: 16, overflow: 'hidden', marginBottom: 20 }}>
               {preferencesItems.map((item, idx) => (
                 <TouchableOpacity
                   key={item.id}
                   onPress={item.onPress}
-                  className={`flex-row items-center p-3 ${idx !== preferencesItems.length - 1 ? 'border-b border-surface-container' : ''}`}
+                  style={{ flexDirection: 'row', alignItems: 'center', padding: 12, borderBottomWidth: idx !== preferencesItems.length - 1 ? 1 : 0, borderBottomColor: borderColor }}
                 >
-                  <View className="w-8 h-8 rounded-lg bg-surface-container-high items-center justify-center mr-3">
+                  <View style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
                     <MaterialIcons name={item.icon as any} size={16} color={item.color} />
                   </View>
-                  <Text className="flex-1 font-headline font-semibold text-sm text-on-surface">{item.title}</Text>
-                  <MaterialIcons name="sync" size={16} color={colorScheme === 'dark' ? '#a08d88' : '#85736f'} />
+                  <Text style={{ flex: 1, fontFamily: 'Epilogue', fontWeight: '600', fontSize: 14, color: onSurface }}>{item.title}</Text>
+                  <MaterialIcons name="sync" size={16} color={isDark ? '#a08d88' : '#85736f'} />
                 </TouchableOpacity>
               ))}
             </View>
           </AnimatedEntrance>
 
-          {/* Action Buttons */}
           <AnimatedEntrance index={3} delay={250}>
             <TouchableOpacity
-              className="w-full bg-error-container p-3 rounded-xl flex-row items-center justify-center mb-3"
+              style={{ width: '100%', backgroundColor: isDark ? 'rgba(186,26,26,0.2)' : '#ffdad6', padding: 12, borderRadius: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}
               onPress={() => signOut()}
             >
-              <MaterialIcons name="logout" size={16} color="#ba1a1a" className="mr-2" />
-              <Text className="font-headline font-bold text-sm text-error">Sign Out</Text>
+              <MaterialIcons name="logout" size={16} color="#ba1a1a" style={{ marginRight: 8 }} />
+              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: '#ba1a1a' }}>Sign Out</Text>
             </TouchableOpacity>
           </AnimatedEntrance>
         </View>

@@ -39,11 +39,9 @@ export default function RateScreen() {
       Alert.alert('Rating Required', 'Please select a star rating before submitting.');
       return;
     }
-
     setIsSubmitting(true);
     const result = await submitReview(redemptionId!, rating, comment || undefined);
     setIsSubmitting(false);
-
     if (result.success) {
       setIsSubmitted(true);
     } else {
@@ -51,43 +49,44 @@ export default function RateScreen() {
     }
   };
 
+  const surfaceBg = isDark ? '#1a110f' : '#fff8f6';
+  const surfaceContainerLowest = isDark ? '#322825' : '#ffffff';
+  const surfaceContainerHigh = isDark ? '#534340' : '#f5ddd9';
+  const onSurface = isDark ? '#f1dfda' : '#231917';
+  const onSurfaceVariant = isDark ? '#d8c2bd' : '#564340';
+  const outlineVariant = isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)';
+
   if (isLoading) {
     return (
-      <View className="flex-1 bg-surface items-center justify-center">
+      <View style={{ flex: 1, backgroundColor: surfaceBg, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" color="#862045" />
       </View>
     );
   }
 
-  // Success state
   if (isSubmitted) {
     return (
-      <View className="flex-1 bg-surface items-center justify-center px-8">
+      <View style={{ flex: 1, backgroundColor: surfaceBg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
         <AnimatedEntrance index={0} delay={100}>
-          <View className="items-center">
-            <View className="w-24 h-24 rounded-full bg-green-100 dark:bg-green-900/30 items-center justify-center mb-6">
+          <View style={{ alignItems: 'center' }}>
+            <View style={{ width: 96, height: 96, borderRadius: 48, backgroundColor: isDark ? 'rgba(22,163,74,0.3)' : '#dcfce7', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
               <MaterialIcons name="check-circle" size={56} color="#16a34a" />
             </View>
-            <Text className="font-headline font-black text-3xl text-on-surface text-center tracking-tight">
-              Thank You!
-            </Text>
-            <Text className="text-on-surface-variant font-body text-base mt-3 text-center leading-relaxed">
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '900', fontSize: 30, color: onSurface, textAlign: 'center', letterSpacing: -0.5 }}>Thank You!</Text>
+            <Text style={{ color: onSurfaceVariant, fontFamily: 'Manrope', fontSize: 16, marginTop: 12, textAlign: 'center', lineHeight: 24 }}>
               Your review helps other customers and the business improve. A deal slot has been freed!
             </Text>
-
-            {/* Star display */}
-            <View className="flex-row items-center gap-2 mt-6">
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 24 }}>
               {[1, 2, 3, 4, 5].map(i => (
                 <MaterialIcons key={i} name="star" size={32} color={i <= rating ? '#f59e0b' : '#d8c2bd'} />
               ))}
             </View>
-
             <AnimatedButton
               variant="gradient"
-              className="mt-10 px-10 py-4 rounded-2xl"
+              style={{ marginTop: 40, paddingHorizontal: 40, paddingVertical: 16, borderRadius: 16 }}
               onPress={() => router.replace('/(customer)/dashboard')}
             >
-              <Text className="text-white font-headline font-bold text-base">Back to My Deals</Text>
+              <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16 }}>Back to My Deals</Text>
             </AnimatedButton>
           </View>
         </AnimatedEntrance>
@@ -99,111 +98,87 @@ export default function RateScreen() {
   const provider = deal?.provider;
 
   return (
-    <View className="flex-1 bg-surface">
-      {/* Header */}
-      <View className="w-full px-6 pt-14 pb-4 flex-row justify-between items-center bg-surface">
-        <View className="flex-row items-center gap-4">
-          <AnimatedButton
-            className="w-10 h-10 rounded-full bg-surface-container-high items-center justify-center p-0"
-            onPress={() => router.back()}
-          >
-            <MaterialIcons name="arrow-back" size={24} color="#85736f" />
-          </AnimatedButton>
-          <Text className="font-headline font-bold tracking-tighter text-xl text-on-surface">
-            Rate Experience
-          </Text>
-        </View>
+    <View style={{ flex: 1, backgroundColor: surfaceBg }}>
+      <View style={{ width: '100%', paddingHorizontal: 24, paddingTop: 56, paddingBottom: 16, flexDirection: 'row', alignItems: 'center', gap: 16, backgroundColor: surfaceBg }}>
+        <AnimatedButton
+          style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}
+          onPress={() => router.back()}
+        >
+          <MaterialIcons name="arrow-back" size={24} color="#85736f" />
+        </AnimatedButton>
+        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 20, color: onSurface }}>Rate Experience</Text>
       </View>
 
-      <View className="flex-1 px-6">
-        {/* Deal Info Card */}
+      <View style={{ flex: 1, paddingHorizontal: 24 }}>
         <AnimatedEntrance index={0} delay={100}>
-          <View className="bg-surface-container-lowest rounded-3xl p-5 flex-row items-center border-outline-variant/10 mb-8">
-            <View className="w-14 h-14 rounded-2xl mr-4 bg-primary/10 items-center justify-center">
+          <View style={{ backgroundColor: surfaceContainerLowest, borderRadius: 24, padding: 20, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: outlineVariant, marginBottom: 32 }}>
+            <View style={{ width: 56, height: 56, borderRadius: 16, marginRight: 16, backgroundColor: 'rgba(134,32,69,0.1)', alignItems: 'center', justifyContent: 'center' }}>
               <MaterialIcons name="local-offer" size={28} color="#862045" />
             </View>
-            <View className="flex-1">
-              <Text className="font-headline font-bold text-base text-on-surface" numberOfLines={1}>
-                {deal?.title || 'Deal'}
-              </Text>
-              <Text className="text-on-surface-variant text-sm mt-1">
-                {provider?.business_name || 'Provider'}
-              </Text>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface }} numberOfLines={1}>{deal?.title || 'Deal'}</Text>
+              <Text style={{ color: onSurfaceVariant, fontSize: 14, marginTop: 4 }}>{provider?.business_name || 'Provider'}</Text>
             </View>
-            <View className="bg-green-100 dark:bg-green-900/30 px-3 py-1.5 rounded-full">
-              <Text className="text-green-700 dark:text-green-300 text-[10px] font-bold uppercase tracking-wider">
-                Redeemed
-              </Text>
+            <View style={{ backgroundColor: isDark ? 'rgba(22,163,74,0.3)' : '#dcfce7', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999 }}>
+              <Text style={{ color: isDark ? '#86efac' : '#15803d', fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 }}>Redeemed</Text>
             </View>
           </View>
         </AnimatedEntrance>
 
-        {/* Star Rating */}
         <AnimatedEntrance index={1} delay={200}>
-          <View className="items-center mb-8">
-            <Text className="font-headline font-bold text-xl text-on-surface mb-2">How was it?</Text>
-            <Text className="text-on-surface-variant font-body text-sm mb-6">Tap a star to rate</Text>
-            <View className="flex-row items-center gap-3">
+          <View style={{ alignItems: 'center', marginBottom: 32 }}>
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginBottom: 8 }}>How was it?</Text>
+            <Text style={{ color: onSurfaceVariant, fontFamily: 'Manrope', fontSize: 14, marginBottom: 24 }}>Tap a star to rate</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               {[1, 2, 3, 4, 5].map(i => (
-                <AnimatedButton
-                  key={i}
-                  className="p-1"
-                  onPress={() => setRating(i)}
-                >
-                  <MaterialIcons
-                    name="star"
-                    size={44}
-                    color={i <= rating ? '#f59e0b' : '#d8c2bd'}
-                  />
+                <AnimatedButton key={i} style={{ padding: 4 }} onPress={() => setRating(i)}>
+                  <MaterialIcons name="star" size={44} color={i <= rating ? '#f59e0b' : '#d8c2bd'} />
                 </AnimatedButton>
               ))}
             </View>
             {rating > 0 && (
-              <Text className="text-on-surface-variant text-sm mt-3 font-body">
+              <Text style={{ color: onSurfaceVariant, fontSize: 14, marginTop: 12, fontFamily: 'Manrope' }}>
                 {rating === 1 ? 'Poor' : rating === 2 ? 'Fair' : rating === 3 ? 'Good' : rating === 4 ? 'Great' : 'Excellent!'}
               </Text>
             )}
           </View>
         </AnimatedEntrance>
 
-        {/* Comment */}
         <AnimatedEntrance index={2} delay={300}>
-          <View className="mb-8">
-            <Text className="font-headline font-bold text-base text-on-surface mb-3">
-              Add a Comment <Text className="text-on-surface-variant text-xs font-normal">(optional)</Text>
+          <View style={{ marginBottom: 32 }}>
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface, marginBottom: 12 }}>
+              Add a Comment <Text style={{ color: onSurfaceVariant, fontSize: 12, fontWeight: '400' }}>(optional)</Text>
             </Text>
             <TextInput
-              className="rounded-2xl p-4 text-base font-body min-h-[120px] bg-surface-container-lowest text-on-surface border-outline-variant/10"
+              style={{
+                borderRadius: 16, padding: 16, fontSize: 16, fontFamily: 'Manrope', minHeight: 120,
+                backgroundColor: surfaceContainerLowest, color: onSurface, borderWidth: 1, borderColor: outlineVariant,
+                textAlignVertical: 'top',
+              }}
               placeholder="Share your experience..."
               placeholderTextColor="#85736f"
               multiline
-              textAlignVertical="top"
               value={comment}
               onChangeText={setComment}
               maxLength={500}
             />
-            <Text className="text-on-surface-variant text-xs mt-2 text-right">{comment.length}/500</Text>
+            <Text style={{ color: onSurfaceVariant, fontSize: 12, marginTop: 8, textAlign: 'right' }}>{comment.length}/500</Text>
           </View>
         </AnimatedEntrance>
 
-        {/* Submit */}
         <AnimatedEntrance index={3} delay={400}>
           <AnimatedButton
             variant="gradient"
-            className="py-4 rounded-2xl shadow-xl"
+            style={{ paddingVertical: 16, borderRadius: 16, opacity: (isSubmitting || rating === 0) ? 0.6 : 1 }}
             onPress={handleSubmit}
             disabled={isSubmitting || rating === 0}
           >
-            <Text className="text-white font-headline font-bold text-lg text-center">
+            <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 18, textAlign: 'center' }}>
               {isSubmitting ? 'Submitting...' : 'Submit Review'}
             </Text>
           </AnimatedButton>
-
-          <AnimatedButton
-            className="mt-4 py-3 items-center"
-            onPress={() => router.back()}
-          >
-            <Text className="text-on-surface-variant font-body text-sm">Skip for now</Text>
+          <AnimatedButton style={{ marginTop: 16, paddingVertical: 12, alignItems: 'center' }} onPress={() => router.back()}>
+            <Text style={{ color: onSurfaceVariant, fontFamily: 'Manrope', fontSize: 14 }}>Skip for now</Text>
           </AnimatedButton>
         </AnimatedEntrance>
       </View>

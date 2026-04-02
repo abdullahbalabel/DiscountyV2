@@ -20,9 +20,9 @@ export default function CustomerLayout() {
           elevation: 10,
           shadowOpacity: 0.1,
           shadowRadius: 10,
-          height: 56,
-          paddingBottom: 4,
-          paddingTop: 4,
+          height: 67,
+          paddingBottom: 6,
+          paddingTop: 6,
           borderTopLeftRadius: 0,
           borderTopRightRadius: 0,
         },
@@ -52,6 +52,12 @@ export default function CustomerLayout() {
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="confirmation-number" size={size} color={color} />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="history"
+        options={{
+          href: null,
         }}
       />
       <Tabs.Screen
@@ -92,6 +98,12 @@ export default function CustomerLayout() {
       />
       <Tabs.Screen
         name="rate/[redemptionId]"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="tamagui-demo"
         options={{
           href: null,
         }}

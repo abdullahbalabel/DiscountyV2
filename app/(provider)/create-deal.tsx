@@ -17,6 +17,13 @@ import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { createDeal, fetchCategories, uploadDealImage } from '../../lib/api';
 import type { Category, DiscountType } from '../../lib/types';
 
+let LinearGradient: any;
+try {
+  LinearGradient = require('expo-linear-gradient').LinearGradient;
+} catch {
+  LinearGradient = View;
+}
+
 export default function CreateDealScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
@@ -197,27 +204,27 @@ export default function CreateDealScreen() {
   // ── Step 3: Success ───────────────────────────
   if (step === 3) {
     return (
-      <View className="flex-1 bg-surface items-center justify-center px-6">
+      <View style={{ flex: 1, backgroundColor: isDark ? '#1a110f' : '#fff8f6', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 }}>
         <AnimatedEntrance index={0}>
-          <View className="items-center">
-            <View className="w-16 h-16 rounded-full bg-green-500/10 items-center justify-center mb-4">
+          <View style={{ alignItems: 'center' }}>
+            <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(16,185,129,0.1)', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
               <MaterialIcons name="check-circle" size={36} color="#10b981" />
             </View>
-            <Text className="font-headline font-bold text-xl text-on-surface text-center mb-2">
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: 'bold', fontSize: 20, color: isDark ? '#f1dfda' : '#231917', textAlign: 'center', marginBottom: 8 }}>
               Deal Published!
             </Text>
-            <Text className="font-body text-on-surface-variant text-center text-sm leading-5 max-w-[260px] mb-5">
+            <Text style={{ fontFamily: 'Manrope', color: isDark ? '#d8c2bd' : '#564340', textAlign: 'center', fontSize: 14, lineHeight: 20, maxWidth: 260, marginBottom: 20 }}>
               Your deal "{title}" is now live and visible to customers.
             </Text>
             <AnimatedButton
               variant="gradient"
-              className="w-full py-2.5 rounded-full items-center justify-center mb-3"
+              style={{ width: '100%', paddingVertical: 10, borderRadius: 999, alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}
               onPress={() => router.push('/(provider)/dashboard')}
             >
-              <Text className="text-white font-body font-bold text-sm">Back to Dashboard</Text>
+              <Text style={{ color: 'white', fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 14 }}>Back to Dashboard</Text>
             </AnimatedButton>
             <AnimatedButton
-              className="w-full py-2.5 rounded-full border-2 border-outline-variant/20 items-center justify-center"
+              style={{ width: '100%', paddingVertical: 10, borderRadius: 999, borderWidth: 2, borderColor: isDark ? 'rgba(160,141,136,0.2)' : 'rgba(133,115,111,0.2)', alignItems: 'center', justifyContent: 'center' }}
               onPress={() => {
                 setTitle(''); setDescription(''); setDiscountValue('');
                 setEndDate(''); setTerms(''); setImageUri(null);
@@ -225,7 +232,7 @@ export default function CreateDealScreen() {
                 setStep(1);
               }}
             >
-              <Text className="font-body font-bold text-sm text-on-surface">Create Another Deal</Text>
+              <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 14, color: isDark ? '#f1dfda' : '#231917' }}>Create Another Deal</Text>
             </AnimatedButton>
           </View>
         </AnimatedEntrance>
@@ -234,17 +241,17 @@ export default function CreateDealScreen() {
   }
 
   return (
-    <View className="flex-1 bg-background">
+    <View style={{ flex: 1, backgroundColor: isDark ? '#1a110f' : '#fff8f6' }}>
       {/* Header */}
-      <View className="w-full px-4 pt-12 pb-2 flex-row justify-between items-center bg-surface">
-        <View className="flex-row items-center gap-3">
+      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: isDark ? '#1a110f' : '#fff8f6' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <AnimatedButton
-            className="w-8 h-8 rounded-full bg-surface-container-high items-center justify-center p-0"
+            style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: isDark ? '#534340' : '#f5ddd9', alignItems: 'center', justifyContent: 'center', padding: 0 }}
             onPress={() => step === 2 ? setStep(1) : router.back()}
           >
             <MaterialIcons name="arrow-back" size={18} color="#85736f" />
           </AnimatedButton>
-          <Text className="font-headline font-bold tracking-tight text-lg text-on-surface">
+          <Text style={{ fontFamily: 'Epilogue', fontWeight: 'bold', letterSpacing: -0.02, fontSize: 18, color: isDark ? '#f1dfda' : '#231917' }}>
             {step === 1 ? 'Create New Deal' : 'Review & Publish'}
           </Text>
         </View>
@@ -252,28 +259,34 @@ export default function CreateDealScreen() {
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
+        style={{ flex: 1 }}
       >
         <ScrollView contentContainerStyle={{ paddingBottom: 80, paddingHorizontal: 16 }}>
 
           {/* Progress Stepper */}
           <AnimatedEntrance index={0}>
-            <View className="flex-row items-center justify-between mb-5 w-full">
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, width: '100%' }}>
               {[
                 { num: 1, label: 'Details' },
                 { num: 2, label: 'Review' },
                 { num: 3, label: 'Finish' },
               ].map((s, idx) => (
                 <React.Fragment key={s.num}>
-                  {idx > 0 && <View className="flex-1 h-[2px] mx-3 bg-surface-container-highest" />}
-                  <View className={`items-center gap-1 ${step < s.num ? 'opacity-40' : ''}`}>
-                    <View className={`w-7 h-7 rounded-full items-center justify-center ${step >= s.num ? 'bg-primary' : 'bg-surface-container-highest'
-                      }`}>
-                      <Text className={`font-bold text-xs ${step >= s.num ? 'text-white' : 'text-on-surface-variant'
-                        }`}>{s.num}</Text>
+                  {idx > 0 && <View style={{ flex: 1, height: 2, marginHorizontal: 12, backgroundColor: isDark ? '#534340' : '#f5ddd9' }} />}
+                  <View style={{ alignItems: 'center', gap: 4, opacity: step < s.num ? 0.4 : 1 }}>
+                    <View style={{
+                      width: 28, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center',
+                      backgroundColor: step >= s.num ? '#862045' : (isDark ? '#534340' : '#f5ddd9'),
+                    }}>
+                      <Text style={{
+                        fontWeight: 'bold', fontSize: 12,
+                        color: step >= s.num ? 'white' : (isDark ? '#d8c2bd' : '#564340'),
+                      }}>{s.num}</Text>
                     </View>
-                    <Text className={`text-[9px] font-label font-bold uppercase tracking-widest ${step >= s.num ? 'text-primary' : 'text-on-surface-variant'
-                      }`}>{s.label}</Text>
+                    <Text style={{
+                      fontSize: 9, fontFamily: 'Manrope', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 0.15,
+                      color: step >= s.num ? '#862045' : (isDark ? '#d8c2bd' : '#564340'),
+                    }}>{s.label}</Text>
                   </View>
                 </React.Fragment>
               ))}
@@ -282,27 +295,33 @@ export default function CreateDealScreen() {
 
           {step === 1 ? (
             /* ── Step 1: Details Form ──────────────── */
-            <AnimatedEntrance index={1} className="space-y-4 flex flex-col gap-4">
+            <AnimatedEntrance index={1} style={{ gap: 16 }}>
               {/* Image Upload */}
               <View>
-                <Text className="font-headline font-bold text-sm text-on-surface ml-1 mb-1.5">Cover Image</Text>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: 'bold', fontSize: 14, color: isDark ? '#f1dfda' : '#231917', marginLeft: 4, marginBottom: 6 }}>Cover Image</Text>
                 <AnimatedButton
-                  className={`w-full ${imageUri ? '' : 'aspect-[16/9]'} border-2 border-dashed border-outline-variant/30 rounded-xl bg-surface-container-low items-center justify-center overflow-hidden`}
+                  style={{
+                    width: '100%', aspectRatio: imageUri ? undefined : 16 / 9,
+                    borderWidth: 2, borderStyle: 'dashed',
+                    borderColor: isDark ? 'rgba(160,141,136,0.3)' : 'rgba(133,115,111,0.3)',
+                    borderRadius: 12, backgroundColor: isDark ? '#271d1b' : '#fff0ed',
+                    alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
+                  }}
                   onPress={pickImage}
                 >
                   {imageUri ? (
-                    <View className="w-full aspect-[16/9]">
-                      <Image source={{ uri: imageUri }} className="w-full h-full" contentFit="cover" />
-                      <View className="absolute bottom-3 right-3 bg-black/60 rounded-full px-3 py-1 flex-row items-center gap-1">
+                    <View style={{ width: '100%', aspectRatio: 16 / 9 }}>
+                      <Image source={{ uri: imageUri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+                      <View style={{ position: 'absolute', bottom: 12, right: 12, backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: 999, paddingHorizontal: 12, paddingVertical: 4, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                         <MaterialIcons name="edit" size={14} color="white" />
-                        <Text className="text-white text-xs font-bold">Change</Text>
+                        <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}>Change</Text>
                       </View>
                     </View>
                   ) : (
-                    <View className="items-center p-5">
+                    <View style={{ alignItems: 'center', padding: 20 }}>
                       <MaterialIcons name="cloud-upload" size={28} color="#862045" />
-                      <Text className="font-body font-semibold text-sm text-on-surface mt-1.5">Tap to upload deal image</Text>
-                      <Text className="text-[10px] text-on-surface-variant mt-0.5">Recommended: 1200x675px (PNG, JPG)</Text>
+                      <Text style={{ fontFamily: 'Manrope', fontWeight: '600', fontSize: 14, color: isDark ? '#f1dfda' : '#231917', marginTop: 6 }}>Tap to upload deal image</Text>
+                      <Text style={{ fontSize: 10, color: isDark ? '#d8c2bd' : '#564340', marginTop: 2 }}>Recommended: 1200x675px (PNG, JPG)</Text>
                     </View>
                   )}
                 </AnimatedButton>
@@ -310,9 +329,15 @@ export default function CreateDealScreen() {
 
               {/* Deal Title */}
               <View>
-                <Text className="font-label font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1 mb-2">Deal Title</Text>
+                <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Deal Title</Text>
                 <TextInput
-                  className="w-full px-4 py-3 rounded-xl bg-surface-container-lowest text-on-surface text-sm font-medium shadow-sm border-outline-variant/10"
+                  style={{
+                    width: '100%', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 12,
+                    backgroundColor: isDark ? '#322825' : '#ffffff',
+                    color: isDark ? '#f1dfda' : '#231917', fontSize: 14, fontWeight: '500',
+                    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1,
+                    borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)', borderWidth: 1,
+                  }}
                   placeholderTextColor="#85736f"
                   placeholder="e.g. Summer Weekend Special"
                   value={title}
@@ -322,9 +347,16 @@ export default function CreateDealScreen() {
 
               {/* Description */}
               <View>
-                <Text className="font-label font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1 mb-2">Description</Text>
+                <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Description</Text>
                 <TextInput
-                  className="w-full px-4 py-3 rounded-xl bg-surface-container-lowest text-on-surface text-sm font-medium shadow-sm border-outline-variant/10 h-20 text-left"
+                  style={{
+                    width: '100%', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 12,
+                    backgroundColor: isDark ? '#322825' : '#ffffff',
+                    color: isDark ? '#f1dfda' : '#231917', fontSize: 14, fontWeight: '500',
+                    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1,
+                    borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)', borderWidth: 1,
+                    height: 80, textAlignVertical: 'top',
+                  }}
                   placeholderTextColor="#85736f"
                   placeholder="Describe your deal..."
                   multiline
@@ -336,15 +368,17 @@ export default function CreateDealScreen() {
 
               {/* Category Picker */}
               <View>
-                <Text className="font-label font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1 mb-2">Category</Text>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-row" contentContainerStyle={{ gap: 8 }}>
+                <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Category</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexDirection: 'row' }} contentContainerStyle={{ gap: 8 }}>
                   {categories.map((cat) => (
                     <AnimatedButton
                       key={cat.id}
-                      className={`px-3 py-2 rounded-lg flex-row items-center gap-1.5 ${selectedCategoryId === cat.id
-                          ? 'bg-primary/10 border-primary'
-                          : 'bg-surface-container-lowest border-outline-variant/10'
-                        }`}
+                      style={{
+                        paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 6,
+                        backgroundColor: selectedCategoryId === cat.id ? 'rgba(134,32,69,0.1)' : (isDark ? '#322825' : '#ffffff'),
+                        borderWidth: 1,
+                        borderColor: selectedCategoryId === cat.id ? '#862045' : (isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)'),
+                      }}
                       onPress={() => setSelectedCategoryId(
                         selectedCategoryId === cat.id ? null : cat.id
                       )}
@@ -354,8 +388,10 @@ export default function CreateDealScreen() {
                         size={14}
                         color={selectedCategoryId === cat.id ? '#862045' : '#85736f'}
                       />
-                      <Text className={`font-body font-semibold text-xs ${selectedCategoryId === cat.id ? 'text-primary' : 'text-on-surface-variant'
-                        }`}>
+                      <Text style={{
+                        fontFamily: 'Manrope', fontWeight: '600', fontSize: 12,
+                        color: selectedCategoryId === cat.id ? '#862045' : (isDark ? '#d8c2bd' : '#564340'),
+                      }}>
                         {cat.name}
                       </Text>
                     </AnimatedButton>
@@ -364,12 +400,18 @@ export default function CreateDealScreen() {
               </View>
 
               {/* Discount & Expiry Row */}
-              <View className="flex-row gap-4">
-                <View className="flex-1">
-                  <Text className="font-label font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1 mb-2">Discount</Text>
-                  <View className="relative flex-row items-center">
+              <View style={{ flexDirection: 'row', gap: 16 }}>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Discount</Text>
+                  <View style={{ position: 'relative', flexDirection: 'row', alignItems: 'center' }}>
                     <TextInput
-                      className="flex-1 px-4 py-3 rounded-xl bg-surface-container-lowest text-on-surface text-sm font-medium shadow-sm border-outline-variant/10"
+                      style={{
+                        flex: 1, paddingHorizontal: 16, paddingVertical: 12, borderRadius: 12,
+                        backgroundColor: isDark ? '#322825' : '#ffffff',
+                        color: isDark ? '#f1dfda' : '#231917', fontSize: 14, fontWeight: '500',
+                        shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1,
+                        borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)', borderWidth: 1,
+                      }}
                       placeholderTextColor="#85736f"
                       placeholder="25"
                       keyboardType="number-pad"
@@ -377,19 +419,25 @@ export default function CreateDealScreen() {
                       onChangeText={setDiscountValue}
                     />
                     <AnimatedButton
-                      className="absolute right-2 px-2 py-1 rounded-md"
+                      style={{ position: 'absolute', right: 8, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 }}
                       onPress={() => setDiscountType(discountType === 'percentage' ? 'fixed' : 'percentage')}
                     >
-                      <Text className="font-bold text-primary text-sm">
+                      <Text style={{ fontWeight: 'bold', color: '#862045', fontSize: 14 }}>
                         {discountType === 'percentage' ? '%' : '$'}
                       </Text>
                     </AnimatedButton>
                   </View>
                 </View>
-                <View className="flex-1">
-                  <Text className="font-label font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1 mb-2">Expiry Date</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Expiry Date</Text>
                   <TextInput
-                    className="flex-1 px-4 py-3 rounded-xl bg-surface-container-lowest text-on-surface text-sm font-medium shadow-sm border-outline-variant/10"
+                    style={{
+                      flex: 1, paddingHorizontal: 16, paddingVertical: 12, borderRadius: 12,
+                      backgroundColor: isDark ? '#322825' : '#ffffff',
+                      color: isDark ? '#f1dfda' : '#231917', fontSize: 14, fontWeight: '500',
+                      shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1,
+                      borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)', borderWidth: 1,
+                    }}
                     placeholderTextColor="#85736f"
                     placeholder="YYYY-MM-DD"
                     value={endDate}
@@ -400,9 +448,15 @@ export default function CreateDealScreen() {
 
               {/* Max Redemptions */}
               <View>
-                <Text className="font-label font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1 mb-2">Max Redemptions</Text>
+                <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Max Redemptions</Text>
                 <TextInput
-                  className="w-full px-4 py-3 rounded-xl bg-surface-container-lowest text-on-surface text-sm font-medium shadow-sm border-outline-variant/10"
+                  style={{
+                    width: '100%', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 12,
+                    backgroundColor: isDark ? '#322825' : '#ffffff',
+                    color: isDark ? '#f1dfda' : '#231917', fontSize: 14, fontWeight: '500',
+                    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1,
+                    borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)', borderWidth: 1,
+                  }}
                   placeholderTextColor="#85736f"
                   placeholder="100"
                   keyboardType="number-pad"
@@ -413,9 +467,16 @@ export default function CreateDealScreen() {
 
               {/* Terms */}
               <View>
-                <Text className="font-label font-bold text-xs uppercase tracking-wider text-on-surface-variant ml-1 mb-2">Terms & Conditions</Text>
+                <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Terms & Conditions</Text>
                 <TextInput
-                  className="w-full px-4 py-3 rounded-xl bg-surface-container-lowest text-on-surface text-sm font-medium shadow-sm border-outline-variant/10 h-24 text-left"
+                  style={{
+                    width: '100%', paddingHorizontal: 16, paddingVertical: 12, borderRadius: 12,
+                    backgroundColor: isDark ? '#322825' : '#ffffff',
+                    color: isDark ? '#f1dfda' : '#231917', fontSize: 14, fontWeight: '500',
+                    shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1,
+                    borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)', borderWidth: 1,
+                    height: 96, textAlignVertical: 'top',
+                  }}
                   placeholderTextColor="#85736f"
                   placeholder="Mention any restrictions or redemption rules..."
                   multiline
@@ -428,49 +489,57 @@ export default function CreateDealScreen() {
           ) : (
             /* ── Step 2: Review ───────────────────── */
             <AnimatedEntrance index={1}>
-              <Text className="font-headline font-bold text-base text-on-surface ml-1 mb-3">Card Preview</Text>
-              <View className="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm border-outline-variant/10 mb-5">
-                <View className="relative h-32">
+              <Text style={{ fontFamily: 'Epilogue', fontWeight: 'bold', fontSize: 16, color: isDark ? '#f1dfda' : '#231917', marginLeft: 4, marginBottom: 12 }}>Card Preview</Text>
+              <View style={{
+                backgroundColor: isDark ? '#322825' : '#ffffff', borderRadius: 12, overflow: 'hidden',
+                shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 2, elevation: 1,
+                borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)', borderWidth: 1,
+                marginBottom: 20,
+              }}>
+                <View style={{ position: 'relative', height: 128 }}>
                   {imageUri ? (
-                    <Image source={{ uri: imageUri }} className="w-full h-full" contentFit="cover" />
+                    <Image source={{ uri: imageUri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                   ) : (
-                    <View className="flex-1 bg-surface-container items-center justify-center">
+                    <View style={{ flex: 1, backgroundColor: isDark ? '#3d3230' : '#f0e0dc', alignItems: 'center', justifyContent: 'center' }}>
                       <MaterialIcons name="image" size={32} color="#bec8d1" />
                     </View>
                   )}
-                  <View className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/70 to-transparent" />
-                  <View className="absolute bottom-3 left-4">
+                  <LinearGradient
+                    colors={['transparent', 'rgba(0,0,0,0.7)']}
+                    style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 64 }}
+                  />
+                  <View style={{ position: 'absolute', bottom: 12, left: 16 }}>
                     {selectedCategoryId && (
-                      <View className="bg-primary self-start px-3 py-1 rounded-full mb-1">
-                        <Text className="text-white font-label font-bold text-[10px] uppercase tracking-tighter">
+                      <View style={{ backgroundColor: '#862045', alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 999, marginBottom: 4 }}>
+                        <Text style={{ color: 'white', fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 10, textTransform: 'uppercase', letterSpacing: -0.01 }}>
                           {categories.find(c => c.id === selectedCategoryId)?.name || 'DEAL'}
                         </Text>
                       </View>
                     )}
-                    <Text className="text-white font-headline font-bold text-lg tracking-tight">
+                    <Text style={{ color: 'white', fontFamily: 'Epilogue', fontWeight: 'bold', fontSize: 18, letterSpacing: -0.02 }}>
                       {title || 'Deal Title'}
                     </Text>
                   </View>
                 </View>
-                <View className="p-4 flex-row justify-between items-center">
+                <View style={{ padding: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                   <View>
-                    <Text className="text-primary font-headline font-bold text-xl">
+                    <Text style={{ color: '#862045', fontFamily: 'Epilogue', fontWeight: 'bold', fontSize: 20 }}>
                       {discountType === 'percentage' ? `-${discountValue || '0'}%` : `$${discountValue || '0'} off`}
                     </Text>
-                    <Text className="text-on-surface-variant text-[10px] font-medium">
+                    <Text style={{ color: isDark ? '#d8c2bd' : '#564340', fontSize: 10, fontWeight: '500' }}>
                       Valid until {endDate || '--'} • Max {maxRedemptions} uses
                     </Text>
                   </View>
                 </View>
                 {description ? (
-                  <View className="px-4 pb-3">
-                    <Text className="text-on-surface-variant text-xs leading-4">{description}</Text>
+                  <View style={{ paddingHorizontal: 16, paddingBottom: 12 }}>
+                    <Text style={{ color: isDark ? '#d8c2bd' : '#564340', fontSize: 12, lineHeight: 16 }}>{description}</Text>
                   </View>
                 ) : null}
                 {terms ? (
-                  <View className="px-4 pb-4 pt-2 border-t border-surface-container">
-                    <Text className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Terms</Text>
-                    <Text className="text-on-surface-variant text-xs italic">"{terms}"</Text>
+                  <View style={{ paddingHorizontal: 16, paddingBottom: 16, paddingTop: 8, borderTopWidth: 1, borderTopColor: isDark ? '#3d3230' : '#f0e0dc' }}>
+                    <Text style={{ fontSize: 10, fontWeight: 'bold', color: isDark ? '#d8c2bd' : '#564340', textTransform: 'uppercase', letterSpacing: 0.15, marginBottom: 4 }}>Terms</Text>
+                    <Text style={{ color: isDark ? '#d8c2bd' : '#564340', fontSize: 12, fontStyle: 'italic' }}>"{terms}"</Text>
                   </View>
                 ) : null}
               </View>
@@ -481,47 +550,64 @@ export default function CreateDealScreen() {
 
       {/* Error Banner */}
       {formError ? (
-        <View className="absolute bottom-20 left-4 right-4 z-50 bg-red-500/90 rounded-xl px-4 py-2.5 flex-row items-center gap-2">
+        <View style={{
+          position: 'absolute', bottom: 80, left: 16, right: 16, zIndex: 50,
+          backgroundColor: 'rgba(239,68,68,0.9)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 10,
+          flexDirection: 'row', alignItems: 'center', gap: 8,
+        }}>
           <MaterialIcons name="error" size={16} color="white" />
-          <Text className="text-white font-body text-xs flex-1">{formError}</Text>
-          <AnimatedButton onPress={() => setFormError('')} className="p-1">
+          <Text style={{ color: 'white', fontFamily: 'Manrope', fontSize: 12, flex: 1 }}>{formError}</Text>
+          <AnimatedButton onPress={() => setFormError('')} style={{ padding: 4 }}>
             <MaterialIcons name="close" size={14} color="white" />
           </AnimatedButton>
         </View>
       ) : null}
 
       {/* Bottom Action Bar */}
-      <View className="absolute bottom-0 w-full z-50 px-4 pb-4 pt-3 flex-row gap-3 bg-surface/90 border-t border-outline-variant/10">
+      <View style={{
+        position: 'absolute', bottom: 0, width: '100%', zIndex: 50,
+        paddingHorizontal: 16, paddingBottom: 16, paddingTop: 12, flexDirection: 'row', gap: 12,
+        backgroundColor: isDark ? 'rgba(26,17,15,0.9)' : 'rgba(255,248,246,0.9)',
+        borderTopWidth: 1, borderTopColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)',
+      }}>
         {step === 1 ? (
           <>
             <AnimatedButton
-              className="flex-1 py-2.5 rounded-full border-2 border-outline-variant/20 items-center justify-center"
+              style={{
+                flex: 1, paddingVertical: 10, borderRadius: 999,
+                borderWidth: 2, borderColor: isDark ? 'rgba(160,141,136,0.2)' : 'rgba(133,115,111,0.2)',
+                alignItems: 'center', justifyContent: 'center',
+              }}
               onPress={handleSaveDraft}
               disabled={submitting}
             >
-              <Text className="font-body font-bold text-sm text-on-surface">
+              <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 14, color: isDark ? '#f1dfda' : '#231917' }}>
                 {submitting ? 'Saving...' : 'Save Draft'}
               </Text>
             </AnimatedButton>
             <AnimatedButton
               variant="gradient"
-              className="flex-[2] py-2.5 rounded-full items-center justify-center"
+              style={{ flex: 2, paddingVertical: 10, borderRadius: 999, alignItems: 'center', justifyContent: 'center' }}
               onPress={handleNextStep}
             >
-              <Text className="font-body font-bold text-white text-sm">Next: Review</Text>
+              <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', color: 'white', fontSize: 14 }}>Next: Review</Text>
             </AnimatedButton>
           </>
         ) : (
           <>
             <AnimatedButton
-              className="flex-1 py-2.5 rounded-full border-2 border-outline-variant/20 items-center justify-center"
+              style={{
+                flex: 1, paddingVertical: 10, borderRadius: 999,
+                borderWidth: 2, borderColor: isDark ? 'rgba(160,141,136,0.2)' : 'rgba(133,115,111,0.2)',
+                alignItems: 'center', justifyContent: 'center',
+              }}
               onPress={() => setStep(1)}
             >
-              <Text className="font-body font-bold text-sm text-on-surface">Edit</Text>
+              <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 14, color: isDark ? '#f1dfda' : '#231917' }}>Edit</Text>
             </AnimatedButton>
             <AnimatedButton
               variant="gradient"
-              className="flex-[2] py-2.5 rounded-full items-center justify-center flex-row gap-2"
+              style={{ flex: 2, paddingVertical: 10, borderRadius: 999, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 }}
               onPress={handlePublish}
               disabled={submitting}
             >
@@ -530,7 +616,7 @@ export default function CreateDealScreen() {
               ) : (
                 <MaterialIcons name="publish" size={16} color="white" />
               )}
-              <Text className="font-body font-bold text-white text-sm">
+              <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', color: 'white', fontSize: 14 }}>
                 {submitting ? 'Publishing...' : 'Publish Deal'}
               </Text>
             </AnimatedButton>

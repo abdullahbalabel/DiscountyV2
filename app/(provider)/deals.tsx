@@ -1,5 +1,6 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
@@ -16,6 +17,7 @@ import {
   activateDeal, deleteDeal,
   fetchProviderDealsList, pauseDeal,
 } from '../../lib/api';
+import { resolveMaterialIcon } from '../../lib/iconMapping';
 import type { Discount, DiscountStatus } from '../../lib/types';
 
 type FilterTab = 'all' | 'active' | 'paused' | 'draft';
@@ -85,10 +87,10 @@ export default function ProviderDealsScreen() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return { bg: 'bg-green-500/10', text: 'text-green-600' };
-      case 'paused': return { bg: 'bg-amber-500/10', text: 'text-amber-600' };
-      case 'draft': return { bg: 'bg-secondary/10', text: 'text-secondary' };
-      default: return { bg: 'bg-surface-container-high', text: 'text-on-surface-variant' };
+      case 'active': return { bg: { backgroundColor: 'rgba(16,185,129,0.1)' }, text: { color: '#16a34a' } };
+      case 'paused': return { bg: { backgroundColor: 'rgba(245,158,11,0.1)' }, text: { color: '#d97706' } };
+      case 'draft': return { bg: { backgroundColor: 'rgba(123,87,51,0.1)' }, text: { color: '#7b5733' } };
+      default: return { bg: { backgroundColor: isDark ? '#534340' : '#f5ddd9' }, text: { color: isDark ? '#d8c2bd' : '#564340' } };
     }
   };
 
@@ -108,60 +110,74 @@ export default function ProviderDealsScreen() {
     return (
       <AnimatedEntrance index={index} delay={50}>
         <AnimatedButton
-          className="bg-surface-container-lowest rounded-md border-outline-variant/10 shadow-sm mb-3 overflow-hidden"
+          style={{
+            backgroundColor: isDark ? '#322825' : '#ffffff',
+            borderRadius: 6,
+            borderWidth: 1,
+            borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)',
+            shadowOpacity: 0.1,
+            shadowRadius: 2,
+            shadowOffset: { width: 0, height: 1 },
+            shadowColor: '#000',
+            marginBottom: 12,
+            overflow: 'hidden',
+          }}
           onPress={() => router.push(`/(provider)/edit-deal/${item.id}`)}
         >
           {/* Image Header */}
           {item.image_url ? (
-            <View className="h-24 w-full">
-              <Image source={{ uri: item.image_url }} className="w-full h-full" contentFit="cover" />
-              <View className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/50 to-transparent" />
-              <View className="absolute top-2 right-2 bg-primary px-2 py-0.5 rounded-md">
-                <Text className="text-white font-headline font-bold text-xs">
+            <View style={{ height: 96, width: '100%' }}>
+              <Image source={{ uri: item.image_url }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
+              <LinearGradient
+                colors={['transparent', 'rgba(0,0,0,0.5)']}
+                style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 48 }}
+              />
+              <View style={{ position: 'absolute', top: 8, right: 8, backgroundColor: '#862045', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 }}>
+                <Text style={{ color: 'white', fontFamily: 'Epilogue', fontWeight: 'bold', fontSize: 12 }}>
                   {item.type === 'percentage' ? `-${item.discount_value}%` : `$${item.discount_value}`}
                 </Text>
               </View>
             </View>
           ) : null}
 
-          <View className="p-3">
+          <View style={{ padding: 12 }}>
             {/* Title + Status */}
-            <View className="flex-row items-start justify-between mb-1.5">
-              <View className="flex-1 mr-2">
-                <Text className="font-headline font-bold text-sm text-on-surface" numberOfLines={2}>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 6 }}>
+              <View style={{ flex: 1, marginRight: 8 }}>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: 'bold', fontSize: 14, color: isDark ? '#f1dfda' : '#231917' }} numberOfLines={2}>
                   {item.title}
                 </Text>
                 {item.category && (
-                  <View className="flex-row items-center gap-1 mt-0.5">
-                    <MaterialIcons name={(item.category.icon || 'category') as any} size={12} color="#85736f" />
-                    <Text className="text-on-surface-variant text-[10px]">{item.category.name}</Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 }}>
+                    <MaterialIcons name={resolveMaterialIcon(item.category.icon)} size={12} color="#85736f" />
+                    <Text style={{ color: isDark ? '#d8c2bd' : '#564340', fontSize: 10 }}>{item.category.name}</Text>
                   </View>
                 )}
               </View>
-              <View className={`px-2 py-0.5 rounded-md ${statusColors.bg}`}>
-                <Text className={`text-[9px] font-bold uppercase tracking-wider ${statusColors.text}`}>
+              <View style={[{ paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 }, statusColors.bg]}>
+                <Text style={[{ fontSize: 9, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 0.5 }, statusColors.text]}>
                   {expired && item.status === 'active' ? 'EXPIRED' : item.status}
                 </Text>
               </View>
             </View>
 
             {/* Stats Row */}
-            <View className="flex-row items-center gap-3 mb-2 mt-0.5">
-              <View className="flex-row items-center gap-1">
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 8, marginTop: 2 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <MaterialIcons name="people" size={12} color="#85736f" />
-                <Text className="text-[10px] text-on-surface-variant font-semibold">
+                <Text style={{ fontSize: 10, color: isDark ? '#d8c2bd' : '#564340', fontWeight: '600' }}>
                   {item.current_redemptions}/{item.max_redemptions}
                 </Text>
               </View>
-              <View className="flex-row items-center gap-1">
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <MaterialIcons name="calendar-today" size={12} color="#85736f" />
-                <Text className="text-[10px] text-on-surface-variant font-semibold">
+                <Text style={{ fontSize: 10, color: isDark ? '#d8c2bd' : '#564340', fontWeight: '600' }}>
                   {expired ? 'Expired' : `Ends ${new Date(item.end_time).toLocaleDateString()}`}
                 </Text>
               </View>
               {!item.image_url && (
-                <View className="flex-row items-center gap-1">
-                  <Text className="text-primary font-headline font-bold text-xs">
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <Text style={{ color: '#862045', fontFamily: 'Epilogue', fontWeight: 'bold', fontSize: 12 }}>
                     {item.type === 'percentage' ? `-${item.discount_value}%` : `$${item.discount_value}`}
                   </Text>
                 </View>
@@ -169,40 +185,40 @@ export default function ProviderDealsScreen() {
             </View>
 
             {/* Quick Action Buttons */}
-            <View className="flex-row gap-1.5 pt-2  border-surface-container">
+            <View style={{ flexDirection: 'row', gap: 6, paddingTop: 8, borderTopColor: isDark ? '#3d3230' : '#f0e0dc', borderTopWidth: 1 }}>
               {item.status === 'active' && (
                 <AnimatedButton
-                  className="flex-1 py-1.5 rounded-md bg-amber-500/10 items-center justify-center flex-row gap-1"
+                  style={{ flex: 1, paddingVertical: 6, borderRadius: 6, backgroundColor: 'rgba(245,158,11,0.1)', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 4 }}
                   onPress={(e) => {
                     e?.stopPropagation?.();
                     handleStatusChange(item, 'paused');
                   }}
                 >
                   <MaterialIcons name="pause" size={14} color="#f59e0b" />
-                  <Text className="text-amber-600 text-[10px] font-bold">Pause</Text>
+                  <Text style={{ color: '#d97706', fontSize: 10, fontWeight: 'bold' }}>Pause</Text>
                 </AnimatedButton>
               )}
               {(item.status === 'paused' || item.status === 'draft') && (
                 <AnimatedButton
-                  className="flex-1 py-1.5 rounded-md bg-green-500/10 items-center justify-center flex-row gap-1"
+                  style={{ flex: 1, paddingVertical: 6, borderRadius: 6, backgroundColor: 'rgba(16,185,129,0.1)', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 4 }}
                   onPress={(e) => {
                     e?.stopPropagation?.();
                     handleStatusChange(item, 'active');
                   }}
                 >
                   <MaterialIcons name="play-arrow" size={14} color="#10b981" />
-                  <Text className="text-green-600 text-[10px] font-bold">Activate</Text>
+                  <Text style={{ color: '#16a34a', fontSize: 10, fontWeight: 'bold' }}>Activate</Text>
                 </AnimatedButton>
               )}
               <AnimatedButton
-                className="flex-1 py-1.5 rounded-md bg-secondary/10 items-center justify-center flex-row gap-1"
+                style={{ flex: 1, paddingVertical: 6, borderRadius: 6, backgroundColor: 'rgba(123,87,51,0.1)', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 4 }}
                 onPress={() => router.push(`/(provider)/edit-deal/${item.id}`)}
               >
                 <MaterialIcons name="edit" size={14} color="#7b5733" />
-                <Text className="text-secondary text-[10px] font-bold">Edit</Text>
+                <Text style={{ color: '#7b5733', fontSize: 10, fontWeight: 'bold' }}>Edit</Text>
               </AnimatedButton>
               <AnimatedButton
-                className="py-1.5 px-2.5 rounded-md bg-red-500/10 items-center justify-center"
+                style={{ paddingVertical: 6, paddingHorizontal: 10, borderRadius: 6, backgroundColor: 'rgba(239,68,68,0.1)', alignItems: 'center', justifyContent: 'center' }}
                 onPress={(e) => {
                   e?.stopPropagation?.();
                   handleStatusChange(item, 'deleted');
@@ -218,14 +234,14 @@ export default function ProviderDealsScreen() {
   };
 
   return (
-    <View className="flex-1 bg-surface">
+    <View style={{ flex: 1, backgroundColor: isDark ? '#1a110f' : '#fff8f6' }}>
       {/* Header */}
-      <View className="w-full px-4 pt-12 pb-2 flex-row justify-between items-center bg-surface">
-        <Text className="font-headline font-bold tracking-tight text-lg text-on-surface">
+      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: isDark ? '#1a110f' : '#fff8f6' }}>
+        <Text style={{ fontFamily: 'Epilogue', fontWeight: 'bold', letterSpacing: -0.5, fontSize: 18, color: isDark ? '#f1dfda' : '#231917' }}>
           My Deals
         </Text>
         <AnimatedButton
-          className="w-8 h-8 rounded-md bg-primary items-center justify-center p-0"
+          style={{ width: 32, height: 32, borderRadius: 6, backgroundColor: '#862045', alignItems: 'center', justifyContent: 'center', padding: 0 }}
           onPress={() => router.push('/(provider)/create-deal')}
         >
           <MaterialIcons name="add" size={18} color="white" />
@@ -233,19 +249,20 @@ export default function ProviderDealsScreen() {
       </View>
 
       {/* Filter Tabs */}
-      <View className="w-full px-4 pb-2">
-        <View className="flex-row gap-1.5">
+      <View style={{ width: '100%', paddingHorizontal: 16, paddingBottom: 8 }}>
+        <View style={{ flexDirection: 'row', gap: 6 }}>
           {filters.map((f) => (
             <AnimatedButton
               key={f.key}
-              className={`px-3 py-1.5 rounded-md ${activeFilter === f.key
-                ? 'bg-primary'
-                : 'bg-surface-container-lowest border-outline-variant/10'
-                }`}
+              style={[
+                { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6 },
+                activeFilter === f.key
+                  ? { backgroundColor: '#862045' }
+                  : { backgroundColor: isDark ? '#322825' : '#ffffff', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }
+              ]}
               onPress={() => setActiveFilter(f.key)}
             >
-              <Text className={`text-xs font-body font-bold ${activeFilter === f.key ? 'text-white' : 'text-on-surface-variant'
-                }`}>
+              <Text style={[{ fontSize: 12, fontFamily: 'Manrope', fontWeight: 'bold' }, activeFilter === f.key ? { color: 'white' } : { color: isDark ? '#d8c2bd' : '#564340' }]}>
                 {f.label}
               </Text>
             </AnimatedButton>
@@ -255,7 +272,7 @@ export default function ProviderDealsScreen() {
 
       {/* Deals List */}
       {loading ? (
-        <View className="flex-1 items-center justify-center">
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <ActivityIndicator size="large" color="#862045" />
         </View>
       ) : (
@@ -269,23 +286,23 @@ export default function ProviderDealsScreen() {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#862045" />
           }
           ListEmptyComponent={
-            <View className="items-center py-12">
-              <View className="w-16 h-16 rounded-md items-center justify-center mb-4 bg-primary/10">
+            <View style={{ alignItems: 'center', paddingVertical: 48 }}>
+              <View style={{ width: 64, height: 64, borderRadius: 6, alignItems: 'center', justifyContent: 'center', marginBottom: 16, backgroundColor: 'rgba(134,32,69,0.1)' }}>
                 <MaterialIcons name="local-offer" size={32} color="#862045" />
               </View>
-              <Text className="font-headline font-bold text-lg text-on-surface text-center mb-2">
+              <Text style={{ fontFamily: 'Epilogue', fontWeight: 'bold', fontSize: 18, color: isDark ? '#f1dfda' : '#231917', textAlign: 'center', marginBottom: 8 }}>
                 No Deals Yet
               </Text>
-              <Text className="font-body text-on-surface-variant text-center text-sm leading-5 max-w-[240px] mb-5">
+              <Text style={{ fontFamily: 'Manrope', color: isDark ? '#d8c2bd' : '#564340', textAlign: 'center', fontSize: 14, lineHeight: 20, maxWidth: 240, marginBottom: 20 }}>
                 Create your first deal to start attracting customers.
               </Text>
               <AnimatedButton
                 variant="gradient"
-                className="px-6 py-2.5 rounded-md items-center justify-center flex-row gap-2"
+                style={{ paddingHorizontal: 24, paddingVertical: 10, borderRadius: 6, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 }}
                 onPress={() => router.push('/(provider)/create-deal')}
               >
                 <MaterialIcons name="add" size={16} color="white" />
-                <Text className="text-white font-body font-bold text-sm">Create Deal</Text>
+                <Text style={{ color: 'white', fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 14 }}>Create Deal</Text>
               </AnimatedButton>
             </View>
           }

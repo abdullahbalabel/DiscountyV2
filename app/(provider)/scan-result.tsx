@@ -11,96 +11,68 @@ export default function ScanResultScreen() {
   const isDark = colorScheme === 'dark';
 
   const { success, dealTitle, discountValue, discountType, redemptionId } = useLocalSearchParams<{
-    success: string;
-    dealTitle: string;
-    discountValue: string;
-    discountType: string;
-    redemptionId: string;
+    success: string; dealTitle: string; discountValue: string; discountType: string; redemptionId: string;
   }>();
 
   const isSuccess = success === 'true';
-  const formattedDiscount = discountType === 'percentage'
-    ? `${discountValue}%`
-    : `$${discountValue}`;
+  const formattedDiscount = discountType === 'percentage' ? `${discountValue}%` : `$${discountValue}`;
+
+  const surfaceBg = isDark ? '#1a110f' : '#fff8f6';
+  const surfaceContainerLowest = isDark ? '#322825' : '#ffffff';
+  const onSurface = isDark ? '#f1dfda' : '#231917';
+  const onSurfaceVariant = isDark ? '#d8c2bd' : '#564340';
+  const outlineVariant = isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)';
 
   return (
-    <View className="flex-1 bg-surface items-center justify-center px-8">
+    <View style={{ flex: 1, backgroundColor: surfaceBg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
       <AnimatedEntrance index={0} delay={100}>
-        <View className="items-center">
-          {/* Status Icon */}
-          <View className={`w-32 h-32 rounded-full items-center justify-center mb-8 ${isSuccess
-              ? 'bg-green-100 dark:bg-green-900/30'
-              : 'bg-red-100 dark:bg-red-900/30'
-            }`}>
-            <MaterialIcons
-              name={isSuccess ? 'check-circle' : 'cancel'}
-              size={72}
-              color={isSuccess ? '#16a34a' : '#dc2626'}
-            />
+        <View style={{ alignItems: 'center' }}>
+          <View style={{
+            width: 128, height: 128, borderRadius: 64, alignItems: 'center', justifyContent: 'center', marginBottom: 32,
+            backgroundColor: isSuccess ? (isDark ? 'rgba(22,163,74,0.3)' : '#dcfce7') : (isDark ? 'rgba(220,38,38,0.3)' : '#fee2e2'),
+          }}>
+            <MaterialIcons name={isSuccess ? 'check-circle' : 'cancel'} size={72} color={isSuccess ? '#16a34a' : '#dc2626'} />
           </View>
-
-          {/* Title */}
-          <Text className="font-headline font-black text-3xl text-on-surface text-center tracking-tight mb-3">
+          <Text style={{ fontFamily: 'Epilogue', fontWeight: '900', fontSize: 30, color: onSurface, textAlign: 'center', letterSpacing: -0.5, marginBottom: 12 }}>
             {isSuccess ? 'Deal Redeemed!' : 'Scan Failed'}
           </Text>
-
-          {/* Subtitle */}
-          <Text className="text-on-surface-variant font-body text-base text-center leading-relaxed max-w-[280px]">
-            {isSuccess
-              ? 'The deal has been successfully redeemed for this customer.'
-              : 'The QR code could not be validated. It may have already been used or expired.'}
+          <Text style={{ color: onSurfaceVariant, fontFamily: 'Manrope', fontSize: 16, textAlign: 'center', lineHeight: 24, maxWidth: 280 }}>
+            {isSuccess ? 'The deal has been successfully redeemed for this customer.' : 'The QR code could not be validated. It may have already been used or expired.'}
           </Text>
         </View>
       </AnimatedEntrance>
 
-      {/* Deal Details Card (success only) */}
       {isSuccess && dealTitle && (
         <AnimatedEntrance index={1} delay={200}>
-          <View className="mt-8 w-full max-w-sm rounded-3xl p-6 bg-surface-container-lowest border-outline-variant/10">
-            <View className="flex-row items-center gap-4 mb-4">
-              <View className="w-12 h-12 rounded-2xl bg-primary/10 items-center justify-center">
+          <View style={{ marginTop: 32, width: '100%', maxWidth: 340, borderRadius: 24, padding: 24, backgroundColor: surfaceContainerLowest, borderWidth: 1, borderColor: outlineVariant }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 16 }}>
+              <View style={{ width: 48, height: 48, borderRadius: 16, backgroundColor: 'rgba(134,32,69,0.1)', alignItems: 'center', justifyContent: 'center' }}>
                 <MaterialIcons name="local-offer" size={24} color="#862045" />
               </View>
-              <View className="flex-1">
-                <Text className="font-headline font-bold text-base text-on-surface" numberOfLines={2}>
-                  {dealTitle}
-                </Text>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface }} numberOfLines={2}>{dealTitle}</Text>
               </View>
             </View>
-
-            <View className="flex-row items-center justify-between pt-4 border-t border-outline-variant/10">
-              <Text className="text-on-surface-variant text-sm">Discount Applied</Text>
-              <View className="bg-green-100 dark:bg-green-900/30 px-4 py-2 rounded-full">
-                <Text className="text-green-700 dark:text-green-300 font-headline font-bold text-lg">
-                  {formattedDiscount}
-                </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 16, borderTopWidth: 1, borderColor: outlineVariant }}>
+              <Text style={{ color: onSurfaceVariant, fontSize: 14 }}>Discount Applied</Text>
+              <View style={{ backgroundColor: isDark ? 'rgba(22,163,74,0.3)' : '#dcfce7', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 999 }}>
+                <Text style={{ color: isDark ? '#86efac' : '#15803d', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 18 }}>{formattedDiscount}</Text>
               </View>
             </View>
           </View>
         </AnimatedEntrance>
       )}
 
-      {/* Actions */}
       <AnimatedEntrance index={2} delay={300}>
-        <View className="mt-10 w-full max-w-sm gap-3">
-          <AnimatedButton
-            variant="gradient"
-            className="py-4 rounded-2xl"
-            onPress={() => router.replace('/(provider)/scan')}
-          >
-            <View className="flex-row items-center justify-center gap-2">
+        <View style={{ marginTop: 40, width: '100%', maxWidth: 340, gap: 12 }}>
+          <AnimatedButton variant="gradient" style={{ paddingVertical: 16, borderRadius: 16 }} onPress={() => router.replace('/(provider)/scan')}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
               <MaterialIcons name="qr-code-scanner" size={20} color="white" />
-              <Text className="text-white font-headline font-bold text-base">Scan Another</Text>
+              <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16 }}>Scan Another</Text>
             </View>
           </AnimatedButton>
-
-          <AnimatedButton
-            className="py-4 rounded-2xl border-outline-variant/20"
-            onPress={() => router.replace('/(provider)/dashboard')}
-          >
-            <Text className="text-on-surface font-headline font-bold text-base text-center">
-              Back to Dashboard
-            </Text>
+          <AnimatedButton style={{ paddingVertical: 16, borderRadius: 16, borderWidth: 1, borderColor: outlineVariant }} onPress={() => router.replace('/(provider)/dashboard')}>
+            <Text style={{ color: onSurface, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, textAlign: 'center' }}>Back to Dashboard</Text>
           </AnimatedButton>
         </View>
       </AnimatedEntrance>

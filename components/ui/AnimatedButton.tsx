@@ -1,28 +1,60 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { cssInterop } from 'nativewind';
 import React from 'react';
-import { Pressable, PressableProps, StyleSheet } from 'react-native';
+import { Pressable, PressableProps, StyleSheet, ViewStyle } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
 
-// Ensure Animated.View works with NativeWind className
-cssInterop(Animated.View, { className: 'style' });
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-cssInterop(AnimatedPressable, { className: 'style' });
 
 interface AnimatedButtonProps extends PressableProps {
   children: React.ReactNode;
   variant?: 'solid' | 'gradient' | 'outline' | 'navy';
-  className?: string;
 }
+
+const variantStyles: Record<string, ViewStyle> = {
+  solid: {
+    backgroundColor: '#862045',
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  gradient: {
+    overflow: 'hidden',
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#862045',
+    shadowOffset: { width: 0, height: 15 },
+    shadowOpacity: 0.25,
+    shadowRadius: 30,
+    elevation: 8,
+  },
+  navy: {
+    backgroundColor: '#2c1600',
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  outline: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#d8c2bd',
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+};
 
 export function AnimatedButton({
   children,
   variant = 'solid',
-  className = '',
   onPressIn,
   onPressOut,
   ...props
@@ -45,24 +77,11 @@ export function AnimatedButton({
     if (onPressOut) onPressOut(e);
   };
 
-  const getVariantStyles = () => {
-    switch (variant) {
-      case 'gradient':
-        return 'overflow-hidden rounded-lg flex-row items-center justify-center shadow-[0_15px_30px_rgba(134,32,69,0.25)]';
-      case 'navy':
-        return 'bg-[#2c1600] rounded-lg flex-row items-center justify-center';
-      case 'outline':
-        return 'border-outline-variant bg-transparent rounded-lg flex-row items-center justify-center';
-      default:
-        return 'bg-primary rounded-lg flex-row items-center justify-center';
-    }
-  };
-
   const innerContent = (
     <AnimatedPressable
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      className={`${getVariantStyles()} ${className}`}
+      style={variantStyles[variant]}
       {...props}
     >
       {variant === 'gradient' ? (

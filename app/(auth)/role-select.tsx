@@ -24,7 +24,6 @@ export default function RoleSelectScreen() {
       setError(result.error);
       setIsSettingRole(false);
     }
-    // Navigation handled by AuthProvider on success
   };
 
   const handleSelectProvider = () => {
@@ -32,41 +31,45 @@ export default function RoleSelectScreen() {
   };
 
   return (
-    <View className="flex-1 bg-surface relative">
+    <View style={{ flex: 1, backgroundColor: '#fff8f6', position: 'relative' }}>
       <Image
         source={{ uri: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop' }}
-        className="absolute inset-0 z-0"
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}
         contentFit="cover"
       />
-      <View className="absolute inset-0 z-0 bg-black/60" />
+      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, backgroundColor: 'rgba(0,0,0,0.6)' }} />
 
       <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
         <GlassView
           intensity={colorScheme === 'dark' ? 30 : 50}
-          className="w-full max-w-lg mx-6 rounded-[2rem] p-10 shadow-2xl z-10 border-white/20"
+          style={{ width: '100%', maxWidth: 512, marginHorizontal: 24, borderRadius: 32, padding: 40, zIndex: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}
         >
           {/* Header */}
-          <View className="mb-10 items-center">
-            <View className="w-16 h-16 rounded-md bg-white/10 border-white/20 items-center justify-center mb-6">
+          <View style={{ marginBottom: 40, alignItems: 'center' }}>
+            <View style={{ width: 64, height: 64, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
               <MaterialIcons name="person-add" size={32} color="white" />
             </View>
-            <Text className="font-headline font-bold text-3xl text-white text-center mb-2">
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 30, color: '#fff', textAlign: 'center', marginBottom: 8 }}>
               Welcome to Discounty
             </Text>
-            <Text className="font-body text-white/70 text-center text-base">
+            <Text style={{ fontFamily: 'Manrope', color: 'rgba(255,255,255,0.7)', textAlign: 'center', fontSize: 16 }}>
               How would you like to use the app?
             </Text>
           </View>
 
           {/* Role Cards */}
-          <View className="flex-col gap-4">
+          <View style={{ gap: 16 }}>
             {/* Customer Card */}
             <AnimatedButton
-              className={`bg-white/10 border-2 border-white/20 rounded-3xl p-6 flex-row items-center gap-5 ${isSettingRole ? 'opacity-50' : ''}`}
               onPress={handleSelectCustomer}
               disabled={isSettingRole}
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 2, borderColor: 'rgba(255,255,255,0.2)',
+                borderRadius: 24, padding: 24, flexDirection: 'row', alignItems: 'center', gap: 20,
+                opacity: isSettingRole ? 0.5 : 1,
+              }}
             >
-              <View className="w-14 h-14 rounded-2xl overflow-hidden items-center justify-center">
+              <View style={{ width: 56, height: 56, borderRadius: 16, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
                 <LinearGradient
                   colors={['#862045', '#a01840']}
                   style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}
@@ -74,11 +77,11 @@ export default function RoleSelectScreen() {
                   <MaterialIcons name="local-offer" size={28} color="white" />
                 </LinearGradient>
               </View>
-              <View className="flex-1">
-                <Text className="font-headline font-bold text-xl text-white mb-1">
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: '#fff', marginBottom: 4 }}>
                   {isSettingRole ? 'Setting up...' : "I'm a Customer"}
                 </Text>
-                <Text className="font-body text-white/60 text-sm leading-5">
+                <Text style={{ fontFamily: 'Manrope', color: 'rgba(255,255,255,0.6)', fontSize: 14, lineHeight: 20 }}>
                   Browse deals, claim discounts, and rate providers.
                 </Text>
               </View>
@@ -87,11 +90,15 @@ export default function RoleSelectScreen() {
 
             {/* Provider Card */}
             <AnimatedButton
-              className={`bg-white/10 border-2 border-white/20 rounded-3xl p-6 flex-row items-center gap-5 ${isSettingRole ? 'opacity-50' : ''}`}
               onPress={handleSelectProvider}
               disabled={isSettingRole}
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 2, borderColor: 'rgba(255,255,255,0.2)',
+                borderRadius: 24, padding: 24, flexDirection: 'row', alignItems: 'center', gap: 20,
+                opacity: isSettingRole ? 0.5 : 1,
+              }}
             >
-              <View className="w-14 h-14 rounded-2xl overflow-hidden items-center justify-center">
+              <View style={{ width: 56, height: 56, borderRadius: 16, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
                 <LinearGradient
                   colors={['#00694d', '#0f9d6e']}
                   style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}
@@ -99,11 +106,11 @@ export default function RoleSelectScreen() {
                   <MaterialCommunityIcons name="store" size={28} color="white" />
                 </LinearGradient>
               </View>
-              <View className="flex-1">
-                <Text className="font-headline font-bold text-xl text-white mb-1">
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: '#fff', marginBottom: 4 }}>
                   I'm a Business
                 </Text>
-                <Text className="font-body text-white/60 text-sm leading-5">
+                <Text style={{ fontFamily: 'Manrope', color: 'rgba(255,255,255,0.6)', fontSize: 14, lineHeight: 20 }}>
                   Post deals, manage customers, and grow your brand.
                 </Text>
               </View>
@@ -113,14 +120,14 @@ export default function RoleSelectScreen() {
 
           {/* Error Message */}
           {error ? (
-            <View className="mt-4 bg-red-500/20 border-red-400/30 rounded-xl px-4 py-3">
-              <Text className="text-error font-body text-sm text-center">{error}</Text>
+            <View style={{ marginTop: 16, backgroundColor: 'rgba(239,68,68,0.2)', borderWidth: 1, borderColor: 'rgba(248,113,113,0.3)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12 }}>
+              <Text style={{ color: '#ef4444', fontFamily: 'Manrope', fontSize: 14, textAlign: 'center' }}>{error}</Text>
             </View>
           ) : null}
 
           {/* Footer */}
-          <View className="mt-8 pt-6 border-t border-white/20 items-center">
-            <Text className="font-body text-white/40 text-xs text-center leading-5">
+          <View style={{ marginTop: 32, paddingTop: 24, borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.2)', alignItems: 'center' }}>
+            <Text style={{ fontFamily: 'Manrope', color: 'rgba(255,255,255,0.4)', fontSize: 12, textAlign: 'center', lineHeight: 20 }}>
               You can always change your role later{'\n'}from your profile settings.
             </Text>
           </View>

@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { AnimatedButton } from './AnimatedButton';
+import { resolveMaterialIcon } from '../../lib/iconMapping';
 
 interface DealCardProps {
   id: string;
@@ -20,8 +21,9 @@ interface DealCardProps {
   rating?: number;
   reviewCount?: number;
   endTime?: string;
+  isSaved?: boolean;
+  onToggleSave?: () => void;
   onPress: () => void;
-  className?: string;
 }
 
 function formatTimeLeft(endTime: string): string {
@@ -49,18 +51,30 @@ export function DealCard({
   rating,
   reviewCount,
   endTime,
+  isSaved,
+  onToggleSave,
   onPress,
-  className = '',
 }: DealCardProps) {
   return (
     <AnimatedButton
       variant="solid"
       onPress={onPress}
-      className={`relative rounded-md overflow-hidden bg-surface-container-lowest shadow-sm mb-3 ${className}`}
-      style={{ padding: 0 }}
+      style={{
+        padding: 0,
+        borderRadius: 12,
+        overflow: 'hidden',
+        backgroundColor: '#fff',
+        marginBottom: 12,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 2,
+      }}
     >
-      <View className="w-full flex-col">
-        <View className="relative w-full h-[140px]">
+      <View style={{ width: '100%' }}>
+        {/* Image Section */}
+        <View style={{ position: 'relative', width: '100%', height: 140 }}>
           <Image
             source={{ uri: imageUri }}
             style={StyleSheet.absoluteFillObject}
@@ -71,57 +85,93 @@ export function DealCard({
             colors={['transparent', 'rgba(0,0,0,0.8)']}
             style={StyleSheet.absoluteFillObject}
           />
+
           {/* Discount Badge */}
-          <View className="absolute top-2.5 right-2.5 bg-primary px-3 py-1 rounded-lg z-10 shadow-[0_10px_20px_rgba(134,32,69,0.3)]">
-            <Text className="text-white font-headline font-bold text-xs">
+          <View style={{
+            position: 'absolute', top: 10, right: 10,
+            backgroundColor: '#862045', paddingHorizontal: 12, paddingVertical: 4,
+            borderRadius: 10, zIndex: 10,
+            shadowColor: '#862045', shadowOffset: { width: 0, height: 10 },
+            shadowOpacity: 0.3, shadowRadius: 20, elevation: 6,
+          }}>
+            <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 12 }}>
               {discountBadge}
             </Text>
           </View>
 
           {/* Time Left Badge */}
           {endTime && (
-            <View className="absolute top-2.5 left-2.5 bg-black/50 px-2 py-1 rounded-md flex-row items-center gap-1">
+            <View style={{
+              position: 'absolute', top: 10, left: 10,
+              backgroundColor: 'rgba(0,0,0,0.5)', paddingHorizontal: 8, paddingVertical: 4,
+              borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 4,
+            }}>
               <MaterialIcons name="timer" size={10} color="white" />
-              <Text className="text-white font-label text-[9px] font-bold uppercase">
+              <Text style={{ color: '#fff', fontFamily: 'Manrope', fontSize: 9, fontWeight: '700', textTransform: 'uppercase' }}>
                 {formatTimeLeft(endTime)}
               </Text>
             </View>
           )}
 
+          {/* Bookmark Button */}
+          {onToggleSave && (
+            <AnimatedButton
+              onPress={onToggleSave}
+              style={{
+                position: 'absolute', bottom: 10, right: 10,
+                width: 28, height: 28, borderRadius: 14,
+                backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center',
+              }}
+            >
+              <MaterialIcons name={isSaved ? 'bookmark' : 'bookmark-border'} size={16} color={isSaved ? '#f59e0b' : 'white'} />
+            </AnimatedButton>
+          )}
+
           {/* Category Tag */}
           {categoryName && (
-            <View className="absolute bottom-2.5 left-2.5 bg-white/20 px-2 py-0.5 rounded-md flex-row items-center gap-1">
+            <View style={{
+              position: 'absolute', bottom: 10, left: 10,
+              backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 8, paddingVertical: 2,
+              borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 4,
+            }}>
               {categoryIcon && (
-                <MaterialIcons name={categoryIcon as any} size={10} color="white" />
+                <MaterialIcons name={resolveMaterialIcon(categoryIcon)} size={10} color="white" />
               )}
-              <Text className="text-white font-label text-[9px] font-bold uppercase tracking-wider">
+              <Text style={{
+                color: '#fff', fontFamily: 'Manrope', fontSize: 9, fontWeight: '700',
+                textTransform: 'uppercase', letterSpacing: 1.5,
+              }}>
                 {categoryName}
               </Text>
             </View>
           )}
         </View>
 
-        <View className="p-3 bg-surface-container-lowest">
+        {/* Content Section */}
+        <View style={{ padding: 12, backgroundColor: '#fff' }}>
           {/* Provider Row */}
-          <View className="flex-row items-center gap-1.5 mb-1">
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 }}>
             {providerLogo ? (
               <Image
                 source={{ uri: providerLogo }}
-                className="w-4 h-4 rounded-md"
+                style={{ width: 16, height: 16, borderRadius: 4 }}
                 contentFit="cover"
               />
             ) : null}
-            <Text className="text-primary font-bold text-[9px] uppercase tracking-[0.15em]">
+            <Text style={{
+              color: '#862045', fontWeight: '700', fontSize: 9,
+              textTransform: 'uppercase', letterSpacing: 1.5,
+            }}>
               {provider}
             </Text>
             {rating != null && rating > 0 && (
-              <View className="flex-row items-center gap-0.5 ml-auto">
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2, marginLeft: 'auto' }}>
                 <MaterialIcons name="star" size={10} color="#f59e0b" />
-                <Text className="text-on-surface-variant text-[9px] font-bold">
+                <Text style={{ color: '#564340', fontSize: 9, fontWeight: '700' }}>
                   {rating.toFixed(1)}
                 </Text>
                 {reviewCount != null && (
-                  <Text className="text-on-surface-variant text-[9px]">
+                  <Text style={{ color: '#564340', fontSize: 9 }}>
                     ({reviewCount})
                   </Text>
                 )}
@@ -129,22 +179,40 @@ export function DealCard({
             )}
           </View>
 
-          <Text className="font-headline font-bold text-sm text-on-surface mb-1">{title}</Text>
+          <Text style={{
+            fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14,
+            color: '#231917', marginBottom: 4,
+          }}>
+            {title}
+          </Text>
 
-          <Text className="text-secondary text-xs mb-2.5 font-body" numberOfLines={2}>
+          <Text
+            style={{
+              color: '#7b5733', fontSize: 12, fontFamily: 'Manrope',
+              marginBottom: 10,
+            }}
+            numberOfLines={2}
+          >
             {description || 'Exclusive deal. Limited stock available for discerning shoppers.'}
           </Text>
 
-          <View className="flex-row items-center justify-between">
-            <View className="flex-row items-baseline gap-1.5">
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 6 }}>
               {currentPrice && (
-                <Text className="text-base font-bold text-on-surface">{currentPrice}</Text>
+                <Text style={{ fontSize: 16, fontWeight: '700', color: '#231917' }}>
+                  {currentPrice}
+                </Text>
               )}
               {originalPrice && (
-                <Text className="text-secondary line-through text-xs">{originalPrice}</Text>
+                <Text style={{ color: '#7b5733', fontSize: 12, textDecorationLine: 'line-through' }}>
+                  {originalPrice}
+                </Text>
               )}
             </View>
-            <View className="bg-primary w-7 h-7 rounded-md flex items-center justify-center">
+            <View style={{
+              backgroundColor: '#862045', width: 28, height: 28,
+              borderRadius: 8, alignItems: 'center', justifyContent: 'center',
+            }}>
               <MaterialIcons name="arrow-forward" size={14} color="white" />
             </View>
           </View>

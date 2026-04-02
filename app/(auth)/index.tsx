@@ -1,6 +1,5 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +8,6 @@ import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { GlassView } from '../../components/ui/GlassView';
 import { useAuth } from '../../contexts/auth';
 
-// Country codes for common Middle East + global
 const COUNTRY_CODES = [
   { code: '+966', flag: '🇸🇦', name: 'Saudi Arabia' },
   { code: '+971', flag: '🇦🇪', name: 'UAE' },
@@ -36,7 +34,6 @@ export default function PhoneEntryScreen() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Email auth state
   const [authMode, setAuthMode] = useState<'phone' | 'email'>('email');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -79,80 +76,80 @@ export default function PhoneEntryScreen() {
     if (isSignUp) {
       const result = await signUpWithEmail(email, password);
       setIsLoading(false);
-      if (result.error) {
-        setError(result.error);
-      }
-      // On success, auth state change triggers navigation via AuthProvider
+      if (result.error) setError(result.error);
     } else {
       const result = await signInWithEmail(email, password);
       setIsLoading(false);
-      if (result.error) {
-        setError(result.error);
-      }
-      // On success, auth state change triggers navigation via AuthProvider
+      if (result.error) setError(result.error);
     }
   };
 
+  const inputStyle = {
+    paddingHorizontal: 24, paddingVertical: 16, borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)', color: '#fff',
+    fontFamily: 'Manrope', fontSize: 16,
+  };
+
+  const labelStyle = {
+    fontFamily: 'Manrope', fontSize: 12, textTransform: 'uppercase' as const,
+    letterSpacing: 2, color: 'rgba(255,255,255,0.9)', fontWeight: '600' as const,
+    paddingHorizontal: 4,
+  };
+
   return (
-    <View className="flex-1 bg-surface relative">
+    <View style={{ flex: 1, backgroundColor: '#fff8f6', position: 'relative' }}>
       <Image
         source={{ uri: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop' }}
-        className="absolute inset-0 z-0"
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}
         contentFit="cover"
       />
-      <View className="absolute inset-0 z-0 bg-black/60" />
+      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, backgroundColor: 'rgba(0,0,0,0.6)' }} />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
+        style={{ flex: 1 }}
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
           <GlassView
             intensity={colorScheme === 'dark' ? 30 : 50}
-            className="w-full max-w-lg mx-6 rounded-[2rem] p-10 shadow-2xl z-10 border-white/20"
+            style={{ width: '90%', maxWidth: 520, marginHorizontal: 24, marginVertical: 24, borderRadius: 32, padding: 40, zIndex: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}
           >
             {/* Branding */}
-            <View className="mb-8">
-              <Text className="font-headline font-bold text-5xl text-white">Discounty</Text>
-              <Text className="font-body text-white/80 mt-2 text-lg">
+            <View style={{ marginBottom: 32 }}>
+              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 48, color: '#fff' }}>Discounty</Text>
+              <Text style={{ fontFamily: 'Manrope', color: 'rgba(255,255,255,0.8)', marginTop: 8, fontSize: 18 }}>
                 Your deals, verified & rewarded.
               </Text>
             </View>
 
             {/* Mode Toggle */}
-            <View className="flex-row bg-white/10 rounded-2xl p-1 mb-8 border-white/10">
+            <View style={{ flexDirection: 'row', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 16, padding: 4, marginBottom: 32, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
               <Pressable
                 onPress={() => { setAuthMode('email'); setError(''); }}
-                className={`flex-1 py-3 rounded-xl items-center ${authMode === 'email' ? 'bg-white/20' : ''
-                  }`}
+                style={{ flex: 1, paddingVertical: 12, borderRadius: 12, alignItems: 'center', backgroundColor: authMode === 'email' ? 'rgba(255,255,255,0.2)' : 'transparent' }}
               >
-                <Text className={`font-body font-semibold text-sm ${authMode === 'email' ? 'text-white' : 'text-white/50'
-                  }`}>
+                <Text style={{ fontFamily: 'Manrope', fontWeight: '600', fontSize: 14, color: authMode === 'email' ? '#fff' : 'rgba(255,255,255,0.5)' }}>
                   Email
                 </Text>
               </Pressable>
               <Pressable
                 onPress={() => { setAuthMode('phone'); setError(''); }}
-                className={`flex-1 py-3 rounded-xl items-center ${authMode === 'phone' ? 'bg-white/20' : ''
-                  }`}
+                style={{ flex: 1, paddingVertical: 12, borderRadius: 12, alignItems: 'center', backgroundColor: authMode === 'phone' ? 'rgba(255,255,255,0.2)' : 'transparent' }}
               >
-                <Text className={`font-body font-semibold text-sm ${authMode === 'phone' ? 'text-white' : 'text-white/50'
-                  }`}>
+                <Text style={{ fontFamily: 'Manrope', fontWeight: '600', fontSize: 14, color: authMode === 'phone' ? '#fff' : 'rgba(255,255,255,0.5)' }}>
                   Phone
                 </Text>
               </Pressable>
             </View>
 
-            <View className="flex-col gap-5">
+            <View style={{ gap: 20 }}>
               {authMode === 'email' ? (
                 <>
-                  {/* Email Input */}
-                  <View className="flex-col gap-2">
-                    <Text className="font-label text-xs uppercase tracking-widest text-white/90 font-semibold px-1">
-                      Email
-                    </Text>
+                  <View style={{ gap: 8 }}>
+                    <Text style={labelStyle}>Email</Text>
                     <TextInput
-                      className="px-6 py-4 rounded-2xl bg-white/10 border-white/20 text-white font-body text-base"
+                      style={inputStyle}
                       placeholder="you@example.com"
                       placeholderTextColor="rgba(255,255,255,0.5)"
                       keyboardType="email-address"
@@ -163,13 +160,10 @@ export default function PhoneEntryScreen() {
                     />
                   </View>
 
-                  {/* Password Input */}
-                  <View className="flex-col gap-2">
-                    <Text className="font-label text-xs uppercase tracking-widest text-white/90 font-semibold px-1">
-                      Password
-                    </Text>
+                  <View style={{ gap: 8 }}>
+                    <Text style={labelStyle}>Password</Text>
                     <TextInput
-                      className="px-6 py-4 rounded-2xl bg-white/10 border-white/20 text-white font-body text-base"
+                      style={inputStyle}
                       placeholder="••••••••"
                       placeholderTextColor="rgba(255,255,255,0.5)"
                       secureTextEntry
@@ -179,78 +173,73 @@ export default function PhoneEntryScreen() {
                   </View>
                 </>
               ) : (
-                <>
-                  {/* Phone Input */}
-                  <View className="flex-col gap-2">
-                    <Text className="font-label text-xs uppercase tracking-widest text-white/90 font-semibold px-1">
-                      Phone Number
-                    </Text>
+                <View style={{ gap: 8 }}>
+                  <Text style={labelStyle}>Phone Number</Text>
+                  <View style={{ flexDirection: 'row', gap: 12 }}>
+                    <Pressable
+                      onPress={() => setShowCountryPicker(!showCountryPicker)}
+                      style={{ paddingHorizontal: 16, paddingVertical: 16, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                    >
+                      <Text style={{ fontSize: 20 }}>{selectedCountry.flag}</Text>
+                      <Text style={{ color: '#fff', fontFamily: 'Manrope', fontWeight: '600' }}>{selectedCountry.code}</Text>
+                      <MaterialIcons name="arrow-drop-down" size={20} color="white" />
+                    </Pressable>
 
-                    <View className="flex-row gap-3">
-                      {/* Country Code Picker */}
-                      <Pressable
-                        onPress={() => setShowCountryPicker(!showCountryPicker)}
-                        className="px-4 py-4 rounded-2xl bg-white/10 border-white/20 flex-row items-center gap-2"
-                      >
-                        <Text className="text-xl">{selectedCountry.flag}</Text>
-                        <Text className="text-white font-body font-semibold">{selectedCountry.code}</Text>
-                        <MaterialIcons name="arrow-drop-down" size={20} color="white" />
-                      </Pressable>
-
-                      {/* Phone Number Input */}
-                      <TextInput
-                        className="flex-1 px-6 py-4 rounded-2xl bg-white/10 border-white/20 text-white font-body text-base"
-                        placeholder="5XX XXX XXX"
-                        placeholderTextColor="rgba(255,255,255,0.5)"
-                        keyboardType="phone-pad"
-                        value={phone}
-                        onChangeText={setPhone}
-                        maxLength={15}
-                      />
-                    </View>
-
-                    {/* Country Picker Dropdown */}
-                    {showCountryPicker && (
-                      <View className="bg-black/80 rounded-2xl border-white/20 mt-2 max-h-60 overflow-hidden">
-                        <ScrollView nestedScrollEnabled>
-                          {COUNTRY_CODES.map((country) => (
-                            <Pressable
-                              key={country.code}
-                              onPress={() => {
-                                setSelectedCountry(country);
-                                setShowCountryPicker(false);
-                              }}
-                              className={`flex-row items-center gap-3 px-4 py-3 border-b border-white/10 ${selectedCountry.code === country.code ? 'bg-white/10' : ''
-                                }`}
-                            >
-                              <Text className="text-lg">{country.flag}</Text>
-                              <Text className="text-white font-body flex-1">{country.name}</Text>
-                              <Text className="text-white/60 font-body">{country.code}</Text>
-                            </Pressable>
-                          ))}
-                        </ScrollView>
-                      </View>
-                    )}
+                    <TextInput
+                      style={{ ...inputStyle, flex: 1 }}
+                      placeholder="5XX XXX XXX"
+                      placeholderTextColor="rgba(255,255,255,0.5)"
+                      keyboardType="phone-pad"
+                      value={phone}
+                      onChangeText={setPhone}
+                      maxLength={15}
+                    />
                   </View>
-                </>
+
+                  {showCountryPicker && (
+                    <View style={{ backgroundColor: 'rgba(0,0,0,0.8)', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', marginTop: 8, maxHeight: 240, overflow: 'hidden' }}>
+                      <ScrollView nestedScrollEnabled>
+                        {COUNTRY_CODES.map((country) => (
+                          <Pressable
+                            key={country.code}
+                            onPress={() => {
+                              setSelectedCountry(country);
+                              setShowCountryPicker(false);
+                            }}
+                            style={{
+                              flexDirection: 'row', alignItems: 'center', gap: 12,
+                              paddingHorizontal: 16, paddingVertical: 12,
+                              borderBottomWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
+                              backgroundColor: selectedCountry.code === country.code ? 'rgba(255,255,255,0.1)' : 'transparent',
+                            }}
+                          >
+                            <Text style={{ fontSize: 18 }}>{country.flag}</Text>
+                            <Text style={{ color: '#fff', fontFamily: 'Manrope', flex: 1 }}>{country.name}</Text>
+                            <Text style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Manrope' }}>{country.code}</Text>
+                          </Pressable>
+                        ))}
+                      </ScrollView>
+                    </View>
+                  )}
+                </View>
               )}
 
               {/* Error Message */}
               {error ? (
-                <View className="bg-red-500/20 border-red-400/30 rounded-xl px-4 py-3">
-                  <Text className="text-error font-body text-sm">{error}</Text>
+                <View style={{ backgroundColor: 'rgba(239,68,68,0.2)', borderWidth: 1, borderColor: 'rgba(248,113,113,0.3)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12 }}>
+                  <Text style={{ color: '#ef4444', fontFamily: 'Manrope', fontSize: 14 }}>{error}</Text>
                 </View>
               ) : null}
 
               {/* Action Button */}
-              <View className="mt-2 flex-col gap-4">
+              <View style={{ marginTop: 8, gap: 16 }}>
                 <AnimatedButton
                   variant="gradient"
-                  className="py-4 rounded-2xl items-center justify-center"
+                  style={{ paddingVertical: 16, borderRadius: 16, opacity: isLoading ? 0.6 : 1 }}
                   onPress={authMode === 'email' ? handleEmailAuth : handleSendOtp}
                   disabled={isLoading}
                 >
-                  <Text className="text-on-primary font-body font-bold text-lg text-center">
+                  <Text style={{ color: '#fff', fontFamily: 'Manrope', fontWeight: '700', fontSize: 18, textAlign: 'center' }}>
                     {isLoading
                       ? (authMode === 'email' ? 'Signing in...' : 'Sending...')
                       : authMode === 'email'
@@ -262,12 +251,12 @@ export default function PhoneEntryScreen() {
 
               {/* Toggle sign-in/sign-up for email mode */}
               {authMode === 'email' && (
-                <View className="flex-row justify-center items-center gap-1">
-                  <Text className="font-body text-white/60 text-sm">
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                  <Text style={{ fontFamily: 'Manrope', color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>
                     {isSignUp ? 'Already have an account?' : "Don't have an account?"}
                   </Text>
                   <Pressable onPress={() => { setIsSignUp(!isSignUp); setError(''); }}>
-                    <Text className="font-body text-primary-fixed font-bold text-sm">
+                    <Text style={{ fontFamily: 'Manrope', color: '#ffb2be', fontWeight: '700', fontSize: 14 }}>
                       {isSignUp ? 'Sign In' : 'Sign Up'}
                     </Text>
                   </Pressable>
@@ -275,8 +264,8 @@ export default function PhoneEntryScreen() {
               )}
 
               {/* Info */}
-              <View className="mt-2 flex-col items-center">
-                <Text className="font-label text-xs text-white/60 text-center leading-5">
+              <View style={{ marginTop: 8, alignItems: 'center' }}>
+                <Text style={{ fontFamily: 'Manrope', fontSize: 12, color: 'rgba(255,255,255,0.6)', textAlign: 'center', lineHeight: 20 }}>
                   {authMode === 'email'
                     ? 'Sign in with your email and password.'
                     : "We'll send you a one-time verification code via SMS.\nStandard message rates may apply."}
@@ -284,30 +273,16 @@ export default function PhoneEntryScreen() {
               </View>
 
               {/* Footer */}
-              <View className="mt-4 pt-6 border-t border-white/20 flex-row justify-center gap-6">
-                <Text className="font-label text-xs text-white/50">Privacy</Text>
-                <Text className="font-label text-xs text-white/50">Terms</Text>
+              <View style={{ marginTop: 16, paddingTop: 24, borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.2)', flexDirection: 'row', justifyContent: 'center', gap: 24 }}>
+                <Text style={{ fontFamily: 'Manrope', fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>Privacy</Text>
+                <Text style={{ fontFamily: 'Manrope', fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>Terms</Text>
               </View>
             </View>
           </GlassView>
         </ScrollView>
       </KeyboardAvoidingView>
 
-      {/* Decorative Badge */}
-      <View className="absolute bottom-10 right-6 opacity-90" pointerEvents="none">
-        <GlassView intensity={50} className="p-4 rounded-xl flex-row items-center gap-3 shadow-xl border-white/20">
-          <View className="w-10 h-10 rounded-md flex items-center justify-center overflow-hidden">
-            <LinearGradient colors={['#862045', '#a01840']} style={{ padding: 8, borderRadius: 20 }}>
-              <MaterialIcons name="verified-user" size={18} color="white" />
-            </LinearGradient>
-          </View>
-          <View>
-            <Text className="font-label text-[10px] uppercase tracking-widest text-white/70 font-bold">Verified Users</Text>
-            <Text className="font-headline font-bold text-sm text-white">Secure access</Text>
-          </View>
-        </GlassView>
-      </View>
+
     </View>
   );
 }
-

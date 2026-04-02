@@ -141,6 +141,14 @@ export async function fetchMyRedemptions(): Promise<Redemption[]> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
 
+  const { data: profile } = await supabase
+    .from('customer_profiles')
+    .select('id')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!profile) return [];
+
   const { data, error } = await supabase
     .from('redemptions')
     .select(`
@@ -153,9 +161,10 @@ export async function fetchMyRedemptions(): Promise<Redemption[]> {
         category:categories!category_id (
           id, name, name_ar, icon
         )
-      )
+      ),
+      review:reviews!redemption_id (*)
     `)
-    .eq('customer_id', user.id)
+    .eq('customer_id', profile.id)
     .order('claimed_at', { ascending: false });
 
   if (error) throw error;
@@ -166,17 +175,25 @@ export async function getActiveSlotCount(): Promise<number> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return 0;
 
+  const { data: profile } = await supabase
+    .from('customer_profiles')
+    .select('id')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!profile) return 0;
+
   // Slots occupied: claimed OR (redeemed but not reviewed)
-  const { data: claimed } = await supabase
+  const { count: claimedCount } = await supabase
     .from('redemptions')
     .select('id', { count: 'exact', head: true })
-    .eq('customer_id', user.id)
+    .eq('customer_id', profile.id)
     .eq('status', 'claimed');
 
   const { data: redeemed } = await supabase
     .from('redemptions')
     .select('id')
-    .eq('customer_id', user.id)
+    .eq('customer_id', profile.id)
     .eq('status', 'redeemed');
 
   // Check which redeemed ones have reviews
@@ -192,7 +209,31 @@ export async function getActiveSlotCount(): Promise<number> {
     unreviewedCount = redemptionIds.filter(id => !reviewedIds.has(id)).length;
   }
 
-  return (claimed?.length || 0) + unreviewedCount;
+  return (claimedCount || 0) + unreviewedCount;
+}
+
+export async function hasClaimedDeal(dealId: string): Promise<boolean> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
+
+  const { data: profile } = await supabase
+    .from('customer_profiles')
+    .select('id')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!profile) return false;
+
+  const { data, error } = await supabase
+    .from('redemptions')
+    .select('id')
+    .eq('customer_id', profile.id)
+    .eq('discount_id', dealId)
+    .in('status', ['claimed', 'redeemed'])
+    .maybeSingle();
+
+  if (error) return false;
+  return !!data;
 }
 
 // ── RPC Calls ───────────────────────────────────
@@ -347,15 +388,23 @@ export async function fetchCustomerStats() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { totalClaimed: 0, totalRedeemed: 0, totalSaved: 0 };
 
+  const { data: profile } = await supabase
+    .from('customer_profiles')
+    .select('id')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!profile) return { totalClaimed: 0, totalRedeemed: 0, totalSaved: 0 };
+
   const { count: totalClaimed } = await supabase
     .from('redemptions')
     .select('id', { count: 'exact', head: true })
-    .eq('customer_id', user.id);
+    .eq('customer_id', profile.id);
 
   const { count: totalRedeemed } = await supabase
     .from('redemptions')
     .select('id', { count: 'exact', head: true })
-    .eq('customer_id', user.id)
+    .eq('customer_id', profile.id)
     .eq('status', 'redeemed');
 
   const savedIds = await getSavedDealIds();

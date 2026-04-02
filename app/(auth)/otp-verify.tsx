@@ -23,7 +23,6 @@ export default function OtpVerifyScreen() {
   const [resendTimer, setResendTimer] = useState(60);
   const inputRefs = useRef<(TextInput | null)[]>([]);
 
-  // Countdown timer for resend
   useEffect(() => {
     if (resendTimer <= 0) return;
     const interval = setInterval(() => {
@@ -38,12 +37,10 @@ export default function OtpVerifyScreen() {
     setOtp(newOtp);
     setError('');
 
-    // Auto-advance to next input
     if (value && index < OTP_LENGTH - 1) {
       inputRefs.current[index + 1]?.focus();
     }
 
-    // Auto-submit when all filled
     if (newOtp.every((digit) => digit !== '') && newOtp.join('').length === OTP_LENGTH) {
       handleVerify(newOtp.join(''));
     }
@@ -73,7 +70,6 @@ export default function OtpVerifyScreen() {
       setOtp(new Array(OTP_LENGTH).fill(''));
       inputRefs.current[0]?.focus();
     }
-    // On success, auth state change triggers navigation via AuthProvider
   };
 
   const handleResend = async () => {
@@ -88,52 +84,55 @@ export default function OtpVerifyScreen() {
     : '•••••••••';
 
   return (
-    <View className="flex-1 bg-surface relative">
+    <View style={{ flex: 1, backgroundColor: '#fff8f6', position: 'relative' }}>
       <Image
         source={{ uri: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop' }}
-        className="absolute inset-0 z-0"
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}
         contentFit="cover"
       />
-      <View className="absolute inset-0 z-0 bg-black/60" />
+      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, backgroundColor: 'rgba(0,0,0,0.6)' }} />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
+        style={{ flex: 1 }}
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
           <GlassView
             intensity={colorScheme === 'dark' ? 30 : 50}
-            className="w-full max-w-lg mx-6 rounded-[2rem] p-10 shadow-2xl z-10 border-white/20"
+            style={{ width: '100%', maxWidth: 512, marginHorizontal: 24, borderRadius: 32, padding: 40, zIndex: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}
           >
             {/* Back Button */}
             <AnimatedButton
-              className="w-10 h-10 rounded-md bg-white/10 border-white/20 items-center justify-center mb-8"
+              style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center', marginBottom: 32 }}
               onPress={() => router.back()}
             >
               <MaterialIcons name="arrow-back" size={20} color="white" />
             </AnimatedButton>
 
             {/* Header */}
-            <View className="mb-8">
-              <Text className="font-headline font-bold text-3xl text-white mb-2">
+            <View style={{ marginBottom: 32 }}>
+              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 30, color: '#fff', marginBottom: 8 }}>
                 Verification Code
               </Text>
-              <Text className="font-body text-white/70 text-base leading-6">
+              <Text style={{ fontFamily: 'Manrope', color: 'rgba(255,255,255,0.7)', fontSize: 16, lineHeight: 24 }}>
                 We sent a 6-digit code to{'\n'}
-                <Text className="text-white font-semibold">{maskedPhone}</Text>
+                <Text style={{ color: '#fff', fontWeight: '600' }}>{maskedPhone}</Text>
               </Text>
             </View>
 
             {/* OTP Input Grid */}
-            <View className="flex-row justify-between gap-2 mb-6">
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 8, marginBottom: 24 }}>
               {otp.map((digit, index) => (
                 <TextInput
                   key={index}
                   ref={(ref) => { inputRefs.current[index] = ref; }}
-                  className={`flex-1 aspect-square rounded-2xl text-center text-white font-headline font-bold text-2xl ${digit
-                    ? 'bg-white/20 border-2 border-primary-fixed'
-                    : 'bg-white/10 border-white/20'
-                    }`}
+                  style={{
+                    flex: 1, aspectRatio: 1, borderRadius: 16, textAlign: 'center',
+                    color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 24,
+                    backgroundColor: digit ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)',
+                    borderWidth: digit ? 2 : 1,
+                    borderColor: digit ? '#ffb2be' : 'rgba(255,255,255,0.2)',
+                  }}
                   maxLength={1}
                   keyboardType="number-pad"
                   value={digit}
@@ -146,33 +145,33 @@ export default function OtpVerifyScreen() {
 
             {/* Error */}
             {error ? (
-              <View className="bg-red-500/20 border-red-400/30 rounded-xl px-4 py-3 mb-4">
-                <Text className="text-error font-body text-sm">{error}</Text>
+              <View style={{ backgroundColor: 'rgba(239,68,68,0.2)', borderWidth: 1, borderColor: 'rgba(248,113,113,0.3)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, marginBottom: 16 }}>
+                <Text style={{ color: '#ef4444', fontFamily: 'Manrope', fontSize: 14 }}>{error}</Text>
               </View>
             ) : null}
 
             {/* Verify Button */}
             <AnimatedButton
               variant="gradient"
-              className="py-4 rounded-2xl mb-6"
+              style={{ paddingVertical: 16, borderRadius: 16, marginBottom: 24, opacity: (isLoading || otp.some((d) => !d)) ? 0.6 : 1 }}
               onPress={() => handleVerify(otp.join(''))}
               disabled={isLoading || otp.some((d) => !d)}
             >
-              <Text className="text-on-primary font-body font-bold text-lg">
+              <Text style={{ color: '#fff', fontFamily: 'Manrope', fontWeight: '700', fontSize: 18, textAlign: 'center' }}>
                 {isLoading ? 'Verifying...' : 'Verify'}
               </Text>
             </AnimatedButton>
 
             {/* Resend */}
-            <View className="flex-row justify-center items-center gap-1">
-              <Text className="font-body text-white/60 text-sm">Didn't receive the code?</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+              <Text style={{ fontFamily: 'Manrope', color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>Didn't receive the code?</Text>
               {resendTimer > 0 ? (
-                <Text className="font-body text-white/40 text-sm">
+                <Text style={{ fontFamily: 'Manrope', color: 'rgba(255,255,255,0.4)', fontSize: 14 }}>
                   Resend in {resendTimer}s
                 </Text>
               ) : (
                 <AnimatedButton onPress={handleResend}>
-                  <Text className="font-body text-primary-fixed font-bold text-sm">Resend</Text>
+                  <Text style={{ fontFamily: 'Manrope', color: '#ffb2be', fontWeight: '700', fontSize: 14 }}>Resend</Text>
                 </AnimatedButton>
               )}
             </View>

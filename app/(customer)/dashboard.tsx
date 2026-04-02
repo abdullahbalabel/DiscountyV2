@@ -5,6 +5,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, RefreshControl, ScrollView, Text, useColorScheme, View } from 'react-native';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
+import { CircularProgress } from '../../components/ui/CircularProgress';
 import { useAuth } from '../../contexts/auth';
 import { fetchCustomerStats, fetchMyRedemptions, getActiveSlotCount } from '../../lib/api';
 import type { Redemption } from '../../lib/types';
@@ -21,7 +22,6 @@ function timeAgo(date: string): string {
 }
 
 export default function DashboardScreen() {
-  const { signOut } = useAuth();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const router = useRouter();
@@ -36,9 +36,7 @@ export default function DashboardScreen() {
     if (showLoader) setIsLoading(true);
     try {
       const [redemptionsData, statsData, slots] = await Promise.all([
-        fetchMyRedemptions(),
-        fetchCustomerStats(),
-        getActiveSlotCount(),
+        fetchMyRedemptions(), fetchCustomerStats(), getActiveSlotCount(),
       ]);
       setRedemptions(redemptionsData);
       setStats(statsData);
@@ -52,132 +50,123 @@ export default function DashboardScreen() {
   }, []);
 
   useEffect(() => { loadData(); }, [loadData]);
+  const handleRefresh = () => { setIsRefreshing(true); loadData(false); };
 
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    loadData(false);
-  };
+  const activeRedemptions = redemptions.filter(r => {
+    if (r.status === 'claimed') return true;
+    if (r.status === 'redeemed') return !r.review;
+    return false;
+  });
 
-  // Active redemptions = claimed or redeemed-but-not-reviewed
-  const activeRedemptions = redemptions.filter(r =>
-    r.status === 'claimed' || r.status === 'redeemed'
-  );
-  const completedRedemptions = redemptions.filter(r => r.status === 'expired');
+  const surfaceBg = isDark ? '#1a110f' : '#fff8f6';
+  const surfaceContainerLowest = isDark ? '#322825' : '#ffffff';
+  const surfaceContainerHigh = isDark ? '#534340' : '#f5ddd9';
+  const surfaceContainer = isDark ? '#3d3230' : '#f0e0dc';
+  const onSurface = isDark ? '#f1dfda' : '#231917';
+  const onSurfaceVariant = isDark ? '#d8c2bd' : '#564340';
 
   return (
-    <View className="flex-1 bg-surface">
-      {/* Header */}
-      <View className="w-full px-4 pt-12 pb-2 flex-row justify-between items-center bg-surface">
-        <View className="flex-row items-center gap-2">
-          <Text className="font-headline font-bold tracking-tight text-lg text-on-surface">
-            My Deals
-          </Text>
+    <View style={{ flex: 1, backgroundColor: surfaceBg }}>
+      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: surfaceBg }}>
+        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: onSurface }}>My Deals</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <AnimatedButton style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }} onPress={() => router.push('/(customer)/history')}>
+            <MaterialIcons name="history" size={18} color="#85736f" />
+          </AnimatedButton>
+          <AnimatedButton style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
+            <MaterialIcons name="notifications" size={18} color="#85736f" />
+          </AnimatedButton>
         </View>
-        <AnimatedButton className="w-8 h-8 rounded-md bg-surface-container-high items-center justify-center p-0">
-          <MaterialIcons name="notifications" size={18} color="#85736f" />
-        </AnimatedButton>
       </View>
 
-      <ScrollView
-        className="flex-1"
-        contentContainerStyle={{ paddingBottom: 12 }}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor="#862045" colors={['#862045']} />
-        }
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 12 }}
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor="#862045" colors={['#862045']} />}
       >
-        <View className="px-4 pt-2">
-          {/* Slot Indicator */}
+        <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
           <AnimatedEntrance index={0} delay={100}>
-            <View className="bg-primary p-4 rounded-md shadow-sm mb-4 mt-2">
-              <View className="flex-row items-center justify-between mb-3">
-                <Text className="text-white font-headline text-sm font-bold">Deal Slots</Text>
+            <View style={{ backgroundColor: '#862045', padding: 16, borderRadius: 8, marginBottom: 16, marginTop: 8 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontSize: 14, fontWeight: '700' }}>Deal Slots</Text>
                 <MaterialIcons name="confirmation-number" size={18} color="#FFD700" />
               </View>
-
-              {/* Slot Dots */}
-              <View className="flex-row items-center gap-3 mb-3">
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 }}>
                 {[0, 1, 2].map(i => (
-                  <View key={i} className="flex-1 items-center">
-                    <View className={`w-10 h-10 rounded-md items-center justify-center mb-1 ${i < slotCount ? 'bg-white/30 border-2 border-white' : 'bg-white/10 border border-white/20'
-                      }`}>
-                      <MaterialIcons
-                        name={i < slotCount ? 'confirmation-number' : 'add'}
-                        size={16}
-                        color={i < slotCount ? 'white' : 'rgba(255,255,255,0.4)'}
-                      />
+                  <View key={i} style={{ flex: 1, alignItems: 'center' }}>
+                    <View style={{
+                      width: 40, height: 40, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginBottom: 4,
+                      backgroundColor: i < slotCount ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.1)',
+                      borderWidth: i < slotCount ? 2 : 1, borderColor: i < slotCount ? '#fff' : 'rgba(255,255,255,0.2)',
+                    }}>
+                      <MaterialIcons name={i < slotCount ? 'confirmation-number' : 'add'} size={16} color={i < slotCount ? 'white' : 'rgba(255,255,255,0.4)'} />
                     </View>
-                    <Text className={`text-[9px] font-bold uppercase tracking-wider ${i < slotCount ? 'text-white' : 'text-white/40'
-                      }`}>
+                    <Text style={{ fontSize: 9, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, color: i < slotCount ? '#fff' : 'rgba(255,255,255,0.4)' }}>
                       Slot {i + 1}
                     </Text>
                   </View>
                 ))}
               </View>
-
-              <Text className="text-white/80 font-body text-xs text-center">
-                {slotCount === 0
-                  ? 'All slots free! Claim a deal from the Feed.'
-                  : slotCount >= 3
-                    ? 'All slots used. Rate a deal to free a slot.'
-                    : `${3 - slotCount} slot${3 - slotCount > 1 ? 's' : ''} available.`
-                }
+              <Text style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Manrope', fontSize: 12, textAlign: 'center' }}>
+                {slotCount === 0 ? 'All slots free! Claim a deal from the Feed.' : slotCount >= 3 ? 'All slots used. Rate a deal to free a slot.' : `${3 - slotCount} slot${3 - slotCount > 1 ? 's' : ''} available.`}
               </Text>
             </View>
           </AnimatedEntrance>
 
-          {/* Quick Stats */}
-          <View className="flex-row gap-3 mb-5">
-            <AnimatedEntrance index={1} delay={150} className="flex-1">
-              <View className="bg-surface-container-lowest p-3 rounded-md shadow-sm">
+          <View style={{ flexDirection: 'row', gap: 12, marginBottom: 20 }}>
+            <AnimatedEntrance index={1} delay={150} style={{ flex: 1 }}>
+              <View style={{ backgroundColor: surfaceContainerLowest, padding: 12, borderRadius: 8 }}>
                 <MaterialIcons name="local-offer" size={18} color="#862045" style={{ marginBottom: 6 }} />
-                <Text className="font-headline font-bold text-xl text-on-surface mb-0.5">{stats.totalClaimed}</Text>
-                <Text className="text-on-surface-variant text-[10px] uppercase tracking-widest font-bold">Claimed</Text>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginBottom: 2 }}>{stats.totalClaimed}</Text>
+                <Text style={{ color: onSurfaceVariant, fontSize: 10, textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700' }}>Claimed</Text>
               </View>
             </AnimatedEntrance>
-            <AnimatedEntrance index={2} delay={200} className="flex-1">
-              <View className="bg-surface-container-lowest p-3 rounded-md shadow-sm">
+            <AnimatedEntrance index={2} delay={200} style={{ flex: 1 }}>
+              <View style={{ backgroundColor: surfaceContainerLowest, padding: 12, borderRadius: 8 }}>
                 <MaterialIcons name="qr-code-scanner" size={18} color="#00694d" style={{ marginBottom: 6 }} />
-                <Text className="font-headline font-bold text-xl text-on-surface mb-0.5">{stats.totalRedeemed}</Text>
-                <Text className="text-on-surface-variant text-[10px] uppercase tracking-widest font-bold">Redeemed</Text>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginBottom: 2 }}>{stats.totalRedeemed}</Text>
+                <Text style={{ color: onSurfaceVariant, fontSize: 10, textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700' }}>Redeemed</Text>
               </View>
             </AnimatedEntrance>
           </View>
 
-          {/* Active Redemptions */}
           <AnimatedEntrance index={3} delay={250}>
-            <Text className="font-headline font-bold text-base text-on-surface mb-3">Active Deals</Text>
-
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface, marginBottom: 12 }}>Active Deals</Text>
             {isLoading ? (
-              <View className="py-6 items-center">
+              <View style={{ paddingVertical: 24, alignItems: 'center' }}>
                 <ActivityIndicator size="large" color="#862045" />
               </View>
             ) : activeRedemptions.length === 0 ? (
-              <View className="rounded-md p-5 items-center bg-surface-container-lowest">
+              <View style={{ borderRadius: 8, padding: 20, alignItems: 'center', backgroundColor: surfaceContainerLowest }}>
                 <MaterialIcons name="local-mall" size={32} color="#85736f" />
-                <Text className="font-headline font-bold text-sm text-on-surface mt-3">No Active Deals</Text>
-                <Text className="text-on-surface-variant text-xs mt-1 text-center">
-                  Head to the Feed to discover amazing deals!
-                </Text>
-                <AnimatedButton
-                  variant="gradient"
-                  className="mt-4 px-6 py-2 rounded-md"
-                  onPress={() => router.push('/(customer)/feed')}
-                >
-                  <Text className="text-white font-bold text-sm">Browse Deals</Text>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: onSurface, marginTop: 12 }}>No Active Deals</Text>
+                <Text style={{ color: onSurfaceVariant, fontSize: 12, marginTop: 4, textAlign: 'center' }}>Head to the Feed to discover amazing deals!</Text>
+                <AnimatedButton variant="gradient" style={{ marginTop: 16, paddingHorizontal: 24, paddingVertical: 8, borderRadius: 8 }} onPress={() => router.push('/(customer)/feed')}>
+                  <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>Browse Deals</Text>
                 </AnimatedButton>
               </View>
             ) : (
-              <View className="bg-surface-container-lowest rounded-md p-1.5">
+              <View style={{ backgroundColor: surfaceContainerLowest, borderRadius: 8, padding: 6 }}>
                 {activeRedemptions.map((redemption, idx) => {
                   const discount = (redemption as any).discount;
                   const provider = discount?.provider;
                   const needsReview = redemption.status === 'redeemed';
+                  const isActive = redemption.status === 'claimed';
+
+                  let daysLeft = 0;
+                  let progress = 0;
+                  if (isActive && discount?.end_time) {
+                    const now = Date.now();
+                    const end = new Date(discount.end_time).getTime();
+                    const start = new Date(redemption.claimed_at).getTime();
+                    const totalDuration = end - start;
+                    const elapsed = now - start;
+                    daysLeft = Math.max(0, Math.ceil((end - now) / 86400000));
+                    progress = totalDuration > 0 ? Math.max(0, Math.min(1, 1 - elapsed / totalDuration)) : 0;
+                  }
 
                   return (
                     <AnimatedButton
                       key={redemption.id}
-                      className={`flex-row items-center p-3 bg-transparent ${idx !== activeRedemptions.length - 1 ? 'border-b border-surface-container' : ''
-                        }`}
+                      style={{ flexDirection: 'row', alignItems: 'center', padding: 12, backgroundColor: 'transparent', borderBottomWidth: idx !== activeRedemptions.length - 1 ? 1 : 0, borderBottomColor: surfaceContainer }}
                       onPress={() => {
                         if (needsReview) {
                           router.push({ pathname: '/(customer)/rate/[redemptionId]', params: { redemptionId: redemption.id } } as any);
@@ -186,32 +175,29 @@ export default function DashboardScreen() {
                         }
                       }}
                     >
-                      <View className="w-10 h-10 rounded-md overflow-hidden mr-3 bg-surface-container-high">
+                      <View style={{ width: 40, height: 40, borderRadius: 8, overflow: 'hidden', marginRight: 12, backgroundColor: surfaceContainerHigh }}>
                         {discount?.image_url ? (
-                          <Image source={{ uri: discount.image_url }} className="w-full h-full" contentFit="cover" />
+                          <Image source={{ uri: discount.image_url }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                         ) : (
-                          <View className="w-full h-full items-center justify-center bg-primary/10">
+                          <View style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(134,32,69,0.1)' }}>
                             <MaterialIcons name="local-offer" size={18} color="#862045" />
                           </View>
                         )}
                       </View>
-                      <View className="flex-1">
-                        <Text className="font-headline font-bold text-sm text-on-surface" numberOfLines={1}>
-                          {discount?.title || 'Deal'}
-                        </Text>
-                        <Text className="text-on-surface-variant text-[10px] font-medium mt-0.5">
-                          {provider?.business_name || 'Provider'} • {timeAgo(redemption.claimed_at)}
-                        </Text>
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: onSurface }} numberOfLines={1}>{discount?.title || 'Deal'}</Text>
+                        <Text style={{ color: onSurfaceVariant, fontSize: 10, fontWeight: '500', marginTop: 2 }}>{provider?.business_name || 'Provider'} • {timeAgo(redemption.claimed_at)}</Text>
                       </View>
-                      <View className={`px-2 py-1 rounded-md ${needsReview
-                        ? 'bg-amber-100 dark:bg-amber-900/30'
-                        : 'bg-green-100 dark:bg-green-900/30'
-                        }`}>
-                        <Text className={`text-[9px] font-bold uppercase tracking-wider ${needsReview ? 'text-amber-700 dark:text-amber-300' : 'text-green-700 dark:text-green-300'
-                          }`}>
-                          {needsReview ? 'Rate' : 'Active'}
-                        </Text>
-                      </View>
+                      {isActive ? (
+                        <CircularProgress size={44} strokeWidth={3} progress={progress} daysLeft={daysLeft} isDark={isDark} />
+                      ) : (
+                        <View style={{ paddingHorizontal: 10, paddingVertical: 6, borderRadius: 6, backgroundColor: isDark ? 'rgba(251,191,36,0.3)' : '#fef3c7', flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                          <MaterialIcons name="star" size={12} color={isDark ? '#fcd34d' : '#b45309'} />
+                          <Text style={{ fontSize: 9, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, color: isDark ? '#fcd34d' : '#b45309' }}>
+                            Review
+                          </Text>
+                        </View>
+                      )}
                     </AnimatedButton>
                   );
                 })}
