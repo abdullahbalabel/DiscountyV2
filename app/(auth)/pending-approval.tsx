@@ -1,11 +1,14 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Text, useColorScheme, View } from 'react-native';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { useAuth } from '../../contexts/auth';
+import { Radius } from '../../hooks/use-theme-colors';
 
 export default function PendingApprovalScreen() {
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const { signOut } = useAuth();
@@ -23,30 +26,30 @@ export default function PendingApprovalScreen() {
 
           {/* Title */}
           <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 30, color: isDark ? '#f1dfda' : '#231917', textAlign: 'center', marginBottom: 12 }}>
-            Application Submitted
+            {t('auth.applicationSubmitted')}
           </Text>
 
           {/* Description */}
           <Text style={{ fontFamily: 'Manrope', color: isDark ? '#d8c2bd' : '#564340', textAlign: 'center', fontSize: 16, lineHeight: 24, marginBottom: 32, maxWidth: 300 }}>
-            Your business registration is being reviewed by our team. This usually takes 24-48 hours.
+            {t('auth.businessRegReview')}
           </Text>
 
           {/* Status Card */}
           <View style={{ width: '100%', borderRadius: 24, padding: 24, marginBottom: 32, backgroundColor: isDark ? '#322825' : '#ffffff', borderWidth: 1, borderColor: 'rgba(133,115,111,0.1)' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-              <View style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: '#fef3c7', alignItems: 'center', justifyContent: 'center' }}>
+              <View style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: '#fef3c7', alignItems: 'center', justifyContent: 'center' }}>
                 <MaterialIcons name="pending" size={18} color="#f59e0b" />
               </View>
               <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: isDark ? '#f1dfda' : '#231917' }}>
-                Status: Pending Review
+                {t('auth.statusPendingReview')}
               </Text>
             </View>
 
             <View style={{ gap: 12 }}>
               {[
-                { label: 'Application received', done: true },
-                { label: 'Under review', done: false, active: true },
-                { label: 'Approved & ready', done: false },
+                { label: t('auth.applicationReceived'), done: true },
+                { label: t('auth.underReview'), done: false, active: true },
+                { label: t('auth.approvedReady'), done: false },
               ].map((item, idx) => (
                 <View key={idx} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
                   <View style={{
@@ -73,8 +76,8 @@ export default function PendingApprovalScreen() {
 
           {/* Info */}
           <Text style={{ fontFamily: 'Manrope', color: isDark ? '#d8c2bd' : '#564340', textAlign: 'center', fontSize: 12, lineHeight: 20, marginBottom: 32 }}>
-            We'll notify you as soon as your business is approved.{'\n'}
-            You can start posting deals immediately after approval.
+            {t('auth.notifyWhenApproved')}{'\n'}
+            {t('auth.startPostingAfterApproval')}
           </Text>
 
           {/* Sign Out */}
@@ -82,7 +85,7 @@ export default function PendingApprovalScreen() {
             style={{ paddingHorizontal: 32, paddingVertical: 12, borderRadius: 999, borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.3)' : 'rgba(133,115,111,0.3)' }}
             onPress={() => signOut()}
           >
-            <Text style={{ fontFamily: 'Manrope', fontWeight: '600', color: isDark ? '#d8c2bd' : '#564340' }}>Sign Out</Text>
+            <Text style={{ fontFamily: 'Manrope', fontWeight: '600', color: isDark ? '#d8c2bd' : '#564340' }}>{t('auth.signOut')}</Text>
           </AnimatedButton>
         </View>
       </AnimatedEntrance>

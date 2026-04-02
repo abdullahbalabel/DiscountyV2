@@ -3,28 +3,30 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator, Alert,
   FlatList,
   RefreshControl,
   Text,
-  useColorScheme,
   View,
 } from 'react-native';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
+import { EmptyState } from '../../components/ui/EmptyState';
 import {
   activateDeal, deleteDeal,
   fetchProviderDealsList, pauseDeal,
 } from '../../lib/api';
 import { resolveMaterialIcon } from '../../lib/iconMapping';
+import { useThemeColors, Radius, Shadows } from '../../hooks/use-theme-colors';
 import type { Discount, DiscountStatus } from '../../lib/types';
 
 type FilterTab = 'all' | 'active' | 'paused' | 'draft';
 
 export default function ProviderDealsScreen() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const { t } = useTranslation();
+  const colors = useThemeColors();
   const router = useRouter();
 
   const [deals, setDeals] = useState<Discount[]>([]);
@@ -57,16 +59,16 @@ export default function ProviderDealsScreen() {
 
   const handleStatusChange = async (deal: Discount, newStatus: 'active' | 'paused' | 'deleted') => {
     const actionLabels = {
-      active: 'Activate',
-      paused: 'Pause',
-      deleted: 'Delete',
+      active: t('provider.activateDeal'),
+      paused: t('provider.pauseDeal'),
+      deleted: t('provider.deleteDeal'),
     };
 
     Alert.alert(
-      `${actionLabels[newStatus]} Deal`,
-      `Are you sure you want to ${actionLabels[newStatus].toLowerCase()} "${deal.title}"?`,
+      `${actionLabels[newStatus]} ${t('provider.deal')}`,
+      t('provider.confirmAction', { action: actionLabels[newStatus].toLowerCase(), title: deal.title }),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
           text: actionLabels[newStatus],
           style: newStatus === 'deleted' ? 'destructive' : 'default',
@@ -77,7 +79,7 @@ export default function ProviderDealsScreen() {
               else if (newStatus === 'deleted') await deleteDeal(deal.id);
               loadDeals();
             } catch (err: any) {
-              Alert.alert('Error', err.message);
+              Alert.alert(t('auth.error'), err.message);
             }
           },
         },
@@ -87,20 +89,20 @@ export default function ProviderDealsScreen() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return { bg: { backgroundColor: 'rgba(16,185,129,0.1)' }, text: { color: '#16a34a' } };
-      case 'paused': return { bg: { backgroundColor: 'rgba(245,158,11,0.1)' }, text: { color: '#d97706' } };
-      case 'draft': return { bg: { backgroundColor: 'rgba(123,87,51,0.1)' }, text: { color: '#7b5733' } };
-      default: return { bg: { backgroundColor: isDark ? '#534340' : '#f5ddd9' }, text: { color: isDark ? '#d8c2bd' : '#564340' } };
+      case 'active': return { bg: { backgroundColor: colors.successBg }, text: { color: colors.successText } };
+      case 'paused': return { bg: { backgroundColor: colors.warningBg }, text: { color: colors.warningText } };
+      case 'draft': return { bg: { backgroundColor: colors.brownBg }, text: { color: colors.brown } };
+      default: return { bg: { backgroundColor: colors.surfaceContainerHigh }, text: { color: colors.onSurfaceVariant } };
     }
   };
 
   const isExpired = (deal: Discount) => new Date(deal.end_time) < new Date();
 
   const filters: { key: FilterTab; label: string }[] = [
-    { key: 'all', label: 'All' },
-    { key: 'active', label: 'Active' },
-    { key: 'paused', label: 'Paused' },
-    { key: 'draft', label: 'Draft' },
+    { key: 'all', label: t('provider.all') },
+    { key: 'active', label: t('provider.active') },
+    { key: 'paused', label: t('provider.paused') },
+    { key: 'draft', label: t('provider.draft') },
   ];
 
   const renderDeal = ({ item, index }: { item: Discount; index: number }) => {
@@ -111,14 +113,11 @@ export default function ProviderDealsScreen() {
       <AnimatedEntrance index={index} delay={50}>
         <AnimatedButton
           style={{
-            backgroundColor: isDark ? '#322825' : '#ffffff',
-            borderRadius: 6,
+            backgroundColor: colors.surfaceContainerLowest,
+            borderRadius: Radius.lg,
             borderWidth: 1,
-            borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)',
-            shadowOpacity: 0.1,
-            shadowRadius: 2,
-            shadowOffset: { width: 0, height: 1 },
-            shadowColor: '#000',
+            borderColor: colors.outlineVariant,
+            ...Shadows.sm,
             marginBottom: 12,
             overflow: 'hidden',
           }}
@@ -130,10 +129,10 @@ export default function ProviderDealsScreen() {
               <Image source={{ uri: item.image_url }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
               <LinearGradient
                 colors={['transparent', 'rgba(0,0,0,0.5)']}
-                style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 48 }}
+                style={{ position: 'absolute', bottom: 0, start: 0, end: 0, height: 48 }}
               />
-              <View style={{ position: 'absolute', top: 8, right: 8, backgroundColor: '#862045', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 }}>
-                <Text style={{ color: 'white', fontFamily: 'Epilogue', fontWeight: 'bold', fontSize: 12 }}>
+              <View style={{ position: 'absolute', top: 8, end: 8, backgroundColor: colors.primary, paddingHorizontal: 8, paddingVertical: 2, borderRadius: Radius.sm }}>
+                <Text style={{ color: 'white', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 12 }}>
                   {item.type === 'percentage' ? `-${item.discount_value}%` : `$${item.discount_value}`}
                 </Text>
               </View>
@@ -144,19 +143,19 @@ export default function ProviderDealsScreen() {
             {/* Title + Status */}
             <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 6 }}>
               <View style={{ flex: 1, marginRight: 8 }}>
-                <Text style={{ fontFamily: 'Epilogue', fontWeight: 'bold', fontSize: 14, color: isDark ? '#f1dfda' : '#231917' }} numberOfLines={2}>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: colors.onSurface }} numberOfLines={2}>
                   {item.title}
                 </Text>
                 {item.category && (
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 }}>
-                    <MaterialIcons name={resolveMaterialIcon(item.category.icon)} size={12} color="#85736f" />
-                    <Text style={{ color: isDark ? '#d8c2bd' : '#564340', fontSize: 10 }}>{item.category.name}</Text>
+                    <MaterialIcons name={resolveMaterialIcon(item.category.icon)} size={12} color={colors.iconDefault} />
+                    <Text style={{ color: colors.onSurfaceVariant, fontSize: 10 }}>{item.category.name}</Text>
                   </View>
                 )}
               </View>
-              <View style={[{ paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 }, statusColors.bg]}>
-                <Text style={[{ fontSize: 9, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 0.5 }, statusColors.text]}>
-                  {expired && item.status === 'active' ? 'EXPIRED' : item.status}
+              <View style={[{ paddingHorizontal: 8, paddingVertical: 2, borderRadius: Radius.sm }, statusColors.bg]}>
+                <Text style={[{ fontSize: 9, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5 }, statusColors.text]}>
+                  {expired && item.status === 'active' ? t('provider.expired').toUpperCase() : item.status}
                 </Text>
               </View>
             </View>
@@ -164,20 +163,20 @@ export default function ProviderDealsScreen() {
             {/* Stats Row */}
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 8, marginTop: 2 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                <MaterialIcons name="people" size={12} color="#85736f" />
-                <Text style={{ fontSize: 10, color: isDark ? '#d8c2bd' : '#564340', fontWeight: '600' }}>
+                <MaterialIcons name="people" size={12} color={colors.iconDefault} />
+                <Text style={{ fontSize: 10, color: colors.onSurfaceVariant, fontWeight: '600' }}>
                   {item.current_redemptions}/{item.max_redemptions}
                 </Text>
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                <MaterialIcons name="calendar-today" size={12} color="#85736f" />
-                <Text style={{ fontSize: 10, color: isDark ? '#d8c2bd' : '#564340', fontWeight: '600' }}>
-                  {expired ? 'Expired' : `Ends ${new Date(item.end_time).toLocaleDateString()}`}
+                <MaterialIcons name="calendar-today" size={12} color={colors.iconDefault} />
+                <Text style={{ fontSize: 10, color: colors.onSurfaceVariant, fontWeight: '600' }}>
+                  {expired ? t('provider.expired') : t('provider.endsOn', { date: new Date(item.end_time).toLocaleDateString() })}
                 </Text>
               </View>
               {!item.image_url && (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                  <Text style={{ color: '#862045', fontFamily: 'Epilogue', fontWeight: 'bold', fontSize: 12 }}>
+                  <Text style={{ color: colors.primary, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 12 }}>
                     {item.type === 'percentage' ? `-${item.discount_value}%` : `$${item.discount_value}`}
                   </Text>
                 </View>
@@ -185,46 +184,46 @@ export default function ProviderDealsScreen() {
             </View>
 
             {/* Quick Action Buttons */}
-            <View style={{ flexDirection: 'row', gap: 6, paddingTop: 8, borderTopColor: isDark ? '#3d3230' : '#f0e0dc', borderTopWidth: 1 }}>
+            <View style={{ flexDirection: 'row', gap: 6, paddingTop: 8, borderTopColor: colors.surfaceContainer, borderTopWidth: 1 }}>
               {item.status === 'active' && (
                 <AnimatedButton
-                  style={{ flex: 1, paddingVertical: 6, borderRadius: 6, backgroundColor: 'rgba(245,158,11,0.1)', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 4 }}
+                  style={{ flex: 1, paddingVertical: 6, borderRadius: Radius.sm, backgroundColor: colors.warningBg, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 4 }}
                   onPress={(e) => {
                     e?.stopPropagation?.();
                     handleStatusChange(item, 'paused');
                   }}
                 >
-                  <MaterialIcons name="pause" size={14} color="#f59e0b" />
-                  <Text style={{ color: '#d97706', fontSize: 10, fontWeight: 'bold' }}>Pause</Text>
+                  <MaterialIcons name="pause" size={14} color={colors.warning} />
+                  <Text style={{ color: colors.warningText, fontSize: 10, fontWeight: '700' }}>{t('provider.pauseDeal')}</Text>
                 </AnimatedButton>
               )}
               {(item.status === 'paused' || item.status === 'draft') && (
                 <AnimatedButton
-                  style={{ flex: 1, paddingVertical: 6, borderRadius: 6, backgroundColor: 'rgba(16,185,129,0.1)', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 4 }}
+                  style={{ flex: 1, paddingVertical: 6, borderRadius: Radius.sm, backgroundColor: colors.successBg, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 4 }}
                   onPress={(e) => {
                     e?.stopPropagation?.();
                     handleStatusChange(item, 'active');
                   }}
                 >
-                  <MaterialIcons name="play-arrow" size={14} color="#10b981" />
-                  <Text style={{ color: '#16a34a', fontSize: 10, fontWeight: 'bold' }}>Activate</Text>
+                  <MaterialIcons name="play-arrow" size={14} color={colors.success} />
+                  <Text style={{ color: colors.successText, fontSize: 10, fontWeight: '700' }}>{t('provider.activateDeal')}</Text>
                 </AnimatedButton>
               )}
               <AnimatedButton
-                style={{ flex: 1, paddingVertical: 6, borderRadius: 6, backgroundColor: 'rgba(123,87,51,0.1)', alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 4 }}
+                style={{ flex: 1, paddingVertical: 6, borderRadius: Radius.sm, backgroundColor: colors.brownBg, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 4 }}
                 onPress={() => router.push(`/(provider)/edit-deal/${item.id}`)}
               >
-                <MaterialIcons name="edit" size={14} color="#7b5733" />
-                <Text style={{ color: '#7b5733', fontSize: 10, fontWeight: 'bold' }}>Edit</Text>
+                <MaterialIcons name="edit" size={14} color={colors.brown} />
+                <Text style={{ color: colors.brown, fontSize: 10, fontWeight: '700' }}>{t('provider.edit')}</Text>
               </AnimatedButton>
               <AnimatedButton
-                style={{ paddingVertical: 6, paddingHorizontal: 10, borderRadius: 6, backgroundColor: 'rgba(239,68,68,0.1)', alignItems: 'center', justifyContent: 'center' }}
+                style={{ paddingVertical: 6, paddingHorizontal: 10, borderRadius: Radius.sm, backgroundColor: 'rgba(239,68,68,0.1)', alignItems: 'center', justifyContent: 'center' }}
                 onPress={(e) => {
                   e?.stopPropagation?.();
                   handleStatusChange(item, 'deleted');
                 }}
               >
-                <MaterialIcons name="delete-outline" size={14} color="#ef4444" />
+                <MaterialIcons name="delete-outline" size={14} color={colors.error} />
               </AnimatedButton>
             </View>
           </View>
@@ -234,14 +233,14 @@ export default function ProviderDealsScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: isDark ? '#1a110f' : '#fff8f6' }}>
+    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
       {/* Header */}
-      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: isDark ? '#1a110f' : '#fff8f6' }}>
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: 'bold', letterSpacing: -0.5, fontSize: 18, color: isDark ? '#f1dfda' : '#231917' }}>
-          My Deals
+      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
+        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>
+          {t('provider.myDeals')}
         </Text>
         <AnimatedButton
-          style={{ width: 32, height: 32, borderRadius: 6, backgroundColor: '#862045', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+          style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', padding: 0 }}
           onPress={() => router.push('/(provider)/create-deal')}
         >
           <MaterialIcons name="add" size={18} color="white" />
@@ -250,19 +249,19 @@ export default function ProviderDealsScreen() {
 
       {/* Filter Tabs */}
       <View style={{ width: '100%', paddingHorizontal: 16, paddingBottom: 8 }}>
-        <View style={{ flexDirection: 'row', gap: 6 }}>
+        <View style={{ flexDirection: 'row', gap: 8 }}>
           {filters.map((f) => (
             <AnimatedButton
               key={f.key}
               style={[
-                { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6 },
+                { paddingHorizontal: 14, paddingVertical: 6, borderRadius: Radius.full },
                 activeFilter === f.key
-                  ? { backgroundColor: '#862045' }
-                  : { backgroundColor: isDark ? '#322825' : '#ffffff', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }
+                  ? { backgroundColor: colors.primary }
+                  : { backgroundColor: colors.surfaceContainerLowest, borderWidth: 1, borderColor: colors.outlineVariant }
               ]}
               onPress={() => setActiveFilter(f.key)}
             >
-              <Text style={[{ fontSize: 12, fontFamily: 'Manrope', fontWeight: 'bold' }, activeFilter === f.key ? { color: 'white' } : { color: isDark ? '#d8c2bd' : '#564340' }]}>
+              <Text style={[{ fontSize: 12, fontFamily: 'Manrope', fontWeight: '700' }, activeFilter === f.key ? { color: 'white' } : { color: colors.onSurfaceVariant }]}>
                 {f.label}
               </Text>
             </AnimatedButton>
@@ -273,7 +272,7 @@ export default function ProviderDealsScreen() {
       {/* Deals List */}
       {loading ? (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <ActivityIndicator size="large" color="#862045" />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : (
         <FlatList
@@ -283,28 +282,17 @@ export default function ProviderDealsScreen() {
           contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 12 }}
           showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#862045" />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
           }
           ListEmptyComponent={
-            <View style={{ alignItems: 'center', paddingVertical: 48 }}>
-              <View style={{ width: 64, height: 64, borderRadius: 6, alignItems: 'center', justifyContent: 'center', marginBottom: 16, backgroundColor: 'rgba(134,32,69,0.1)' }}>
-                <MaterialIcons name="local-offer" size={32} color="#862045" />
-              </View>
-              <Text style={{ fontFamily: 'Epilogue', fontWeight: 'bold', fontSize: 18, color: isDark ? '#f1dfda' : '#231917', textAlign: 'center', marginBottom: 8 }}>
-                No Deals Yet
-              </Text>
-              <Text style={{ fontFamily: 'Manrope', color: isDark ? '#d8c2bd' : '#564340', textAlign: 'center', fontSize: 14, lineHeight: 20, maxWidth: 240, marginBottom: 20 }}>
-                Create your first deal to start attracting customers.
-              </Text>
-              <AnimatedButton
-                variant="gradient"
-                style={{ paddingHorizontal: 24, paddingVertical: 10, borderRadius: 6, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 }}
-                onPress={() => router.push('/(provider)/create-deal')}
-              >
-                <MaterialIcons name="add" size={16} color="white" />
-                <Text style={{ color: 'white', fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 14 }}>Create Deal</Text>
-              </AnimatedButton>
-            </View>
+            <EmptyState
+              icon="local-offer"
+              title={t('provider.noDeals')}
+              message={t('provider.noDealsDesc')}
+              ctaLabel={t('provider.createDeal')}
+              onCtaPress={() => router.push('/(provider)/create-deal')}
+              primaryIcon
+            />
           }
         />
       )}

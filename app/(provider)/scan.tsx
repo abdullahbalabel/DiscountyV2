@@ -2,6 +2,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, Platform, StyleSheet, Text, TextInput, useColorScheme, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { redeemDeal } from '../../lib/api';
@@ -19,6 +20,7 @@ try {
 }
 
 export default function ScanScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -59,7 +61,7 @@ export default function ScanScreen() {
     fontHeadline: { fontFamily: 'Epilogue' },
     fontBody: { fontFamily: 'Manrope' },
     absolute: { position: 'absolute' as const },
-    absoluteInset0: { position: 'absolute' as const, top: 0, right: 0, bottom: 0, left: 0 },
+    absoluteInset0: { position: 'absolute' as const, top: 0, end: 0, bottom: 0, start: 0 },
     relative: { position: 'relative' as const },
     flexRow: { flexDirection: 'row' as const },
     itemsCenter: { alignItems: 'center' as const },
@@ -76,12 +78,13 @@ export default function ScanScreen() {
     rounded2xl: { borderRadius: 16 },
     rounded3xl: { borderRadius: 24 },
     roundedFull: { borderRadius: 9999 },
-    roundedTlXl: { borderTopLeftRadius: 12 },
-    roundedTrXl: { borderTopRightRadius: 12 },
-    roundedBlXl: { borderBottomLeftRadius: 12 },
-    roundedBrXl: { borderBottomRightRadius: 12 },
+    roundedTlXl: { borderTopStartRadius: 12 },
+    roundedTrXl: { borderTopEndRadius: 12 },
+    roundedBlXl: { borderBottomStartRadius: 12 },
+    roundedBrXl: { borderBottomEndRadius: 12 },
     p4: { padding: 16 },
     p6: { padding: 24 },
+    px4: { paddingHorizontal: 16 },
     px6: { paddingHorizontal: 24 },
     px8: { paddingHorizontal: 32 },
     px10: { paddingHorizontal: 40 },
@@ -106,20 +109,20 @@ export default function ScanScreen() {
     textBase: { fontSize: 16 },
     textXl: { fontSize: 20 },
     text2xl: { fontSize: 24 },
-    fontBold: { fontWeight: 'bold' as const },
+    fontBold: { fontWeight: '700' as const },
     textCenter: { textAlign: 'center' as const },
     uppercase: { textTransform: 'uppercase' as const },
     trackingTight: { letterSpacing: -0.2 },
     trackingWider: { letterSpacing: 0.5 },
     leadingRelaxed: { lineHeight: 20 },
     top0: { top: 0 },
-    left0: { left: 0 },
-    right0: { right: 0 },
+    left0: { start: 0 },
+    right0: { end: 0 },
     bottom0: { bottom: 0 },
     borderTop4: { borderTopWidth: 4 },
-    borderRight4: { borderRightWidth: 4 },
+    borderRight4: { borderEndWidth: 4 },
     borderBottom4: { borderBottomWidth: 4 },
-    borderLeft4: { borderLeftWidth: 4 },
+    borderLeft4: { borderStartWidth: 4 },
     borderWhite: { borderColor: 'white' },
     borderOutlineVariant10: { borderColor: borderOutlineVariant10 },
   });
@@ -146,14 +149,14 @@ export default function ScanScreen() {
           },
         });
       } else {
-        Alert.alert('Scan Failed', result.error || 'Could not validate this QR code.', [
-          { text: 'Try Again', onPress: () => { setScanned(false); setScanResult(null); } },
+        Alert.alert(t('provider.scanFailed'), result.error || t('provider.scanFailedAlert'), [
+          { text: t('customer.tryAgain'), onPress: () => { setScanned(false); setScanResult(null); } },
         ]);
       }
     } catch (err: any) {
-      Alert.alert('Error', err.message || 'Something went wrong.', [
-        { text: 'Try Again', onPress: () => { setScanned(false); setScanResult(null); } },
-      ]);
+      Alert.alert(t('auth.error'), err.message || t('auth.somethingWentWrong'), [
+          { text: t('customer.tryAgain'), onPress: () => { setScanned(false); setScanResult(null); } },
+        ]);
     } finally {
       setIsProcessing(false);
     }
@@ -161,7 +164,7 @@ export default function ScanScreen() {
 
   const handleManualSubmit = async () => {
     if (!manualCode.trim()) {
-      Alert.alert('Enter Code', 'Please enter the redemption code.');
+      Alert.alert(t('provider.enterCodeTitle'), t('provider.enterCodeAlert'));
       return;
     }
     await handleBarCodeScanned({ data: manualCode.trim() });
@@ -173,7 +176,7 @@ export default function ScanScreen() {
       <View style={[s.flex1, s.bgSurface]}>
         <View style={[s.wFull, s.px6, s.pt14, s.pb4, s.flexRow, s.justifyBetween, s.itemsCenter, s.bgSurface]}>
           <Text style={[s.fontHeadline, s.fontBold, s.trackingTight, s.textXl, s.textOnSurface]}>
-            Scan QR Code
+            {t('provider.scanQRCode')}
           </Text>
         </View>
 
@@ -184,10 +187,10 @@ export default function ScanScreen() {
                 <MaterialIcons name="qr-code-scanner" size={48} color="#862045" />
               </View>
               <Text style={[s.fontHeadline, s.fontBold, s.text2xl, s.textOnSurface, s.textCenter, s.trackingTight]}>
-                Manual Code Entry
+                {t('provider.manualEntry')}
               </Text>
               <Text style={[s.textOnSurfaceVariant, s.fontBody, s.textSm, s.mt2, s.textCenter]}>
-                Camera is not available. Enter the redemption code manually.
+                {t('provider.cameraNotAvailable')}
               </Text>
             </View>
           </AnimatedEntrance>
@@ -196,7 +199,7 @@ export default function ScanScreen() {
             <View style={[s.wFull, s.maxWsm]}>
               <TextInput
                 style={[s.rounded2xl, s.p4, s.textBase, s.fontBody, s.textCenter, s.bgSurfaceContainerLowest, s.textOnSurface, s.borderOutlineVariant10]}
-                placeholder="Enter redemption code..."
+                placeholder={t('provider.enterCode')}
                 placeholderTextColor="#85736f"
                 value={manualCode}
                 onChangeText={setManualCode}
@@ -212,7 +215,7 @@ export default function ScanScreen() {
                 <View style={[s.flexRow, s.itemsCenter, s.justifyCenter, s.gap2]}>
                   <MaterialIcons name="check-circle" size={20} color="white" />
                   <Text style={[s.textWhite, s.fontHeadline, s.fontBold, s.textBase]}>
-                    {isProcessing ? 'Validating...' : 'Validate Code'}
+                    {isProcessing ? t('provider.validating') : t('provider.validateCode')}
                   </Text>
                 </View>
               </AnimatedButton>
@@ -227,7 +230,7 @@ export default function ScanScreen() {
   if (!permission) {
     return (
       <View style={[s.flex1, s.bgSurface, s.itemsCenter, s.justifyCenter]}>
-        <Text style={[s.textOnSurfaceVariant]}>Loading camera...</Text>
+        <Text style={[s.textOnSurfaceVariant]}>{t('feed.loading')}</Text>
       </View>
     );
   }
@@ -241,23 +244,23 @@ export default function ScanScreen() {
               <MaterialIcons name="camera-alt" size={48} color="#862045" />
             </View>
             <Text style={[s.fontHeadline, s.fontBold, s.text2xl, s.textOnSurface, s.textCenter]}>
-              Camera Access Needed
+              {t('provider.cameraAccess')}
             </Text>
             <Text style={[s.textOnSurfaceVariant, s.fontBody, s.textSm, s.mt3, s.textCenter, s.leadingRelaxed]}>
-              We need camera access to scan customer QR codes for deal redemption.
+              {t('provider.cameraAccessDesc')}
             </Text>
             <AnimatedButton
               variant="gradient"
               style={[s.mt8, s.px10, s.py4, s.rounded2xl]}
               onPress={requestPermission}
             >
-              <Text style={[s.textWhite, s.fontHeadline, s.fontBold, s.textBase]}>Grant Permission</Text>
+              <Text style={[s.textWhite, s.fontHeadline, s.fontBold, s.textBase]}>{t('provider.grantPermission')}</Text>
             </AnimatedButton>
             <AnimatedButton
               style={[s.mt4, s.py3]}
               onPress={() => setShowManualEntry(true)}
             >
-              <Text style={[s.textPrimary, s.fontBody, s.textSm]}>Enter code manually instead</Text>
+              <Text style={[s.textPrimary, s.fontBody, s.textSm]}>{t('provider.enterManually')}</Text>
             </AnimatedButton>
           </View>
         </AnimatedEntrance>
@@ -297,12 +300,12 @@ export default function ScanScreen() {
 
       {/* Top Bar */}
       <View style={[s.absolute, s.top0, s.wFull, s.px6, s.pt14, s.pb4, s.flexRow, s.justifyBetween, s.itemsCenter]}>
-        <Text style={[s.fontHeadline, s.fontBold, s.textWhite, s.textXl, s.trackingTight]}>Scan QR</Text>
+        <Text style={[s.fontHeadline, s.fontBold, s.textWhite, s.textXl, s.trackingTight]}>{t('provider.scanQR')}</Text>
         <AnimatedButton
           style={[s.bgWhite20, s.px4, s.py2, s.roundedFull]}
           onPress={() => setShowManualEntry(true)}
         >
-          <Text style={[s.textWhite, s.textXs, s.fontBold, s.uppercase, s.trackingWider]}>Manual Entry</Text>
+            <Text style={[s.textWhite, s.textXs, s.fontBold, s.uppercase, s.trackingWider]}>{t('provider.manualEntry')}</Text>
         </AnimatedButton>
       </View>
 
@@ -310,7 +313,7 @@ export default function ScanScreen() {
       <View style={[s.absolute, s.bottom0, s.wFull, s.px6, {paddingBottom: 128}, s.itemsCenter]}>
         <View style={[s.bgWhite20, s.rounded2xl, s.px6, s.py4]}>
           <Text style={[s.textWhite, s.fontBody, s.textSm, s.textCenter]}>
-            Point camera at customer's QR code
+            {t('provider.pointCamera')}
           </Text>
         </View>
         {scanned && (
@@ -318,7 +321,7 @@ export default function ScanScreen() {
             style={[s.mt4, s.bgWhite20, s.px6, s.py3, s.roundedFull]}
             onPress={() => { setScanned(false); setScanResult(null); }}
           >
-            <Text style={[s.textWhite, s.fontBold, s.textSm]}>Tap to Scan Again</Text>
+            <Text style={[s.textWhite, s.fontBold, s.textSm]}>{t('provider.tapScanAgain')}</Text>
           </AnimatedButton>
         )}
       </View>
@@ -328,14 +331,14 @@ export default function ScanScreen() {
         <View style={[s.absoluteInset0, s.bgBlack80, s.itemsCenter, s.justifyCenter, s.px8]}>
           <View style={[s.wFull, s.maxWsm, s.rounded3xl, s.p6, s.bgSurfaceContainerLowest]}>
             <Text style={[s.fontHeadline, s.fontBold, s.textXl, s.textOnSurface, s.textCenter, s.mb2]}>
-              Enter Code Manually
+              {t('provider.enterCodeManually')}
             </Text>
             <Text style={[s.textOnSurfaceVariant, s.textSm, s.textCenter, s.mb6, s.fontBody]}>
-              Type the redemption code from the customer
+              {t('provider.typeRedemptionCode')}
             </Text>
             <TextInput
               style={[s.rounded2xl, s.p4, s.textBase, s.fontBody, s.textCenter, s.mb4, s.bgSurfaceContainer, s.textOnSurface, s.borderOutlineVariant10]}
-              placeholder="Redemption code..."
+              placeholder={t('provider.redemptionCodePlaceholder')}
               placeholderTextColor="#85736f"
               value={manualCode}
               onChangeText={setManualCode}
@@ -349,14 +352,14 @@ export default function ScanScreen() {
               disabled={isProcessing}
             >
               <Text style={[s.textWhite, s.fontHeadline, s.fontBold, s.textBase, s.textCenter]}>
-                {isProcessing ? 'Validating...' : 'Validate'}
+                {isProcessing ? t('provider.validating') : t('provider.validate')}
               </Text>
             </AnimatedButton>
             <AnimatedButton
               style={[s.py3, s.itemsCenter]}
               onPress={() => setShowManualEntry(false)}
             >
-              <Text style={[s.textOnSurfaceVariant, s.fontBody, s.textSm]}>Back to Camera</Text>
+              <Text style={[s.textOnSurfaceVariant, s.fontBody, s.textSm]}>{t('provider.backToCamera')}</Text>
             </AnimatedButton>
           </View>
         </View>

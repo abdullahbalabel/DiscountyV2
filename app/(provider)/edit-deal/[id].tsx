@@ -12,6 +12,7 @@ import {
   TextInput, useColorScheme,
   View,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
 import type { DealRedemptionStats } from '../../../lib/api';
@@ -27,6 +28,7 @@ import {
 import type { Category, Discount, DiscountType } from '../../../lib/types';
 
 export default function EditDealScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const colorScheme = useColorScheme();
@@ -65,7 +67,7 @@ export default function EditDealScreen() {
       ]);
 
       if (!dealData) {
-        Alert.alert('Error', 'Deal not found');
+        Alert.alert(t('auth.error'), t('provider.dealNotFound'));
         router.back();
         return;
       }
@@ -85,7 +87,7 @@ export default function EditDealScreen() {
       setImageUrl(dealData.image_url || null);
     } catch (err) {
       console.error('Failed to load deal:', err);
-      Alert.alert('Error', 'Failed to load deal data');
+      Alert.alert(t('auth.error'), t('provider.failedLoadDeal'));
     } finally {
       setLoading(false);
     }
@@ -98,7 +100,7 @@ export default function EditDealScreen() {
   const pickImage = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert('Permission Required', 'Please allow access to your photo library.');
+      Alert.alert(t('provider.permissionRequired'), t('provider.allowPhotoLibrary'));
       return;
     }
 
@@ -119,7 +121,7 @@ export default function EditDealScreen() {
 
   const handleSave = async () => {
     if (!id || !title.trim()) {
-      Alert.alert('Error', 'Deal title is required');
+      Alert.alert(t('auth.error'), t('provider.dealTitleRequired'));
       return;
     }
 
@@ -141,11 +143,11 @@ export default function EditDealScreen() {
         max_redemptions: parseInt(maxRedemptions) || undefined,
       });
 
-      Alert.alert('Saved', 'Deal updated successfully.', [
+      Alert.alert(t('provider.saved'), t('provider.dealUpdatedSuccess'), [
         { text: 'OK', onPress: () => router.back() },
       ]);
     } catch (err: any) {
-      Alert.alert('Error', err.message || 'Failed to update deal');
+      Alert.alert(t('auth.error'), err.message || t('provider.failedUpdateDeal'));
     } finally {
       setSaving(false);
     }
@@ -154,22 +156,21 @@ export default function EditDealScreen() {
   const handleTogglePause = async () => {
     if (!id || !deal) return;
 
-    const action = deal.status === 'active' ? 'pause' : 'activate';
     Alert.alert(
-      `${action === 'pause' ? 'Pause' : 'Activate'} Deal`,
-      `Are you sure you want to ${action} this deal?`,
+      deal.status === 'active' ? t('provider.pauseDeal') : t('provider.activateDeal'),
+      deal.status === 'active' ? t('provider.pauseDealConfirm') : t('provider.activateDealConfirm'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: action === 'pause' ? 'Pause' : 'Activate',
+          text: deal.status === 'active' ? t('provider.pauseDeal') : t('provider.activateDeal'),
           onPress: async () => {
             try {
-              const updated = action === 'pause'
+              const updated = deal.status === 'active'
                 ? await pauseDeal(id)
                 : await activateDeal(id);
               setDeal({ ...deal, status: updated.status });
             } catch (err: any) {
-              Alert.alert('Error', err.message);
+              Alert.alert(t('auth.error'), err.message);
             }
           },
         },
@@ -181,21 +182,21 @@ export default function EditDealScreen() {
     if (!id) return;
 
     Alert.alert(
-      'Delete Deal',
-      'This action cannot be undone. Are you sure?',
+      t('provider.deleteDeal'),
+      t('provider.deleteDealConfirm'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: 'Delete',
+          text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteDeal(id);
-              Alert.alert('Deleted', 'Deal has been removed.', [
+              Alert.alert(t('provider.deleteDeal'), t('provider.dealRemoved'), [
                 { text: 'OK', onPress: () => router.back() },
               ]);
             } catch (err: any) {
-              Alert.alert('Error', err.message);
+              Alert.alert(t('auth.error'), err.message);
             }
           },
         },
@@ -207,7 +208,7 @@ export default function EditDealScreen() {
     return (
       <View style={{ flex: 1, backgroundColor: isDark ? '#1a110f' : '#fff8f6', alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" color="#862045" />
-        <Text style={{ color: isDark ? '#d8c2bd' : '#564340', fontFamily: 'Manrope', marginTop: 16 }}>Loading deal...</Text>
+        <Text style={{ color: isDark ? '#d8c2bd' : '#564340', fontFamily: 'Manrope', marginTop: 16 }}>{t('provider.loadingDeal')}</Text>
       </View>
     );
   }
@@ -226,14 +227,14 @@ export default function EditDealScreen() {
             <MaterialIcons name="arrow-back" size={24} color="#85736f" />
           </AnimatedButton>
           <View>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: 'bold', letterSpacing: -0.02, fontSize: 20, color: isDark ? '#f1dfda' : '#231917' }}>
-              Edit Deal
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.02, fontSize: 20, color: isDark ? '#f1dfda' : '#231917' }}>
+              {t('provider.editDeal')}
             </Text>
             {deal && (
               <View style={{ alignSelf: 'flex-start', paddingHorizontal: 8, paddingTop: 2, paddingBottom: 2, borderRadius: 9999, marginTop: 2, backgroundColor: deal.status === 'active' ? 'rgba(16,185,129,0.1)' :
                   deal.status === 'paused' ? 'rgba(245,158,11,0.1)' : isDark ? '#534340' : '#f5ddd9'
                 }}>
-                <Text style={{ fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 0.05, color: deal.status === 'active' ? '#16a34a' :
+                <Text style={{ fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.05, color: deal.status === 'active' ? '#16a34a' :
                     deal.status === 'paused' ? '#d97706' : isDark ? '#d8c2bd' : '#564340'
                   }}>{deal.status}</Text>
               </View>
@@ -248,9 +249,9 @@ export default function EditDealScreen() {
               }}
             onPress={handleTogglePause}
           >
-            <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', color: deal.status === 'active' ? '#d97706' : '#16a34a'
+            <Text style={{ fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', color: deal.status === 'active' ? '#d97706' : '#16a34a'
               }}>
-              {deal.status === 'active' ? 'Pause' : 'Activate'}
+              {deal.status === 'active' ? t('provider.pauseDeal') : t('provider.activateDeal')}
             </Text>
           </AnimatedButton>
         )}
@@ -267,16 +268,16 @@ export default function EditDealScreen() {
             <AnimatedEntrance index={0}>
               <View style={{ flexDirection: 'row', gap: 12, marginBottom: 24 }}>
                 {[
-                  { label: 'Total', value: redemptionStats.total, color: '#6366f1' },
-                  { label: 'Claimed', value: redemptionStats.claimed, color: '#f59e0b' },
-                  { label: 'Redeemed', value: redemptionStats.redeemed, color: '#10b981' },
+                  { label: t('provider.total'), value: redemptionStats.total, color: '#6366f1' },
+                  { label: t('provider.claimed'), value: redemptionStats.claimed, color: '#f59e0b' },
+                  { label: t('provider.redeemed'), value: redemptionStats.redeemed, color: '#10b981' },
                 ].map((stat) => (
                   <View
                     key={stat.label}
                     style={{ flex: 1, backgroundColor: isDark ? '#322825' : '#ffffff', padding: 16, borderRadius: 16, borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)', alignItems: 'center' }}
                   >
-                    <Text style={{ fontFamily: 'Epilogue', fontWeight: 'bold', fontSize: 20, color: isDark ? '#f1dfda' : '#231917' }}>{stat.value}</Text>
-                    <Text style={{ fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: 0.1, color: isDark ? '#d8c2bd' : '#564340', marginTop: 4 }}>{stat.label}</Text>
+                    <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: isDark ? '#f1dfda' : '#231917' }}>{stat.value}</Text>
+                    <Text style={{ fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.1, color: isDark ? '#d8c2bd' : '#564340', marginTop: 4 }}>{stat.label}</Text>
                   </View>
                 ))}
               </View>
@@ -285,7 +286,7 @@ export default function EditDealScreen() {
 
           {/* Image */}
           <AnimatedEntrance index={1}>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: 'bold', fontSize: 18, color: isDark ? '#f1dfda' : '#231917', marginLeft: 4, marginBottom: 8 }}>Cover Image</Text>
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 18, color: isDark ? '#f1dfda' : '#231917', marginLeft: 4, marginBottom: 8 }}>{t('provider.coverImage')}</Text>
             <AnimatedButton
               style={{ width: '100%', borderWidth: 2, borderStyle: 'dashed', borderColor: isDark ? 'rgba(160,141,136,0.3)' : 'rgba(133,115,111,0.3)', borderRadius: 12, backgroundColor: isDark ? '#271d1b' : '#fff0ed', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginBottom: 24 }}
               onPress={pickImage}
@@ -295,13 +296,13 @@ export default function EditDealScreen() {
                   <Image source={{ uri: displayImageUri }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                   <View style={{ position: 'absolute', bottom: 12, right: 12, backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: 9999, paddingHorizontal: 12, paddingVertical: 4, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                     <MaterialIcons name="edit" size={14} color="white" />
-                    <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}>Change</Text>
+                    <Text style={{ color: 'white', fontSize: 12, fontWeight: '700' }}>{t('provider.change')}</Text>
                   </View>
                 </View>
               ) : (
                 <View style={{ alignItems: 'center', padding: 32, aspectRatio: 16/9, justifyContent: 'center' }}>
                   <MaterialIcons name="cloud-upload" size={40} color="#862045" />
-                  <Text style={{ fontFamily: 'Manrope', fontWeight: '600', color: isDark ? '#f1dfda' : '#231917', marginTop: 8 }}>Tap to upload</Text>
+                  <Text style={{ fontFamily: 'Manrope', fontWeight: '600', color: isDark ? '#f1dfda' : '#231917', marginTop: 8 }}>{t('provider.tapToUpload')}</Text>
                 </View>
               )}
             </AnimatedButton>
@@ -311,7 +312,7 @@ export default function EditDealScreen() {
           <AnimatedEntrance index={2} style={{ gap: 24 }}>
             {/* Title */}
             <View>
-              <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Deal Title</Text>
+              <Text style={{ fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>{t('provider.dealTitle')}</Text>
               <TextInput
                 style={{ width: '100%', paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12, backgroundColor: isDark ? '#322825' : '#ffffff', color: isDark ? '#f1dfda' : '#231917', fontWeight: '500', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }}
                 placeholderTextColor="#85736f"
@@ -322,11 +323,11 @@ export default function EditDealScreen() {
 
             {/* Description */}
             <View>
-              <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Description</Text>
+              <Text style={{ fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>{t('provider.description')}</Text>
               <TextInput
                 style={{ width: '100%', paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12, backgroundColor: isDark ? '#322825' : '#ffffff', color: isDark ? '#f1dfda' : '#231917', fontWeight: '500', height: 96, textAlign: 'left', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }}
                 placeholderTextColor="#85736f"
-                placeholder="Describe your deal..."
+                placeholder={t('provider.describeDealPlaceholder')}
                 multiline
                 textAlignVertical="top"
                 value={description}
@@ -336,7 +337,7 @@ export default function EditDealScreen() {
 
             {/* Category Picker */}
             <View>
-              <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Category</Text>
+              <Text style={{ fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>{t('provider.category')}</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                 {categories.map((cat) => (
                   <AnimatedButton
@@ -370,7 +371,7 @@ export default function EditDealScreen() {
             {/* Discount & Expiry */}
             <View style={{ flexDirection: 'row', gap: 16 }}>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Discount</Text>
+                <Text style={{ fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>{t('provider.discount')}</Text>
                 <View style={{ position: 'relative', flexDirection: 'row', alignItems: 'center' }}>
                   <TextInput
                     style={{ flex: 1, paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12, backgroundColor: isDark ? '#322825' : '#ffffff', color: isDark ? '#f1dfda' : '#231917', fontWeight: '500', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }}
@@ -379,13 +380,13 @@ export default function EditDealScreen() {
                     onChangeText={setDiscountValue}
                     placeholderTextColor="#85736f"
                   />
-                  <Text style={{ position: 'absolute', right: 24, fontWeight: 'bold', color: '#862045' }}>
+                  <Text style={{ position: 'absolute', right: 24, fontWeight: '700', color: '#862045' }}>
                     {discountType === 'percentage' ? '%' : '$'}
                   </Text>
                 </View>
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Expiry Date</Text>
+                <Text style={{ fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>{t('provider.expiryDate')}</Text>
                 <TextInput
                   style={{ width: '100%', paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12, backgroundColor: isDark ? '#322825' : '#ffffff', color: isDark ? '#f1dfda' : '#231917', fontWeight: '500', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }}
                   value={endDate}
@@ -398,7 +399,7 @@ export default function EditDealScreen() {
 
             {/* Max Redemptions */}
             <View>
-              <Text style={{ fontFamily: 'Manrope', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>Max Redemptions</Text>
+              <Text style={{ fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginLeft: 4, marginBottom: 8 }}>{t('provider.maxRedemptions')}</Text>
               <TextInput
                 style={{ width: '100%', paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12, backgroundColor: isDark ? '#322825' : '#ffffff', color: isDark ? '#f1dfda' : '#231917', fontWeight: '500', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }}
                 keyboardType="number-pad"
@@ -423,8 +424,8 @@ export default function EditDealScreen() {
                 ) : (
                   <MaterialIcons name="save" size={20} color="white" />
                 )}
-                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 18 }}>
-                  {saving ? 'Saving...' : 'Save Changes'}
+                <Text style={{ color: 'white', fontWeight: '700', fontSize: 18 }}>
+                  {saving ? t('provider.saving') : t('provider.saveChanges')}
                 </Text>
               </AnimatedButton>
 
@@ -433,7 +434,7 @@ export default function EditDealScreen() {
                 onPress={handleDelete}
               >
                 <MaterialIcons name="delete" size={20} color="#ba1a1a" />
-                <Text style={{ color: '#ba1a1a', fontWeight: 'bold', fontSize: 18 }}>Delete Deal</Text>
+                <Text style={{ color: '#ba1a1a', fontWeight: '700', fontSize: 18 }}>{t('provider.deleteDeal')}</Text>
               </AnimatedButton>
             </View>
           </AnimatedEntrance>

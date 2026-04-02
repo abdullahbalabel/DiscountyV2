@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
+import { Semantic } from '../../constants/theme';
 
 interface CircularProgressProps {
   progress: number; // 0 to 1
@@ -17,7 +18,7 @@ export function CircularProgress({ progress, size, strokeWidth, daysLeft, isDark
   const center = size / 2;
 
   const trackColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
-  const progressColor = progress > 0.5 ? '#15803d' : progress > 0.25 ? '#f59e0b' : '#ef4444';
+  const progressColor = progress > 0.5 ? Semantic.success : progress > 0.25 ? Semantic.warning : Semantic.error;
   const textColor = isDark ? '#f1dfda' : '#231917';
   const subColor = isDark ? '#d8c2bd' : '#564340';
 
@@ -47,7 +48,7 @@ export function CircularProgress({ progress, size, strokeWidth, daysLeft, isDark
           originY={center}
         />
       </Svg>
-      <Text style={{ fontFamily: 'Epilogue', fontWeight: '900', fontSize: size * 0.28, color: textColor }}>
+      <Text style={{ fontFamily: 'Epilogue', fontWeight: '800', fontSize: size * 0.28, color: textColor }}>
         {daysLeft}
       </Text>
       <Text style={{ fontFamily: 'Manrope', fontSize: size * 0.1, color: subColor, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1, marginTop: -2 }}>

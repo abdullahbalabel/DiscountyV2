@@ -1,11 +1,12 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Pressable, PressableProps, StyleSheet, ViewStyle } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
+import { useThemeColors, Radius, Shadows } from '../../hooks/use-theme-colors';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -14,52 +15,50 @@ interface AnimatedButtonProps extends PressableProps {
   variant?: 'solid' | 'gradient' | 'outline' | 'navy';
 }
 
-const variantStyles: Record<string, ViewStyle> = {
-  solid: {
-    backgroundColor: '#862045',
-    borderRadius: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  gradient: {
-    overflow: 'hidden',
-    borderRadius: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#862045',
-    shadowOffset: { width: 0, height: 15 },
-    shadowOpacity: 0.25,
-    shadowRadius: 30,
-    elevation: 8,
-  },
-  navy: {
-    backgroundColor: '#2c1600',
-    borderRadius: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  outline: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#d8c2bd',
-    borderRadius: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-};
-
 export function AnimatedButton({
   children,
   variant = 'solid',
   onPressIn,
   onPressOut,
+  style,
   ...props
 }: AnimatedButtonProps) {
+  const colors = useThemeColors();
   const scale = useSharedValue(1);
+
+  const variantStyles: Record<string, ViewStyle> = useMemo(() => ({
+    solid: {
+      backgroundColor: colors.primary,
+      borderRadius: Radius.lg,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    gradient: {
+      overflow: 'hidden',
+      borderRadius: Radius.lg,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      ...Shadows.glow,
+    },
+    navy: {
+      backgroundColor: colors.isDark ? colors.surfaceContainerHigh : '#2c1600',
+      borderRadius: Radius.lg,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    outline: {
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      borderColor: colors.onSurfaceVariant,
+      borderRadius: Radius.lg,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  }), [colors]);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -81,13 +80,13 @@ export function AnimatedButton({
     <AnimatedPressable
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      style={variantStyles[variant]}
+      style={[variantStyles[variant], style]}
       {...props}
     >
       {variant === 'gradient' ? (
         <>
           <LinearGradient
-            colors={['#862045', '#a01840']}
+            colors={colors.primaryGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={StyleSheet.absoluteFillObject}

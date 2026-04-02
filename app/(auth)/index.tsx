@@ -3,10 +3,12 @@ import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, useColorScheme, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { GlassView } from '../../components/ui/GlassView';
 import { useAuth } from '../../contexts/auth';
+import { setupRtl } from '../../i18n';
+import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
 
 const COUNTRY_CODES = [
   { code: '+966', flag: '🇸🇦', name: 'Saudi Arabia' },
@@ -23,8 +25,8 @@ const COUNTRY_CODES = [
 ];
 
 export default function PhoneEntryScreen() {
-  const { t } = useTranslation();
-  const colorScheme = useColorScheme();
+  const { t, i18n } = useTranslation();
+  const colors = useThemeColors();
   const router = useRouter();
   const { signInWithOtp, signInWithEmail, signUpWithEmail } = useAuth();
 
@@ -39,9 +41,15 @@ export default function PhoneEntryScreen() {
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
 
+  const toggleLanguage = () => {
+    const newLang = i18n.language?.startsWith('ar') ? 'en' : 'ar';
+    i18n.changeLanguage(newLang);
+    setupRtl();
+  };
+
   const handleSendOtp = async () => {
     if (phone.length < 7) {
-      setError('Please enter a valid phone number');
+      setError(t('enterValidPhone'));
       return;
     }
     setError('');
@@ -63,11 +71,11 @@ export default function PhoneEntryScreen() {
 
   const handleEmailAuth = async () => {
     if (!email || !password) {
-      setError('Please enter both email and password');
+      setError(t('enterEmailPassword'));
       return;
     }
     if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError(t('passwordMinLength'));
       return;
     }
     setError('');
@@ -85,26 +93,43 @@ export default function PhoneEntryScreen() {
   };
 
   const inputStyle = {
-    paddingHorizontal: 24, paddingVertical: 16, borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)', color: '#fff',
+    paddingHorizontal: 24, paddingVertical: 16, borderRadius: Radius.xl,
+    backgroundColor: colors.isDark ? 'rgba(255,255,255,0.1)' : colors.surfaceContainerHigh,
+    borderWidth: 1,
+    borderColor: colors.isDark ? 'rgba(255,255,255,0.2)' : colors.outlineVariant,
+    color: colors.isDark ? '#fff' : colors.onSurface,
     fontFamily: 'Manrope', fontSize: 16,
   };
 
   const labelStyle = {
     fontFamily: 'Manrope', fontSize: 12, textTransform: 'uppercase' as const,
-    letterSpacing: 2, color: 'rgba(255,255,255,0.9)', fontWeight: '600' as const,
+    letterSpacing: 2,
+    color: colors.isDark ? 'rgba(255,255,255,0.9)' : colors.onSurfaceVariant,
+    fontWeight: '600' as const,
     paddingHorizontal: 4,
   };
 
+  // Theme-aware glass card colors
+  const textPrimary = colors.isDark ? '#fff' : colors.onSurface;
+  const textSecondary = colors.isDark ? 'rgba(255,255,255,0.8)' : colors.onSurfaceVariant;
+  const textMuted = colors.isDark ? 'rgba(255,255,255,0.6)' : colors.onSurfaceVariant;
+  const textFaint = colors.isDark ? 'rgba(255,255,255,0.5)' : colors.onSurfaceVariant;
+  const glassBorder = colors.isDark ? 'rgba(255,255,255,0.2)' : colors.outlineVariant;
+  const toggleBg = colors.isDark ? 'rgba(255,255,255,0.1)' : colors.surfaceContainer;
+  const toggleActiveBg = colors.isDark ? 'rgba(255,255,255,0.2)' : colors.surfaceContainerHigh;
+  const toggleBorder = colors.isDark ? 'rgba(255,255,255,0.1)' : colors.outlineVariant;
+  const accentColor = colors.isDark ? '#ffb2be' : colors.primary;
+  const iconColor = colors.isDark ? 'white' : colors.onSurfaceVariant;
+  const placeholderColor = colors.isDark ? 'rgba(255,255,255,0.5)' : colors.onSurfaceVariant;
+
   return (
-    <View style={{ flex: 1, backgroundColor: '#fff8f6', position: 'relative' }}>
+    <View style={{ flex: 1, backgroundColor: colors.surfaceBg, position: 'relative' }}>
       <Image
         source={{ uri: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop' }}
-        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}
+        style={{ position: 'absolute', top: 0, start: 0, end: 0, bottom: 0, zIndex: 0 }}
         contentFit="cover"
       />
-      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, backgroundColor: 'rgba(0,0,0,0.6)' }} />
+      <View style={{ position: 'absolute', top: 0, start: 0, end: 0, bottom: 0, zIndex: 0, backgroundColor: 'rgba(0,0,0,0.6)' }} />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -112,33 +137,58 @@ export default function PhoneEntryScreen() {
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
           <GlassView
-            intensity={colorScheme === 'dark' ? 30 : 50}
-            style={{ width: '90%', maxWidth: 520, marginHorizontal: 24, marginVertical: 24, borderRadius: 32, padding: 40, zIndex: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}
+            intensity={colors.isDark ? 30 : 50}
+            style={{ width: '90%', maxWidth: 520, marginHorizontal: 24, marginVertical: 24, borderRadius: Radius.glass, padding: 40, zIndex: 10, borderWidth: 1, borderColor: glassBorder }}
           >
+            {/* Language Switcher */}
+            <View style={{ alignItems: 'flex-end', marginBottom: 16 }}>
+              <Pressable
+                onPress={toggleLanguage}
+                accessibilityRole="button"
+                accessibilityLabel={t('language')}
+                style={{
+                  flexDirection: 'row', alignItems: 'center', gap: 6,
+                  paddingHorizontal: 12, paddingVertical: 6,
+                  borderRadius: Radius.full,
+                  backgroundColor: toggleBg,
+                  borderWidth: 1, borderColor: toggleBorder,
+                }}
+              >
+                <MaterialIcons name="language" size={16} color={iconColor} />
+                <Text style={{ fontFamily: 'Manrope', fontWeight: '600', fontSize: 12, color: textPrimary }}>
+                  {i18n.language?.startsWith('ar') ? t('english') : t('arabic')}
+                </Text>
+              </Pressable>
+            </View>
+
             {/* Branding */}
             <View style={{ marginBottom: 32 }}>
-              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 48, color: '#fff' }}>Discounty</Text>
-              <Text style={{ fontFamily: 'Manrope', color: 'rgba(255,255,255,0.8)', marginTop: 8, fontSize: 18 }}>
-                Your deals, verified & rewarded.
+              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 48, color: textPrimary }}>{t('discounty')}</Text>
+              <Text style={{ fontFamily: 'Manrope', color: textSecondary, marginTop: 8, fontSize: 18 }}>
+                {t('tagline')}
               </Text>
             </View>
 
             {/* Mode Toggle */}
-            <View style={{ flexDirection: 'row', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 16, padding: 4, marginBottom: 32, borderWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
+            <View style={{ flexDirection: 'row', backgroundColor: toggleBg, borderRadius: Radius.xl, padding: 4, marginBottom: 32, borderWidth: 1, borderColor: toggleBorder }}>
               <Pressable
                 onPress={() => { setAuthMode('email'); setError(''); }}
-                style={{ flex: 1, paddingVertical: 12, borderRadius: 12, alignItems: 'center', backgroundColor: authMode === 'email' ? 'rgba(255,255,255,0.2)' : 'transparent' }}
+                style={{ flex: 1, paddingVertical: 12, borderRadius: Radius.lg, alignItems: 'center', backgroundColor: authMode === 'email' ? toggleActiveBg : 'transparent' }}
+                accessibilityRole="tab"
+                accessibilityState={{ selected: authMode === 'email' }}
               >
-                <Text style={{ fontFamily: 'Manrope', fontWeight: '600', fontSize: 14, color: authMode === 'email' ? '#fff' : 'rgba(255,255,255,0.5)' }}>
-                  Email
+                <Text style={{ fontFamily: 'Manrope', fontWeight: '600', fontSize: 14, color: authMode === 'email' ? textPrimary : textMuted }}>
+                  {t('email')}
                 </Text>
               </Pressable>
               <Pressable
                 onPress={() => { setAuthMode('phone'); setError(''); }}
-                style={{ flex: 1, paddingVertical: 12, borderRadius: 12, alignItems: 'center', backgroundColor: authMode === 'phone' ? 'rgba(255,255,255,0.2)' : 'transparent' }}
+                style={{ flex: 1, paddingVertical: 12, borderRadius: Radius.lg, alignItems: 'center', backgroundColor: authMode === 'phone' ? toggleActiveBg : 'transparent' }}
+                accessibilityRole="tab"
+                accessibilityState={{ selected: authMode === 'phone' }}
               >
-                <Text style={{ fontFamily: 'Manrope', fontWeight: '600', fontSize: 14, color: authMode === 'phone' ? '#fff' : 'rgba(255,255,255,0.5)' }}>
-                  Phone
+                <Text style={{ fontFamily: 'Manrope', fontWeight: '600', fontSize: 14, color: authMode === 'phone' ? textPrimary : textMuted }}>
+                  {t('phone')}
                 </Text>
               </Pressable>
             </View>
@@ -147,11 +197,11 @@ export default function PhoneEntryScreen() {
               {authMode === 'email' ? (
                 <>
                   <View style={{ gap: 8 }}>
-                    <Text style={labelStyle}>Email</Text>
+                    <Text style={labelStyle}>{t('email')}</Text>
                     <TextInput
                       style={inputStyle}
-                      placeholder="you@example.com"
-                      placeholderTextColor="rgba(255,255,255,0.5)"
+                      placeholder={t('auth.emailPlaceholder')}
+                      placeholderTextColor={placeholderColor}
                       keyboardType="email-address"
                       autoCapitalize="none"
                       autoComplete="email"
@@ -161,11 +211,11 @@ export default function PhoneEntryScreen() {
                   </View>
 
                   <View style={{ gap: 8 }}>
-                    <Text style={labelStyle}>Password</Text>
+                    <Text style={labelStyle}>{t('password')}</Text>
                     <TextInput
                       style={inputStyle}
                       placeholder="••••••••"
-                      placeholderTextColor="rgba(255,255,255,0.5)"
+                      placeholderTextColor={placeholderColor}
                       secureTextEntry
                       value={password}
                       onChangeText={(v) => { setPassword(v); setError(''); }}
@@ -174,21 +224,21 @@ export default function PhoneEntryScreen() {
                 </>
               ) : (
                 <View style={{ gap: 8 }}>
-                  <Text style={labelStyle}>Phone Number</Text>
+                  <Text style={labelStyle}>{t('phoneNumber')}</Text>
                   <View style={{ flexDirection: 'row', gap: 12 }}>
                     <Pressable
                       onPress={() => setShowCountryPicker(!showCountryPicker)}
-                      style={{ paddingHorizontal: 16, paddingVertical: 16, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                      style={{ paddingHorizontal: 16, paddingVertical: 16, borderRadius: Radius.xl, backgroundColor: colors.isDark ? 'rgba(255,255,255,0.1)' : colors.surfaceContainerHigh, borderWidth: 1, borderColor: glassBorder, flexDirection: 'row', alignItems: 'center', gap: 8 }}
                     >
                       <Text style={{ fontSize: 20 }}>{selectedCountry.flag}</Text>
-                      <Text style={{ color: '#fff', fontFamily: 'Manrope', fontWeight: '600' }}>{selectedCountry.code}</Text>
-                      <MaterialIcons name="arrow-drop-down" size={20} color="white" />
+                      <Text style={{ color: textPrimary, fontFamily: 'Manrope', fontWeight: '600' }}>{selectedCountry.code}</Text>
+                      <MaterialIcons name="arrow-drop-down" size={20} color={iconColor} />
                     </Pressable>
 
                     <TextInput
                       style={{ ...inputStyle, flex: 1 }}
-                      placeholder="5XX XXX XXX"
-                      placeholderTextColor="rgba(255,255,255,0.5)"
+                      placeholder={t('auth.phonePlaceholder')}
+                      placeholderTextColor={placeholderColor}
                       keyboardType="phone-pad"
                       value={phone}
                       onChangeText={setPhone}
@@ -197,7 +247,7 @@ export default function PhoneEntryScreen() {
                   </View>
 
                   {showCountryPicker && (
-                    <View style={{ backgroundColor: 'rgba(0,0,0,0.8)', borderRadius: 16, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', marginTop: 8, maxHeight: 240, overflow: 'hidden' }}>
+                    <View style={{ backgroundColor: colors.isDark ? 'rgba(0,0,0,0.8)' : colors.surfaceContainerLowest, borderRadius: Radius.xl, borderWidth: 1, borderColor: glassBorder, marginTop: 8, maxHeight: 240, overflow: 'hidden' }}>
                       <ScrollView nestedScrollEnabled>
                         {COUNTRY_CODES.map((country) => (
                           <Pressable
@@ -209,13 +259,13 @@ export default function PhoneEntryScreen() {
                             style={{
                               flexDirection: 'row', alignItems: 'center', gap: 12,
                               paddingHorizontal: 16, paddingVertical: 12,
-                              borderBottomWidth: 1, borderColor: 'rgba(255,255,255,0.1)',
-                              backgroundColor: selectedCountry.code === country.code ? 'rgba(255,255,255,0.1)' : 'transparent',
+                              borderBottomWidth: 1, borderColor: colors.isDark ? 'rgba(255,255,255,0.1)' : colors.outlineVariant,
+                              backgroundColor: selectedCountry.code === country.code ? (colors.isDark ? 'rgba(255,255,255,0.1)' : colors.surfaceContainerHigh) : 'transparent',
                             }}
                           >
                             <Text style={{ fontSize: 18 }}>{country.flag}</Text>
-                            <Text style={{ color: '#fff', fontFamily: 'Manrope', flex: 1 }}>{country.name}</Text>
-                            <Text style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Manrope' }}>{country.code}</Text>
+                            <Text style={{ color: textPrimary, fontFamily: 'Manrope', flex: 1 }}>{country.name}</Text>
+                            <Text style={{ color: textMuted, fontFamily: 'Manrope' }}>{country.code}</Text>
                           </Pressable>
                         ))}
                       </ScrollView>
@@ -226,7 +276,7 @@ export default function PhoneEntryScreen() {
 
               {/* Error Message */}
               {error ? (
-                <View style={{ backgroundColor: 'rgba(239,68,68,0.2)', borderWidth: 1, borderColor: 'rgba(248,113,113,0.3)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12 }}>
+                <View style={{ backgroundColor: 'rgba(239,68,68,0.2)', borderWidth: 1, borderColor: 'rgba(248,113,113,0.3)', borderRadius: Radius.lg, paddingHorizontal: 16, paddingVertical: 12 }}>
                   <Text style={{ color: '#ef4444', fontFamily: 'Manrope', fontSize: 14 }}>{error}</Text>
                 </View>
               ) : null}
@@ -235,16 +285,16 @@ export default function PhoneEntryScreen() {
               <View style={{ marginTop: 8, gap: 16 }}>
                 <AnimatedButton
                   variant="gradient"
-                  style={{ paddingVertical: 16, borderRadius: 16, opacity: isLoading ? 0.6 : 1 }}
+                  style={{ paddingVertical: 16, borderRadius: Radius.xl, opacity: isLoading ? 0.6 : 1 }}
                   onPress={authMode === 'email' ? handleEmailAuth : handleSendOtp}
                   disabled={isLoading}
                 >
                   <Text style={{ color: '#fff', fontFamily: 'Manrope', fontWeight: '700', fontSize: 18, textAlign: 'center' }}>
                     {isLoading
-                      ? (authMode === 'email' ? 'Signing in...' : 'Sending...')
+                      ? (authMode === 'email' ? t('signingIn') : t('sending'))
                       : authMode === 'email'
-                        ? (isSignUp ? 'Create Account' : 'Sign In')
-                        : 'Send Verification Code'}
+                        ? (isSignUp ? t('createAccount') : t('signIn'))
+                        : t('sendVerificationCode')}
                   </Text>
                 </AnimatedButton>
               </View>
@@ -252,12 +302,12 @@ export default function PhoneEntryScreen() {
               {/* Toggle sign-in/sign-up for email mode */}
               {authMode === 'email' && (
                 <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
-                  <Text style={{ fontFamily: 'Manrope', color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>
-                    {isSignUp ? 'Already have an account?' : "Don't have an account?"}
+                  <Text style={{ fontFamily: 'Manrope', color: textMuted, fontSize: 14 }}>
+                    {isSignUp ? t('alreadyHaveAccount') : t('dontHaveAccount')}
                   </Text>
                   <Pressable onPress={() => { setIsSignUp(!isSignUp); setError(''); }}>
-                    <Text style={{ fontFamily: 'Manrope', color: '#ffb2be', fontWeight: '700', fontSize: 14 }}>
-                      {isSignUp ? 'Sign In' : 'Sign Up'}
+                    <Text style={{ fontFamily: 'Manrope', color: accentColor, fontWeight: '700', fontSize: 14 }}>
+                      {isSignUp ? t('signIn') : t('signUp')}
                     </Text>
                   </Pressable>
                 </View>
@@ -265,24 +315,22 @@ export default function PhoneEntryScreen() {
 
               {/* Info */}
               <View style={{ marginTop: 8, alignItems: 'center' }}>
-                <Text style={{ fontFamily: 'Manrope', fontSize: 12, color: 'rgba(255,255,255,0.6)', textAlign: 'center', lineHeight: 20 }}>
+                <Text style={{ fontFamily: 'Manrope', fontSize: 12, color: textMuted, textAlign: 'center', lineHeight: 20 }}>
                   {authMode === 'email'
-                    ? 'Sign in with your email and password.'
-                    : "We'll send you a one-time verification code via SMS.\nStandard message rates may apply."}
+                    ? t('signInWithEmail')
+                    : t('sendOtpDesc')}
                 </Text>
               </View>
 
               {/* Footer */}
-              <View style={{ marginTop: 16, paddingTop: 24, borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.2)', flexDirection: 'row', justifyContent: 'center', gap: 24 }}>
-                <Text style={{ fontFamily: 'Manrope', fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>Privacy</Text>
-                <Text style={{ fontFamily: 'Manrope', fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>Terms</Text>
+              <View style={{ marginTop: 16, paddingTop: 24, borderTopWidth: 1, borderColor: glassBorder, flexDirection: 'row', justifyContent: 'center', gap: 24 }}>
+                <Text style={{ fontFamily: 'Manrope', fontSize: 12, color: textFaint }}>{t('privacy')}</Text>
+                <Text style={{ fontFamily: 'Manrope', fontSize: 12, color: textFaint }}>{t('terms')}</Text>
               </View>
             </View>
           </GlassView>
         </ScrollView>
       </KeyboardAvoidingView>
-
-
     </View>
   );
 }

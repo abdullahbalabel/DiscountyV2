@@ -1,16 +1,18 @@
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { useAuth } from '../../contexts/auth';
 import { supabase } from '../../lib/supabase';
+import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
 import type { ProviderProfile } from '../../lib/types';
 
 export default function ProviderProfileScreen() {
+  const { t } = useTranslation();
   const { signOut, session } = useAuth();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const colors = useThemeColors();
   const [profile, setProfile] = useState<ProviderProfile | null>(null);
 
   useEffect(() => {
@@ -22,45 +24,36 @@ export default function ProviderProfileScreen() {
     fetchProfile();
   }, [session]);
 
-  const surfaceBg = isDark ? '#1a110f' : '#fff8f6';
-  const surfaceContainerLowest = isDark ? '#322825' : '#ffffff';
-  const surfaceContainerHigh = isDark ? '#534340' : '#f5ddd9';
-  const surfaceContainer = isDark ? '#3d3230' : '#f0e0dc';
-  const onSurface = isDark ? '#f1dfda' : '#231917';
-  const onSurfaceVariant = isDark ? '#d8c2bd' : '#564340';
-  const borderColor = isDark ? '#3d3230' : '#f0e0dc';
-  const outlineVariant = isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)';
-
   const menuItems = [
-    { id: '1', title: 'Business Information', icon: 'store', color: '#7b5733' },
-    { id: '2', title: 'Business Hours', icon: 'schedule', color: '#10b981' },
-    { id: '3', title: 'Social Media Links', icon: 'share', color: '#8b5cf6' },
-    { id: '4', title: 'Help & Support', icon: 'help-outline', color: '#85736f' },
+    { id: '1', title: t('provider.businessInformation'), icon: 'store', color: colors.brown },
+    { id: '2', title: t('provider.businessHours'), icon: 'schedule', color: colors.success },
+    { id: '3', title: t('provider.socialMediaLinks'), icon: 'share', color: colors.purple },
+    { id: '4', title: t('provider.helpSupport'), icon: 'help-outline', color: colors.iconDefault },
   ];
 
   return (
-    <View style={{ flex: 1, backgroundColor: surfaceBg }}>
-      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: surfaceBg }}>
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: onSurface }}>Profile</Text>
-        <AnimatedButton style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
-          <MaterialIcons name="settings" size={18} color="#85736f" />
+    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
+      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
+        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('provider.profile')}</Text>
+        <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
+          <MaterialIcons name="settings" size={18} color={colors.iconDefault} />
         </AnimatedButton>
       </View>
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 12 }}>
         <View style={{ paddingHorizontal: 16, gap: 16, paddingTop: 8 }}>
           <AnimatedEntrance index={0} delay={100}>
-            <View style={{ backgroundColor: surfaceContainerLowest, padding: 16, borderRadius: 16, borderWidth: 1, borderColor: outlineVariant, marginBottom: 20, flexDirection: 'row', alignItems: 'center' }}>
-              <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: 'rgba(134,32,69,0.1)', alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
-                <MaterialCommunityIcons name="store" size={24} color="#862045" />
+            <View style={{ backgroundColor: colors.surfaceContainerLowest, padding: 16, borderRadius: Radius.xl, borderWidth: 1, borderColor: colors.outlineVariant, marginBottom: 20, flexDirection: 'row', alignItems: 'center' }}>
+              <View style={{ width: 48, height: 48, borderRadius: Radius.full, backgroundColor: 'rgba(134,32,69,0.1)', alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
+                <MaterialCommunityIcons name="store" size={24} color={colors.primary} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface }}>{profile?.business_name || 'Your Business'}</Text>
-                <Text style={{ color: onSurfaceVariant, fontFamily: 'Manrope', fontSize: 12, marginTop: 2 }}>{profile?.category || 'Category'}</Text>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: colors.onSurface }}>{profile?.business_name || t('provider.yourBusiness')}</Text>
+                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Manrope', fontSize: 12, marginTop: 2 }}>{profile?.category || t('provider.category')}</Text>
                 {profile?.average_rating ? (
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 }}>
-                    <MaterialIcons name="star" size={12} color="#f59e0b" />
-                    <Text style={{ color: onSurfaceVariant, fontSize: 12, fontWeight: '600' }}>{profile.average_rating.toFixed(1)} ({profile.total_reviews})</Text>
+                    <MaterialIcons name="star" size={12} color={colors.warning} />
+                    <Text style={{ color: colors.onSurfaceVariant, fontSize: 12, fontWeight: '600' }}>{profile.average_rating.toFixed(1)} ({profile.total_reviews})</Text>
                   </View>
                 ) : null}
               </View>
@@ -68,18 +61,18 @@ export default function ProviderProfileScreen() {
           </AnimatedEntrance>
 
           <AnimatedEntrance index={1} delay={150}>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: onSurface, marginBottom: 8 }}>Settings</Text>
-            <View style={{ backgroundColor: surfaceContainerLowest, borderRadius: 16, overflow: 'hidden', borderWidth: 1, borderColor: outlineVariant, marginBottom: 20 }}>
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: colors.onSurface, marginBottom: 8 }}>{t('provider.settings')}</Text>
+            <View style={{ backgroundColor: colors.surfaceContainerLowest, borderRadius: Radius.xl, overflow: 'hidden', borderWidth: 1, borderColor: colors.outlineVariant, marginBottom: 20 }}>
               {menuItems.map((item, idx) => (
                 <TouchableOpacity
                   key={item.id}
-                  style={{ flexDirection: 'row', alignItems: 'center', padding: 12, borderBottomWidth: idx !== menuItems.length - 1 ? 1 : 0, borderBottomColor: borderColor }}
+                  style={{ flexDirection: 'row', alignItems: 'center', padding: 12, borderBottomWidth: idx !== menuItems.length - 1 ? 1 : 0, borderBottomColor: colors.surfaceContainer }}
                 >
-                  <View style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
+                  <View style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
                     <MaterialIcons name={item.icon as any} size={16} color={item.color} />
                   </View>
-                  <Text style={{ flex: 1, fontFamily: 'Epilogue', fontWeight: '600', fontSize: 14, color: onSurface }}>{item.title}</Text>
-                  <MaterialIcons name="chevron-right" size={20} color="#85736f" />
+                  <Text style={{ flex: 1, fontFamily: 'Epilogue', fontWeight: '600', fontSize: 14, color: colors.onSurface }}>{item.title}</Text>
+                  <MaterialIcons name="chevron-right" size={20} color={colors.iconDefault} />
                 </TouchableOpacity>
               ))}
             </View>
@@ -87,11 +80,11 @@ export default function ProviderProfileScreen() {
 
           <AnimatedEntrance index={2} delay={200}>
             <TouchableOpacity
-              style={{ width: '100%', backgroundColor: isDark ? 'rgba(186,26,26,0.2)' : '#ffdad6', padding: 12, borderRadius: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}
+              style={{ width: '100%', backgroundColor: colors.errorBgDark, padding: 12, borderRadius: Radius.lg, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}
               onPress={() => signOut()}
             >
-              <MaterialIcons name="logout" size={16} color="#ba1a1a" />
-              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: '#ba1a1a', marginLeft: 8 }}>Sign Out</Text>
+              <MaterialIcons name="logout" size={16} color={colors.error} />
+              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: colors.error, marginLeft: 8 }}>{t('provider.signOut')}</Text>
             </TouchableOpacity>
           </AnimatedEntrance>
         </View>

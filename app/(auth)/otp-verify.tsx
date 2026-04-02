@@ -7,11 +7,13 @@ import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, useColorSc
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { GlassView } from '../../components/ui/GlassView';
 import { useAuth } from '../../contexts/auth';
+import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
 
 const OTP_LENGTH = 6;
 
 export default function OtpVerifyScreen() {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const colorScheme = useColorScheme();
   const router = useRouter();
   const { phone } = useLocalSearchParams<{ phone: string }>();
@@ -22,6 +24,18 @@ export default function OtpVerifyScreen() {
   const [error, setError] = useState('');
   const [resendTimer, setResendTimer] = useState(60);
   const inputRefs = useRef<(TextInput | null)[]>([]);
+
+  // Theme-aware glass card colors
+  const isDark = colors.isDark;
+  const textPrimary = isDark ? '#fff' : colors.onSurface;
+  const textSecondary = isDark ? 'rgba(255,255,255,0.7)' : colors.onSurfaceVariant;
+  const textMuted = isDark ? 'rgba(255,255,255,0.6)' : colors.onSurfaceVariant;
+  const textFaint = isDark ? 'rgba(255,255,255,0.4)' : colors.onSurfaceVariant;
+  const glassBorder = isDark ? 'rgba(255,255,255,0.2)' : colors.outlineVariant;
+  const inputBg = isDark ? 'rgba(255,255,255,0.1)' : colors.surfaceContainerHigh;
+  const inputBgFilled = isDark ? 'rgba(255,255,255,0.2)' : colors.surfaceContainer;
+  const accentColor = isDark ? '#ffb2be' : colors.primary;
+  const iconColor = isDark ? 'white' : colors.onSurfaceVariant;
 
   useEffect(() => {
     if (resendTimer <= 0) return;
@@ -57,7 +71,7 @@ export default function OtpVerifyScreen() {
 
   const handleVerify = async (code: string) => {
     if (!phone) {
-      setError('Phone number missing. Please go back.');
+      setError(t('auth.phoneMissing'));
       return;
     }
 
@@ -87,10 +101,10 @@ export default function OtpVerifyScreen() {
     <View style={{ flex: 1, backgroundColor: '#fff8f6', position: 'relative' }}>
       <Image
         source={{ uri: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop' }}
-        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}
+        style={{ position: 'absolute', top: 0, start: 0, end: 0, bottom: 0, zIndex: 0 }}
         contentFit="cover"
       />
-      <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, backgroundColor: 'rgba(0,0,0,0.6)' }} />
+      <View style={{ position: 'absolute', top: 0, start: 0, end: 0, bottom: 0, zIndex: 0, backgroundColor: 'rgba(0,0,0,0.6)' }} />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -99,24 +113,25 @@ export default function OtpVerifyScreen() {
         <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
           <GlassView
             intensity={colorScheme === 'dark' ? 30 : 50}
-            style={{ width: '100%', maxWidth: 512, marginHorizontal: 24, borderRadius: 32, padding: 40, zIndex: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' }}
+            style={{ width: '100%', maxWidth: 512, marginHorizontal: 24, borderRadius: 32, padding: 40, zIndex: 10, borderWidth: 1, borderColor: glassBorder }}
           >
             {/* Back Button */}
             <AnimatedButton
-              style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center', marginBottom: 32 }}
+              style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: inputBg, borderWidth: 1, borderColor: glassBorder, alignItems: 'center', justifyContent: 'center', marginBottom: 32 }}
               onPress={() => router.back()}
+              accessibilityLabel={t('customer.goBack')}
             >
-              <MaterialIcons name="arrow-back" size={20} color="white" />
+              <MaterialIcons name="arrow-back" size={20} color={iconColor} />
             </AnimatedButton>
 
             {/* Header */}
             <View style={{ marginBottom: 32 }}>
-              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 30, color: '#fff', marginBottom: 8 }}>
-                Verification Code
+              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 30, color: textPrimary, marginBottom: 8 }}>
+                {t('auth.verificationCode')}
               </Text>
-              <Text style={{ fontFamily: 'Manrope', color: 'rgba(255,255,255,0.7)', fontSize: 16, lineHeight: 24 }}>
-                We sent a 6-digit code to{'\n'}
-                <Text style={{ color: '#fff', fontWeight: '600' }}>{maskedPhone}</Text>
+              <Text style={{ fontFamily: 'Manrope', color: textSecondary, fontSize: 16, lineHeight: 24 }}>
+                {t('auth.sentCodeTo')}{'\n'}
+                <Text style={{ color: textPrimary, fontWeight: '600' }}>{maskedPhone}</Text>
               </Text>
             </View>
 
@@ -128,10 +143,10 @@ export default function OtpVerifyScreen() {
                   ref={(ref) => { inputRefs.current[index] = ref; }}
                   style={{
                     flex: 1, aspectRatio: 1, borderRadius: 16, textAlign: 'center',
-                    color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 24,
-                    backgroundColor: digit ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)',
+                    color: textPrimary, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 24,
+                    backgroundColor: digit ? inputBgFilled : inputBg,
                     borderWidth: digit ? 2 : 1,
-                    borderColor: digit ? '#ffb2be' : 'rgba(255,255,255,0.2)',
+                    borderColor: digit ? accentColor : glassBorder,
                   }}
                   maxLength={1}
                   keyboardType="number-pad"
@@ -158,20 +173,20 @@ export default function OtpVerifyScreen() {
               disabled={isLoading || otp.some((d) => !d)}
             >
               <Text style={{ color: '#fff', fontFamily: 'Manrope', fontWeight: '700', fontSize: 18, textAlign: 'center' }}>
-                {isLoading ? 'Verifying...' : 'Verify'}
+                {isLoading ? t('auth.verifying') : t('auth.verify')}
               </Text>
             </AnimatedButton>
 
             {/* Resend */}
             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
-              <Text style={{ fontFamily: 'Manrope', color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>Didn't receive the code?</Text>
+              <Text style={{ fontFamily: 'Manrope', color: textMuted, fontSize: 14 }}>{t('auth.didntReceive')}</Text>
               {resendTimer > 0 ? (
-                <Text style={{ fontFamily: 'Manrope', color: 'rgba(255,255,255,0.4)', fontSize: 14 }}>
-                  Resend in {resendTimer}s
+                <Text style={{ fontFamily: 'Manrope', color: textFaint, fontSize: 14 }}>
+                  {t('auth.resendIn')} {resendTimer}s
                 </Text>
               ) : (
                 <AnimatedButton onPress={handleResend}>
-                  <Text style={{ fontFamily: 'Manrope', color: '#ffb2be', fontWeight: '700', fontSize: 14 }}>Resend</Text>
+                  <Text style={{ fontFamily: 'Manrope', color: accentColor, fontWeight: '700', fontSize: 14 }}>{t('auth.resend')}</Text>
                 </AnimatedButton>
               )}
             </View>

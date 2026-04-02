@@ -1,20 +1,23 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { Pressable, View, Text, useColorScheme, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { Pressable, View, Text, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Swipeable } from 'react-native-gesture-handler';
 import { DealCard } from '../../components/ui/DealCard';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { fetchSavedDeals } from '../../lib/api';
 import { useSavedDeals } from '../../contexts/savedDeals';
+import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
 import type { Discount } from '../../lib/types';
 
 export default function SavedScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const colors = useThemeColors();
   const { toggleSave, savedIds } = useSavedDeals();
+  const { t } = useTranslation();
 
   const [allDeals, setAllDeals] = useState<Discount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -51,11 +54,6 @@ export default function SavedScreen() {
     return `-$${deal.discount_value}`;
   };
 
-  const surfaceBg = isDark ? '#1a110f' : '#fff8f6';
-  const surfaceContainerHigh = isDark ? '#534340' : '#f5ddd9';
-  const onSurface = isDark ? '#f1dfda' : '#231917';
-  const onSurfaceVariant = isDark ? '#d8c2bd' : '#564340';
-
   const swipeableRefs = useRef<Map<string, Swipeable>>(new Map());
 
   const renderRightActions = (dealId: string) => (
@@ -68,53 +66,42 @@ export default function SavedScreen() {
         width: 80,
         marginBottom: 12,
         marginLeft: 4,
-        borderRadius: 12,
-        backgroundColor: '#ba1a1a',
+        borderRadius: Radius.lg,
+        backgroundColor: colors.error,
         alignItems: 'center',
         justifyContent: 'center',
         flex: 1,
       }}
     >
       <MaterialIcons name="delete-outline" size={24} color="white" />
-      <Text style={{ color: 'white', fontFamily: 'Manrope', fontSize: 10, fontWeight: '700', marginTop: 4 }}>Remove</Text>
+      <Text style={{ color: 'white', fontFamily: 'Manrope', fontSize: 10, fontWeight: '700', marginTop: 4 }}>{t('customer.remove')}</Text>
     </Pressable>
   );
 
   const renderEmptyState = () => (
-    <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 48, paddingHorizontal: 24 }}>
-      <View style={{ width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', marginBottom: 16, backgroundColor: surfaceContainerHigh }}>
-        <MaterialIcons name="bookmark-border" size={28} color="#85736f" />
-      </View>
-      <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface, textAlign: 'center', marginBottom: 4 }}>
-        No Saved Deals
-      </Text>
-      <Text style={{ fontFamily: 'Manrope', color: onSurfaceVariant, textAlign: 'center', fontSize: 12, lineHeight: 16 }}>
-        Tap the bookmark icon on any deal to save it for later.
-      </Text>
-      <AnimatedButton
-        variant="gradient"
-        style={{ marginTop: 16, paddingHorizontal: 24, paddingVertical: 8, borderRadius: 999 }}
-        onPress={() => router.push('/(customer)/feed')}
-      >
-        <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>Browse Deals</Text>
-      </AnimatedButton>
-    </View>
+    <EmptyState
+      icon="bookmark-border"
+      title={t('customer.noSavedDeals')}
+      message={t('customer.saveBookmarkHint')}
+      ctaLabel={t('customer.browseDeals')}
+      onCtaPress={() => router.push('/(customer)/feed')}
+    />
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: surfaceBg }}>
-      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: surfaceBg }}>
+    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
+      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: onSurface }}>Saved</Text>
+          <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('customer.saved')}</Text>
         </View>
-        <AnimatedButton style={{ width: 32, height: 32, borderRadius: 16, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
-          <MaterialIcons name="search" size={18} color="#85736f" />
+        <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
+          <MaterialIcons name="search" size={18} color={colors.iconDefault} />
         </AnimatedButton>
       </View>
 
       {isLoading ? (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <ActivityIndicator size="large" color="#862045" />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : (
         <FlatList
@@ -134,7 +121,7 @@ export default function SavedScreen() {
                     <DealCard
                       id={item.id}
                       title={item.title}
-                      provider={provider?.business_name || 'Unknown'}
+                      provider={provider?.business_name || t('customer.unknown')}
                       providerLogo={provider?.logo_url}
                       imageUri={item.image_url || 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800'}
                       discountBadge={formatBadge(item)}
@@ -160,7 +147,7 @@ export default function SavedScreen() {
           contentContainerStyle={{ paddingBottom: 12, flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor="#862045" colors={['#862045']} />
+            <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={colors.primary} colors={[colors.primary]} />
           }
         />
       )}

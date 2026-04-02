@@ -2,11 +2,13 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Text, TextInput, useColorScheme, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
 import { fetchRedemptionById, submitReview } from '../../../lib/api';
 
 export default function RateScreen() {
+  const { t } = useTranslation();
   const { redemptionId } = useLocalSearchParams<{ redemptionId: string }>();
   const router = useRouter();
   const colorScheme = useColorScheme();
@@ -36,7 +38,7 @@ export default function RateScreen() {
 
   const handleSubmit = async () => {
     if (rating === 0) {
-      Alert.alert('Rating Required', 'Please select a star rating before submitting.');
+      Alert.alert(t('customer.ratingRequired'), t('customer.selectStarRating'));
       return;
     }
     setIsSubmitting(true);
@@ -45,7 +47,7 @@ export default function RateScreen() {
     if (result.success) {
       setIsSubmitted(true);
     } else {
-      Alert.alert('Error', result.error || 'Could not submit review. Please try again.');
+      Alert.alert(t('auth.error'), result.error || t('customer.couldNotSubmitReview'));
     }
   };
 
@@ -72,9 +74,9 @@ export default function RateScreen() {
             <View style={{ width: 96, height: 96, borderRadius: 48, backgroundColor: isDark ? 'rgba(22,163,74,0.3)' : '#dcfce7', alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
               <MaterialIcons name="check-circle" size={56} color="#16a34a" />
             </View>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '900', fontSize: 30, color: onSurface, textAlign: 'center', letterSpacing: -0.5 }}>Thank You!</Text>
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '800', fontSize: 30, color: onSurface, textAlign: 'center', letterSpacing: -0.5 }}>{t('customer.thankYou')}</Text>
             <Text style={{ color: onSurfaceVariant, fontFamily: 'Manrope', fontSize: 16, marginTop: 12, textAlign: 'center', lineHeight: 24 }}>
-              Your review helps other customers and the business improve. A deal slot has been freed!
+              {t('customer.reviewHelps')}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 24 }}>
               {[1, 2, 3, 4, 5].map(i => (
@@ -86,7 +88,7 @@ export default function RateScreen() {
               style={{ marginTop: 40, paddingHorizontal: 40, paddingVertical: 16, borderRadius: 16 }}
               onPress={() => router.replace('/(customer)/dashboard')}
             >
-              <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16 }}>Back to My Deals</Text>
+              <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16 }}>{t('customer.backToMyDeals')}</Text>
             </AnimatedButton>
           </View>
         </AnimatedEntrance>
@@ -106,7 +108,7 @@ export default function RateScreen() {
         >
           <MaterialIcons name="arrow-back" size={24} color="#85736f" />
         </AnimatedButton>
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 20, color: onSurface }}>Rate Experience</Text>
+        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 20, color: onSurface }}>{t('customer.rateExperience')}</Text>
       </View>
 
       <View style={{ flex: 1, paddingHorizontal: 24 }}>
@@ -116,19 +118,19 @@ export default function RateScreen() {
               <MaterialIcons name="local-offer" size={28} color="#862045" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface }} numberOfLines={1}>{deal?.title || 'Deal'}</Text>
-              <Text style={{ color: onSurfaceVariant, fontSize: 14, marginTop: 4 }}>{provider?.business_name || 'Provider'}</Text>
+              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface }} numberOfLines={1}>{deal?.title || t('customer.deal')}</Text>
+              <Text style={{ color: onSurfaceVariant, fontSize: 14, marginTop: 4 }}>{provider?.business_name || t('customer.provider')}</Text>
             </View>
             <View style={{ backgroundColor: isDark ? 'rgba(22,163,74,0.3)' : '#dcfce7', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 999 }}>
-              <Text style={{ color: isDark ? '#86efac' : '#15803d', fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 }}>Redeemed</Text>
+              <Text style={{ color: isDark ? '#86efac' : '#15803d', fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 }}>{t('customer.redeemed')}</Text>
             </View>
           </View>
         </AnimatedEntrance>
 
         <AnimatedEntrance index={1} delay={200}>
           <View style={{ alignItems: 'center', marginBottom: 32 }}>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginBottom: 8 }}>How was it?</Text>
-            <Text style={{ color: onSurfaceVariant, fontFamily: 'Manrope', fontSize: 14, marginBottom: 24 }}>Tap a star to rate</Text>
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginBottom: 8 }}>{t('customer.howWasIt')}</Text>
+            <Text style={{ color: onSurfaceVariant, fontFamily: 'Manrope', fontSize: 14, marginBottom: 24 }}>{t('customer.tapToRate')}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               {[1, 2, 3, 4, 5].map(i => (
                 <AnimatedButton key={i} style={{ padding: 4 }} onPress={() => setRating(i)}>
@@ -138,7 +140,7 @@ export default function RateScreen() {
             </View>
             {rating > 0 && (
               <Text style={{ color: onSurfaceVariant, fontSize: 14, marginTop: 12, fontFamily: 'Manrope' }}>
-                {rating === 1 ? 'Poor' : rating === 2 ? 'Fair' : rating === 3 ? 'Good' : rating === 4 ? 'Great' : 'Excellent!'}
+                {rating === 1 ? t('customer.ratingPoor') : rating === 2 ? t('customer.ratingFair') : rating === 3 ? t('customer.ratingGood') : rating === 4 ? t('customer.ratingGreat') : t('customer.ratingExcellent')}
               </Text>
             )}
           </View>
@@ -147,7 +149,7 @@ export default function RateScreen() {
         <AnimatedEntrance index={2} delay={300}>
           <View style={{ marginBottom: 32 }}>
             <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface, marginBottom: 12 }}>
-              Add a Comment <Text style={{ color: onSurfaceVariant, fontSize: 12, fontWeight: '400' }}>(optional)</Text>
+              {t('customer.addComment')} <Text style={{ color: onSurfaceVariant, fontSize: 12, fontWeight: '400' }}>({t('customer.optional')})</Text>
             </Text>
             <TextInput
               style={{
@@ -155,7 +157,7 @@ export default function RateScreen() {
                 backgroundColor: surfaceContainerLowest, color: onSurface, borderWidth: 1, borderColor: outlineVariant,
                 textAlignVertical: 'top',
               }}
-              placeholder="Share your experience..."
+              placeholder={t('customer.sharePlaceholder')}
               placeholderTextColor="#85736f"
               multiline
               value={comment}
@@ -174,11 +176,11 @@ export default function RateScreen() {
             disabled={isSubmitting || rating === 0}
           >
             <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 18, textAlign: 'center' }}>
-              {isSubmitting ? 'Submitting...' : 'Submit Review'}
+              {isSubmitting ? t('auth.submitting') : t('customer.submitReview')}
             </Text>
           </AnimatedButton>
           <AnimatedButton style={{ marginTop: 16, paddingVertical: 12, alignItems: 'center' }} onPress={() => router.back()}>
-            <Text style={{ color: onSurfaceVariant, fontFamily: 'Manrope', fontSize: 14 }}>Skip for now</Text>
+            <Text style={{ color: onSurfaceVariant, fontFamily: 'Manrope', fontSize: 14 }}>{t('customer.skipForNow')}</Text>
           </AnimatedButton>
         </AnimatedEntrance>
       </View>

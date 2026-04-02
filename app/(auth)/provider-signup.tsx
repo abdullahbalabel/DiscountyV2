@@ -4,6 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Alert,
   KeyboardAvoidingView, Platform, Pressable,
@@ -18,13 +19,14 @@ import { useAuth } from '../../contexts/auth';
 import { supabase } from '../../lib/supabase';
 import type { Category, SocialLinks } from '../../lib/types';
 
-const STEPS = ['Business Info', 'Contact & Social', 'Review'];
-
 export default function ProviderSignupScreen() {
+  const { t } = useTranslation();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const router = useRouter();
   const { session, setUserRole } = useAuth();
+
+  const STEPS = [t('auth.businessInfo'), t('auth.contactSocial'), t('auth.review')];
 
   const [step, setStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -63,7 +65,7 @@ export default function ProviderSignupScreen() {
   const getCurrentLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission Denied', 'Location permission is needed to set your business location.');
+      Alert.alert(t('auth.permissionDenied'), t('auth.locationPermissionNeeded'));
       return;
     }
     const location = await Location.getCurrentPositionAsync({});
@@ -122,7 +124,7 @@ export default function ProviderSignupScreen() {
       if (profileError) throw new Error(profileError.message);
       router.replace('/(auth)/pending-approval');
     } catch (err: any) {
-      Alert.alert('Error', err.message || 'Something went wrong');
+      Alert.alert(t('auth.error'), err.message || t('auth.somethingWentWrong'));
     } finally {
       setIsLoading(false);
     }
@@ -171,16 +173,16 @@ export default function ProviderSignupScreen() {
               )}
             </View>
           </Pressable>
-          <Text style={{ color: onSurfaceVariant, fontSize: 12, marginTop: 8, fontWeight: '500' }}>Tap to add logo</Text>
+          <Text style={{ color: onSurfaceVariant, fontSize: 12, marginTop: 8, fontWeight: '500' }}>{t('auth.tapToAddLogo')}</Text>
         </View>
 
         {/* Business Name */}
         <View>
-          <Text style={labelStyle}>Business Name *</Text>
+          <Text style={labelStyle}>{t('auth.businessNameRequired')}</Text>
           <TextInput
             style={inputStyle}
             placeholderTextColor="#85736f"
-            placeholder="e.g. Coffee Corner"
+            placeholder={t('auth.businessNamePlaceholder')}
             value={businessName}
             onChangeText={setBusinessName}
           />
@@ -188,7 +190,7 @@ export default function ProviderSignupScreen() {
 
         {/* Category */}
         <View>
-          <Text style={labelStyle}>Category *</Text>
+          <Text style={labelStyle}>{t('auth.categoryRequired')}</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ overflow: 'visible' }}>
             <View style={{ flexDirection: 'row', gap: 8 }}>
               {categories.map((cat) => (
@@ -217,11 +219,11 @@ export default function ProviderSignupScreen() {
 
         {/* Description */}
         <View>
-          <Text style={labelStyle}>Description</Text>
+          <Text style={labelStyle}>{t('provider.description')}</Text>
           <TextInput
             style={[inputStyle, { height: 112 }]}
             placeholderTextColor="#85736f"
-            placeholder="Tell customers about your business..."
+            placeholder={t('auth.describeBusinessPlaceholder')}
             multiline
             textAlignVertical="top"
             value={description}
@@ -231,7 +233,7 @@ export default function ProviderSignupScreen() {
 
         {/* Location */}
         <View>
-          <Text style={labelStyle}>Business Location</Text>
+          <Text style={labelStyle}>{t('auth.businessLocation')}</Text>
           <AnimatedButton
             style={{
               width: '100%', paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12,
@@ -242,7 +244,7 @@ export default function ProviderSignupScreen() {
           >
             <MaterialIcons name="my-location" size={20} color="#862045" />
             <Text style={{ fontFamily: 'Manrope', flex: 1, color: locationName ? onSurface : onSurfaceVariant }}>
-              {locationName || 'Tap to use current location'}
+              {locationName || t('auth.tapCurrentLocation')}
             </Text>
             {latitude && <MaterialIcons name="check-circle" size={20} color="#10b981" />}
           </AnimatedButton>
@@ -255,7 +257,7 @@ export default function ProviderSignupScreen() {
     <AnimatedEntrance index={0}>
       <View style={{ gap: 24 }}>
         <View>
-          <Text style={labelStyle}>Business Phone</Text>
+          <Text style={labelStyle}>{t('auth.businessPhone')}</Text>
           <TextInput
             style={inputStyle}
             placeholderTextColor="#85736f"
@@ -267,7 +269,7 @@ export default function ProviderSignupScreen() {
         </View>
 
         <View>
-          <Text style={labelStyle}>Website</Text>
+          <Text style={labelStyle}>{t('customer.website')}</Text>
           <TextInput
             style={inputStyle}
             placeholderTextColor="#85736f"
@@ -279,14 +281,14 @@ export default function ProviderSignupScreen() {
           />
         </View>
 
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 18, color: onSurface, marginTop: 8 }}>Social Media</Text>
+        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 18, color: onSurface, marginTop: 8 }}>{t('auth.socialMedia')}</Text>
 
         {[
-          { key: 'instagram', label: 'Instagram', icon: 'instagram', placeholder: '@your_handle' },
-          { key: 'facebook', label: 'Facebook', icon: 'facebook', placeholder: 'facebook.com/page' },
-          { key: 'tiktok', label: 'TikTok', icon: 'music-note', placeholder: '@tiktok_handle' },
-          { key: 'x', label: 'X (Twitter)', icon: 'tag', placeholder: '@handle' },
-          { key: 'snapchat', label: 'Snapchat', icon: 'camera', placeholder: '@snapchat_user' },
+          { key: 'instagram', label: t('auth.instagram'), icon: 'instagram', placeholder: '@your_handle' },
+          { key: 'facebook', label: t('auth.facebook'), icon: 'facebook', placeholder: 'facebook.com/page' },
+          { key: 'tiktok', label: t('auth.tikTok'), icon: 'music-note', placeholder: '@tiktok_handle' },
+          { key: 'x', label: t('auth.xTwitter'), icon: 'tag', placeholder: '@handle' },
+          { key: 'snapchat', label: t('auth.snapchat'), icon: 'camera', placeholder: '@snapchat_user' },
         ].map((social) => (
           <View key={social.key} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
             <View style={{ width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center', backgroundColor: surfaceContainerHigh }}>
@@ -309,7 +311,7 @@ export default function ProviderSignupScreen() {
   const renderStep2 = () => (
     <AnimatedEntrance index={0}>
       <View style={{ gap: 16 }}>
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginBottom: 8 }}>Review Your Application</Text>
+        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginBottom: 8 }}>{t('auth.reviewApplication')}</Text>
 
         <View style={{ borderRadius: 24, padding: 24, backgroundColor: surfaceContainerLowest, borderWidth: 1, borderColor: outlineVariant }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 16 }}>
@@ -322,10 +324,10 @@ export default function ProviderSignupScreen() {
             )}
             <View style={{ flex: 1 }}>
               <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface }}>
-                {businessName || 'Business Name'}
+                {businessName || t('auth.businessName')}
               </Text>
               <Text style={{ color: onSurfaceVariant, fontSize: 14, fontWeight: '500', marginTop: 4 }}>
-                {categories.find((c) => c.id === selectedCategory)?.name || 'Category'}
+                {categories.find((c) => c.id === selectedCategory)?.name || t('provider.category')}
               </Text>
             </View>
           </View>
@@ -359,7 +361,7 @@ export default function ProviderSignupScreen() {
         <View style={{ borderRadius: 16, padding: 16, flexDirection: 'row', alignItems: 'flex-start', gap: 12, backgroundColor: surfaceContainer, borderWidth: 1, borderColor: outlineVariant }}>
           <MaterialIcons name="info" size={20} color="#f59e0b" />
           <Text style={{ flex: 1, fontSize: 14, lineHeight: 20, color: onSurfaceVariant }}>
-            Your application will be reviewed by our team. You'll be notified once approved and can start posting deals immediately.
+            {t('auth.applicationReviewed')}
           </Text>
         </View>
       </View>
@@ -378,7 +380,7 @@ export default function ProviderSignupScreen() {
             <MaterialIcons name="arrow-back" size={24} color="#85736f" />
           </AnimatedButton>
           <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 20, color: onSurface }}>
-            Business Registration
+            {t('auth.businessRegistration')}
           </Text>
         </View>
       </View>
@@ -435,7 +437,7 @@ export default function ProviderSignupScreen() {
             style={{ flex: 1, paddingVertical: 16, borderRadius: 999, borderWidth: 2, borderColor: outlineVariant, alignItems: 'center', justifyContent: 'center' }}
             onPress={() => setStep(step - 1)}
           >
-            <Text style={{ fontFamily: 'Manrope', fontWeight: '700', color: onSurface }}>Back</Text>
+            <Text style={{ fontFamily: 'Manrope', fontWeight: '700', color: onSurface }}>{t('auth.back')}</Text>
           </AnimatedButton>
         )}
         <AnimatedButton
@@ -445,7 +447,7 @@ export default function ProviderSignupScreen() {
           disabled={!canAdvance() || isLoading}
         >
           <Text style={{ fontFamily: 'Manrope', fontWeight: '700', color: '#fff', fontSize: 16 }}>
-            {isLoading ? 'Submitting...' : step === STEPS.length - 1 ? 'Submit Application' : 'Continue'}
+            {isLoading ? t('auth.submitting') : step === STEPS.length - 1 ? t('auth.submitApplication') : t('auth.continue')}
           </Text>
         </AnimatedButton>
       </View>

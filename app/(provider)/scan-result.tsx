@@ -2,10 +2,12 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { Text, useColorScheme, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 
 export default function ScanResultScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
@@ -33,11 +35,11 @@ export default function ScanResultScreen() {
           }}>
             <MaterialIcons name={isSuccess ? 'check-circle' : 'cancel'} size={72} color={isSuccess ? '#16a34a' : '#dc2626'} />
           </View>
-          <Text style={{ fontFamily: 'Epilogue', fontWeight: '900', fontSize: 30, color: onSurface, textAlign: 'center', letterSpacing: -0.5, marginBottom: 12 }}>
-            {isSuccess ? 'Deal Redeemed!' : 'Scan Failed'}
+          <Text style={{ fontFamily: 'Epilogue', fontWeight: '800', fontSize: 30, color: onSurface, textAlign: 'center', letterSpacing: -0.5, marginBottom: 12 }}>
+            {isSuccess ? t('provider.dealRedeemed') : t('provider.scanFailed')}
           </Text>
           <Text style={{ color: onSurfaceVariant, fontFamily: 'Manrope', fontSize: 16, textAlign: 'center', lineHeight: 24, maxWidth: 280 }}>
-            {isSuccess ? 'The deal has been successfully redeemed for this customer.' : 'The QR code could not be validated. It may have already been used or expired.'}
+            {isSuccess ? t('provider.dealRedeemedDesc') : t('provider.scanFailedDesc')}
           </Text>
         </View>
       </AnimatedEntrance>
@@ -54,7 +56,7 @@ export default function ScanResultScreen() {
               </View>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 16, borderTopWidth: 1, borderColor: outlineVariant }}>
-              <Text style={{ color: onSurfaceVariant, fontSize: 14 }}>Discount Applied</Text>
+              <Text style={{ color: onSurfaceVariant, fontSize: 14 }}>{t('provider.discountApplied')}</Text>
               <View style={{ backgroundColor: isDark ? 'rgba(22,163,74,0.3)' : '#dcfce7', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 999 }}>
                 <Text style={{ color: isDark ? '#86efac' : '#15803d', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 18 }}>{formattedDiscount}</Text>
               </View>
@@ -68,11 +70,11 @@ export default function ScanResultScreen() {
           <AnimatedButton variant="gradient" style={{ paddingVertical: 16, borderRadius: 16 }} onPress={() => router.replace('/(provider)/scan')}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
               <MaterialIcons name="qr-code-scanner" size={20} color="white" />
-              <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16 }}>Scan Another</Text>
+              <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16 }}>{t('provider.scanAnother')}</Text>
             </View>
           </AnimatedButton>
           <AnimatedButton style={{ paddingVertical: 16, borderRadius: 16, borderWidth: 1, borderColor: outlineVariant }} onPress={() => router.replace('/(provider)/dashboard')}>
-            <Text style={{ color: onSurface, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, textAlign: 'center' }}>Back to Dashboard</Text>
+            <Text style={{ color: onSurface, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, textAlign: 'center' }}>{t('provider.backToDashboard')}</Text>
           </AnimatedButton>
         </View>
       </AnimatedEntrance>

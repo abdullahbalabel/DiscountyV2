@@ -1,25 +1,24 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React from 'react';
+import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useColorScheme } from 'react-native';
+import { useThemeColors, Shadows } from '../../hooks/use-theme-colors';
 
 export default function CustomerLayout() {
-  const colorScheme = useColorScheme();
+  const colors = useThemeColors();
   const { t } = useTranslation();
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#862045', // primary
-        tabBarInactiveTintColor: colorScheme === 'dark' ? '#a08d88' : '#85736f',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.tabBarInactive,
         tabBarStyle: {
-          backgroundColor: colorScheme === 'dark' ? '#271d1b' : '#ffffff',
+          backgroundColor: colors.tabBarBg,
           borderTopWidth: 0,
-          elevation: 10,
-          shadowOpacity: 0.1,
-          shadowRadius: 10,
+          ...Shadows.md,
           height: 67,
           paddingBottom: 6,
           paddingTop: 6,
@@ -34,23 +33,44 @@ export default function CustomerLayout() {
           letterSpacing: 0.3,
           marginTop: 2,
         },
+        tabBarItemStyle: {
+          paddingTop: 4,
+        },
       }}
     >
       <Tabs.Screen
         name="feed"
         options={{
-          title: 'Deals',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="local-offer" size={size} color={color} />
+          title: t('tabs.deals'),
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={{ alignItems: 'center' }}>
+              {focused && (
+                <View style={{
+                  width: 4, height: 4, borderRadius: 2,
+                  backgroundColor: colors.primary,
+                  marginBottom: 2,
+                }} />
+              )}
+              <MaterialIcons name="local-offer" size={size} color={color} />
+            </View>
           ),
         }}
       />
       <Tabs.Screen
         name="dashboard"
         options={{
-          title: 'My Deals',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="confirmation-number" size={size} color={color} />
+          title: t('tabs.myDeals'),
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={{ alignItems: 'center' }}>
+              {focused && (
+                <View style={{
+                  width: 4, height: 4, borderRadius: 2,
+                  backgroundColor: colors.primary,
+                  marginBottom: 2,
+                }} />
+              )}
+              <MaterialIcons name="confirmation-number" size={size} color={color} />
+            </View>
           ),
         }}
       />
@@ -63,25 +83,43 @@ export default function CustomerLayout() {
       <Tabs.Screen
         name="saved"
         options={{
-          title: 'Saved',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="bookmark" size={size} color={color} />
+          title: t('tabs.saved'),
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={{ alignItems: 'center' }}>
+              {focused && (
+                <View style={{
+                  width: 4, height: 4, borderRadius: 2,
+                  backgroundColor: colors.primary,
+                  marginBottom: 2,
+                }} />
+              )}
+              <MaterialIcons name="bookmark" size={size} color={color} />
+            </View>
           ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="person" size={size} color={color} />
+          title: t('tabs.profile'),
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={{ alignItems: 'center' }}>
+              {focused && (
+                <View style={{
+                  width: 4, height: 4, borderRadius: 2,
+                  backgroundColor: colors.primary,
+                  marginBottom: 2,
+                }} />
+              )}
+              <MaterialIcons name="person" size={size} color={color} />
+            </View>
           ),
         }}
       />
       <Tabs.Screen
         name="deals/[id]"
         options={{
-          href: null, // hides this screen from tab bar
+          href: null,
         }}
       />
       <Tabs.Screen

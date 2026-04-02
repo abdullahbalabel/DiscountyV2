@@ -3,20 +3,22 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, Text, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, Alert, I18nManager, ScrollView, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
 import { claimDeal, fetchDealById, getActiveSlotCount, hasClaimedDeal } from '../../../lib/api';
 import { useSavedDeals } from '../../../contexts/savedDeals';
 import { resolveMaterialIcon } from '../../../lib/iconMapping';
+import { useThemeColors, Radius, Shadows } from '../../../hooks/use-theme-colors';
 import type { Discount } from '../../../lib/types';
 
-function useCountdown(endTime: string) {
+function useCountdown(endTime: string, t: (key: string) => string) {
   const [timeLeft, setTimeLeft] = useState('');
   useEffect(() => {
     const update = () => {
       const diff = new Date(endTime).getTime() - Date.now();
-      if (diff <= 0) { setTimeLeft('Expired'); return; }
+      if (diff <= 0) { setTimeLeft(t('deal.expired')); return; }
       const h = Math.floor(diff / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
       const s = Math.floor((diff % 60000) / 1000);
@@ -30,10 +32,10 @@ function useCountdown(endTime: string) {
 }
 
 export default function DealDetails() {
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const colors = useThemeColors();
   const { savedIds, toggleSave } = useSavedDeals();
 
   const [deal, setDeal] = useState<Discount | null>(null);
@@ -44,7 +46,7 @@ export default function DealDetails() {
 
   const isSaved = deal ? savedIds.has(deal.id) : false;
 
-  const timeLeft = useCountdown(deal?.end_time || new Date().toISOString());
+  const timeLeft = useCountdown(deal?.end_time || new Date().toISOString(), t);
 
   useEffect(() => {
     const loadDeal = async () => {
@@ -62,18 +64,18 @@ export default function DealDetails() {
 
   const handleClaim = async () => {
     if (!deal) return;
-    if (slotCount >= 3) { Alert.alert('Deal Slots Full', 'You have 3 active deal slots. Please review a redeemed deal to free a slot.', [{ text: 'OK' }]); return; }
+    if (slotCount >= 3) { Alert.alert(t('customer.dealSlotsFull'), t('customer.dealSlotsFullMsg'), [{ text: 'OK' }]); return; }
     setIsClaiming(true);
     const result = await claimDeal(deal.id);
     setIsClaiming(false);
     if (result.success) {
-      Alert.alert('Deal Claimed!', 'Your QR code is ready. Show it to the provider to redeem your deal.', [
-        { text: 'View My Deals', onPress: () => router.replace('/(customer)/dashboard') },
-        { text: 'Stay Here', style: 'cancel' },
+      Alert.alert(t('customer.dealClaimed'), t('customer.qrCodeReady'), [
+        { text: t('customer.viewMyDeals'), onPress: () => router.replace('/(customer)/dashboard') },
+        { text: t('customer.stayHere'), style: 'cancel' },
       ]);
       setSlotCount((prev) => prev + 1);
     } else {
-      Alert.alert('Could Not Claim', result.error || 'Something went wrong. Please try again.');
+      Alert.alert(t('customer.couldNotClaim'), result.error || t('customer.tryAgain'));
     }
   };
 
@@ -82,27 +84,18 @@ export default function DealDetails() {
     await toggleSave(deal.id);
   };
 
-  const surfaceBg = isDark ? '#1a110f' : '#fff8f6';
-  const surfaceContainerLowest = isDark ? '#322825' : '#ffffff';
-  const surfaceContainerHigh = isDark ? '#534340' : '#f5ddd9';
-  const surfaceContainerLow = isDark ? '#271d1b' : '#fff0ed';
-  const surfaceContainer = isDark ? '#3d3230' : '#f0e0dc';
-  const onSurface = isDark ? '#f1dfda' : '#231917';
-  const onSurfaceVariant = isDark ? '#d8c2bd' : '#564340';
-  const outlineVariant = isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)';
-
   if (isLoading) {
-    return <View style={{ flex: 1, backgroundColor: surfaceBg, alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator size="large" color="#862045" /></View>;
+    return <View style={{ flex: 1, backgroundColor: colors.surfaceBg, alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator size="large" color={colors.primary} /></View>;
   }
 
   if (!deal) {
     return (
-      <View style={{ flex: 1, backgroundColor: surfaceBg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 }}>
-        <MaterialIcons name="error-outline" size={36} color="#85736f" />
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface, marginTop: 12 }}>Deal Not Found</Text>
-        <Text style={{ fontFamily: 'Manrope', color: onSurfaceVariant, textAlign: 'center', fontSize: 14, marginTop: 4 }}>This deal may have been removed or expired.</Text>
-        <AnimatedButton style={{ marginTop: 16, paddingHorizontal: 20, paddingVertical: 8, backgroundColor: '#862045', borderRadius: 8 }} onPress={() => router.back()}>
-          <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>Go Back</Text>
+      <View style={{ flex: 1, backgroundColor: colors.surfaceBg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 }}>
+        <MaterialIcons name="error-outline" size={36} color={colors.iconDefault} />
+        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: colors.onSurface, marginTop: 12 }}>{t('customer.dealNotFound')}</Text>
+        <Text style={{ fontFamily: 'Manrope', color: colors.onSurfaceVariant, textAlign: 'center', fontSize: 14, marginTop: 4 }}>{t('customer.dealRemovedOrExpired')}</Text>
+        <AnimatedButton style={{ marginTop: 16, paddingHorizontal: 20, paddingVertical: 8, backgroundColor: colors.primary, borderRadius: Radius.md }} onPress={() => router.back()}>
+          <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>{t('customer.goBack')}</Text>
         </AnimatedButton>
       </View>
     );
@@ -114,78 +107,78 @@ export default function DealDetails() {
   const spotsLeft = deal.max_redemptions - deal.current_redemptions;
 
   return (
-    <View style={{ flex: 1, backgroundColor: surfaceBg }}>
-      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: surfaceBg }}>
+    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
+      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <AnimatedButton style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center' }} onPress={() => router.back()}>
-            <MaterialIcons name="arrow-back" size={18} color="white" />
+          <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' }} onPress={() => router.back()}>
+            <MaterialIcons name={I18nManager.isRTL ? "arrow-forward" : "arrow-back"} size={18} color="white" />
           </AnimatedButton>
-          <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: onSurface }}>Discounty</Text>
+          <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('discounty')}</Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <AnimatedButton style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center' }}>
+          <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' }}>
             <MaterialIcons name="share" size={16} color="white" />
           </AnimatedButton>
-          <AnimatedButton style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center' }} onPress={handleToggleSave}>
-            <MaterialIcons name={isSaved ? 'bookmark' : 'bookmark-border'} size={16} color={isSaved ? '#f59e0b' : 'white'} />
+          <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' }} onPress={handleToggleSave}>
+            <MaterialIcons name={isSaved ? 'bookmark' : 'bookmark-border'} size={16} color={isSaved ? colors.warning : 'white'} />
           </AnimatedButton>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
-        <View style={{ position: 'relative', width: '100%', aspectRatio: 16/10, backgroundColor: isDark ? '#534340' : '#f5ddd9' }}>
+        <View style={{ position: 'relative', width: '100%', aspectRatio: 16/10, backgroundColor: colors.surfaceContainerHigh }}>
           <Image source={{ uri: deal.image_url || 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800' }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
-          <LinearGradient colors={['transparent', 'rgba(26,17,15,0.9)']} style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '60%' }} />
-          <View style={{ position: 'absolute', top: 64, right: 16, backgroundColor: '#ffd9de', padding: 12, borderRadius: 12, alignItems: 'center' }}>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '900', fontSize: 18, color: '#fff', letterSpacing: -0.5 }}>{formattedDiscount}</Text>
-            <Text style={{ fontFamily: 'Manrope', fontSize: 8, color: '#fff', textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700' }}>Discount</Text>
+          <LinearGradient colors={['transparent', 'rgba(26,17,15,0.9)']} style={{ position: 'absolute', bottom: 0, start: 0, end: 0, height: '60%' }} />
+          <View style={{ position: 'absolute', top: 64, end: 16, backgroundColor: colors.primaryContainer, padding: 12, borderRadius: Radius.lg, alignItems: 'center' }}>
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '800', fontSize: 18, color: '#fff', letterSpacing: -0.5 }}>{formattedDiscount}</Text>
+            <Text style={{ fontFamily: 'Manrope', fontSize: 8, color: '#fff', textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700' }}>{t('customer.discount')}</Text>
           </View>
           <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16 }}>
             {category && (
-              <View style={{ backgroundColor: '#7d5700', alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, marginBottom: 8, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <View style={{ backgroundColor: colors.brown, alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: Radius.sm, marginBottom: 8, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <MaterialIcons name={resolveMaterialIcon(category.icon)} size={10} color="white" />
                 <Text style={{ color: '#fff', fontFamily: 'Manrope', fontSize: 9, textTransform: 'uppercase', letterSpacing: 3 }}>{category.name}</Text>
               </View>
             )}
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '900', color: '#fff', fontSize: 20, letterSpacing: -0.5 }}>{deal.title}</Text>
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '800', color: '#fff', fontSize: 20, letterSpacing: -0.5 }}>{deal.title}</Text>
           </View>
         </View>
 
         <View style={{ paddingHorizontal: 16, marginTop: 16 }}>
           {provider && (
             <AnimatedButton
-              style={{ backgroundColor: surfaceContainerLowest, padding: 12, borderRadius: 12, flexDirection: 'row', alignItems: 'center', marginBottom: 16, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 }}
+              style={{ backgroundColor: colors.surfaceContainerLowest, padding: 12, borderRadius: Radius.lg, flexDirection: 'row', alignItems: 'center', marginBottom: 16, ...Shadows.sm }}
               onPress={() => router.push(`/(customer)/provider/${provider.id}`)}
             >
               {provider.logo_url ? (
-                <Image source={{ uri: provider.logo_url }} style={{ width: 40, height: 40, borderRadius: 8, marginRight: 12 }} contentFit="cover" />
+                <Image source={{ uri: provider.logo_url }} style={{ width: 40, height: 40, borderRadius: Radius.md, marginEnd: 12 }} contentFit="cover" />
               ) : (
-                <View style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: 'rgba(134,32,69,0.1)', alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
-                  <MaterialIcons name="store" size={18} color="#862045" />
+                <View style={{ width: 40, height: 40, borderRadius: Radius.md, backgroundColor: 'rgba(134,32,69,0.1)', alignItems: 'center', justifyContent: 'center', marginEnd: 12 }}>
+                  <MaterialIcons name="store" size={18} color={colors.primary} />
                 </View>
               )}
               <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: onSurface }}>{provider.business_name}</Text>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: colors.onSurface }}>{provider.business_name}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 }}>
-                  <MaterialIcons name="star" size={12} color="#f59e0b" />
-                  <Text style={{ color: onSurfaceVariant, fontSize: 12, fontWeight: '600' }}>
-                    {provider.average_rating?.toFixed(1) || '—'} ({provider.total_reviews || 0} reviews)
+                  <MaterialIcons name="star" size={12} color={colors.warning} />
+                  <Text style={{ color: colors.onSurfaceVariant, fontSize: 12, fontWeight: '600' }}>
+                     {provider.average_rating?.toFixed(1) || '—'} ({provider.total_reviews || 0} {t('customer.reviews')})
                   </Text>
                 </View>
               </View>
-              <MaterialIcons name="chevron-right" size={20} color="#85736f" />
+              <MaterialIcons name="chevron-right" size={20} color={colors.iconDefault} />
             </AnimatedButton>
           )}
 
           <AnimatedEntrance index={0} delay={100}>
-            <View style={{ backgroundColor: surfaceContainerLow, padding: 16, borderRadius: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+            <View style={{ backgroundColor: colors.surfaceContainerLow, padding: 16, borderRadius: Radius.xl, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-                <View style={{ backgroundColor: 'rgba(134,32,69,0.1)', padding: 8, borderRadius: 8 }}>
-                  <MaterialIcons name="timer" size={20} color="#862045" />
+                <View style={{ backgroundColor: 'rgba(134,32,69,0.1)', padding: 8, borderRadius: Radius.md }}>
+                  <MaterialIcons name="timer" size={20} color={colors.primary} />
                 </View>
                 <View>
-                  <Text style={{ fontFamily: 'Manrope', fontSize: 9, textTransform: 'uppercase', letterSpacing: 3, color: onSurfaceVariant, fontWeight: '700' }}>Deal expires in</Text>
-                  <Text style={{ fontFamily: 'Epilogue', fontSize: 14, color: onSurface, fontWeight: '700' }}>{timeLeft}</Text>
+                  <Text style={{ fontFamily: 'Manrope', fontSize: 9, textTransform: 'uppercase', letterSpacing: 3, color: colors.onSurfaceVariant, fontWeight: '700' }}>{t('customer.dealExpiresIn')}</Text>
+                  <Text style={{ fontFamily: 'Epilogue', fontSize: 14, color: colors.onSurface, fontWeight: '700' }}>{timeLeft}</Text>
                 </View>
               </View>
             </View>
@@ -194,68 +187,68 @@ export default function DealDetails() {
           {deal.description && (
             <AnimatedEntrance index={1} delay={150}>
               <View style={{ marginBottom: 20 }}>
-                <Text style={{ fontFamily: 'Epilogue', fontSize: 16, color: onSurface, marginBottom: 8, letterSpacing: -0.5 }}>About This Deal</Text>
-                <Text style={{ color: onSurfaceVariant, lineHeight: 22, fontSize: 14, fontFamily: 'Manrope' }}>{deal.description}</Text>
+                <Text style={{ fontFamily: 'Epilogue', fontSize: 16, color: colors.onSurface, marginBottom: 8, letterSpacing: -0.5 }}>{t('customer.aboutThisDeal')}</Text>
+                <Text style={{ color: colors.onSurfaceVariant, lineHeight: 22, fontSize: 14, fontFamily: 'Manrope' }}>{deal.description}</Text>
               </View>
             </AnimatedEntrance>
           )}
 
           <AnimatedEntrance index={2} delay={200}>
-            <View style={{ backgroundColor: surfaceContainerHigh, padding: 16, borderRadius: 16, overflow: 'hidden', marginBottom: 20 }}>
-              <Text style={{ fontFamily: 'Manrope', fontSize: 9, textTransform: 'uppercase', letterSpacing: 3, color: onSurfaceVariant, marginBottom: 4 }}>Deal Stats</Text>
-              <Text style={{ fontFamily: 'Epilogue', fontSize: 24, color: onSurface, letterSpacing: -0.5, marginBottom: 16 }}>
-                {formattedDiscount} <Text style={{ fontSize: 12, fontWeight: '400', color: onSurfaceVariant }}>off</Text>
+            <View style={{ backgroundColor: colors.surfaceContainerHigh, padding: 16, borderRadius: Radius.xl, overflow: 'hidden', marginBottom: 20 }}>
+              <Text style={{ fontFamily: 'Manrope', fontSize: 9, textTransform: 'uppercase', letterSpacing: 3, color: colors.onSurfaceVariant, marginBottom: 4 }}>{t('customer.dealStats')}</Text>
+              <Text style={{ fontFamily: 'Epilogue', fontSize: 24, color: colors.onSurface, letterSpacing: -0.5, marginBottom: 16 }}>
+                {formattedDiscount} <Text style={{ fontSize: 12, fontWeight: '400', color: colors.onSurfaceVariant }}>{t('customer.off')}</Text>
               </Text>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <Text style={{ fontSize: 10, color: onSurfaceVariant }}>Merchant Rating</Text>
+                <Text style={{ fontSize: 10, color: colors.onSurfaceVariant }}>{t('customer.merchantRating')}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                  <MaterialIcons name="star" size={12} color="#f59e0b" />
-                  <Text style={{ fontWeight: '700', color: onSurface, fontSize: 12 }}>{provider?.average_rating?.toFixed(1) || '—'}</Text>
+                  <MaterialIcons name="star" size={12} color={colors.warning} />
+                  <Text style={{ fontWeight: '700', color: colors.onSurface, fontSize: 12 }}>{provider?.average_rating?.toFixed(1) || '—'}</Text>
                 </View>
               </View>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                <Text style={{ fontSize: 10, color: onSurfaceVariant }}>Total Claims</Text>
-                <Text style={{ fontWeight: '700', color: onSurface, fontSize: 12 }}>{deal.current_redemptions} users</Text>
+                <Text style={{ fontSize: 10, color: colors.onSurfaceVariant }}>{t('customer.totalClaims')}</Text>
+                <Text style={{ fontWeight: '700', color: colors.onSurface, fontSize: 12 }}>{deal.current_redemptions} {t('customer.users')}</Text>
               </View>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={{ fontSize: 10, color: onSurfaceVariant }}>Spots Remaining</Text>
-                <Text style={{ fontWeight: '700', fontSize: 12, color: spotsLeft <= 10 ? '#ba1a1a' : onSurface }}>{spotsLeft > 0 ? `${spotsLeft} left` : 'Sold Out'}</Text>
+                <Text style={{ fontSize: 10, color: colors.onSurfaceVariant }}>{t('customer.spotsRemaining')}</Text>
+                <Text style={{ fontWeight: '700', fontSize: 12, color: spotsLeft <= 10 ? colors.error : colors.onSurface }}>{spotsLeft > 0 ? `${spotsLeft} ${t('customer.left')}` : t('customer.soldOut')}</Text>
               </View>
             </View>
           </AnimatedEntrance>
 
           <AnimatedEntrance index={3} delay={250}>
-            <View style={{ borderRadius: 12, padding: 12, flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginBottom: 20, backgroundColor: surfaceContainer }}>
-              <MaterialIcons name="info" size={16} color="#7b5733" />
-              <Text style={{ flex: 1, fontSize: 12, lineHeight: 16, color: onSurfaceVariant }}>
-                You have <Text style={{ fontWeight: '700', color: onSurface }}>{slotCount}/3</Text> deal slots used.
-                {slotCount >= 3 && ' Review a redeemed deal to free a slot.'}
+            <View style={{ borderRadius: Radius.lg, padding: 12, flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginBottom: 20, backgroundColor: colors.surfaceContainer }}>
+              <MaterialIcons name="info" size={16} color={colors.brown} />
+              <Text style={{ flex: 1, fontSize: 12, lineHeight: 16, color: colors.onSurfaceVariant }}>
+                {t('customer.dealSlotsUsed', { count: slotCount })}
+                {slotCount >= 3 && ` ${t('customer.reviewToFreeSlot')}`}
               </Text>
             </View>
           </AnimatedEntrance>
 
           <AnimatedEntrance index={4} delay={300}>
             {spotsLeft <= 0 ? (
-              <View style={{ paddingVertical: 12, borderRadius: 12, backgroundColor: surfaceContainerHigh, alignItems: 'center', marginBottom: 20 }}>
-                <Text style={{ color: onSurfaceVariant, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14 }}>Sold Out</Text>
-              </View>
-            ) : timeLeft === 'Expired' ? (
-              <View style={{ paddingVertical: 12, borderRadius: 12, backgroundColor: surfaceContainerHigh, alignItems: 'center', marginBottom: 20 }}>
-                <Text style={{ color: onSurfaceVariant, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14 }}>Deal Expired</Text>
-              </View>
-            ) : alreadyClaimed ? (
-              <View style={{ paddingVertical: 12, borderRadius: 12, backgroundColor: surfaceContainerHigh, alignItems: 'center', marginBottom: 20 }}>
-                <Text style={{ color: onSurfaceVariant, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14 }}>Already Claimed</Text>
+              <View style={{ paddingVertical: 12, borderRadius: Radius.lg, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', marginBottom: 20 }}>
+                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14 }}>{t('customer.soldOut')}</Text>
+               </View>
+             ) : timeLeft === t('deal.expired') ? (
+               <View style={{ paddingVertical: 12, borderRadius: Radius.lg, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', marginBottom: 20 }}>
+                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14 }}>{t('customer.dealExpired')}</Text>
+               </View>
+             ) : alreadyClaimed ? (
+               <View style={{ paddingVertical: 12, borderRadius: Radius.lg, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', marginBottom: 20 }}>
+                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14 }}>{t('customer.alreadyClaimed')}</Text>
               </View>
             ) : (
               <AnimatedButton
                 variant="gradient"
-                style={{ paddingVertical: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.15, shadowRadius: 16, elevation: 4, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginBottom: 20, opacity: (isClaiming || slotCount >= 3) ? 0.6 : 1 }}
+                style={{ paddingVertical: 12, ...Shadows.md, borderRadius: Radius.lg, alignItems: 'center', justifyContent: 'center', marginBottom: 20, opacity: (isClaiming || slotCount >= 3) ? 0.6 : 1 }}
                 onPress={handleClaim}
                 disabled={isClaiming || slotCount >= 3}
               >
                 <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, textAlign: 'center' }}>
-                  {isClaiming ? 'Claiming...' : slotCount >= 3 ? 'Slots Full — Review a Deal' : 'Claim Deal Now'}
+                  {isClaiming ? t('customer.claiming') : slotCount >= 3 ? t('customer.slotsFullReview') : t('customer.claimDealNow')}
                 </Text>
               </AnimatedButton>
             )}

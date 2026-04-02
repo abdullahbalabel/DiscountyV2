@@ -2,29 +2,32 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, RefreshControl, ScrollView, Text, useColorScheme, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { CircularProgress } from '../../components/ui/CircularProgress';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { useAuth } from '../../contexts/auth';
 import { fetchCustomerStats, fetchMyRedemptions, getActiveSlotCount } from '../../lib/api';
+import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
 import type { Redemption } from '../../lib/types';
 
-function timeAgo(date: string): string {
-  const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
-  if (seconds < 60) return 'Just now';
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  return `${days}d ago`;
-}
-
 export default function DashboardScreen() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const colors = useThemeColors();
   const router = useRouter();
+  const { t } = useTranslation();
+
+  const timeAgo = useCallback((date: string): string => {
+    const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
+    if (seconds < 60) return t('customer.justNow');
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ${t('customer.ago')}`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ${t('customer.ago')}`;
+    const days = Math.floor(hours / 24);
+    return `${days}d ${t('customer.ago')}`;
+  }, [t]);
 
   const [redemptions, setRedemptions] = useState<Redemption[]>([]);
   const [stats, setStats] = useState({ totalClaimed: 0, totalRedeemed: 0, totalSaved: 0 });
@@ -58,93 +61,85 @@ export default function DashboardScreen() {
     return false;
   });
 
-  const surfaceBg = isDark ? '#1a110f' : '#fff8f6';
-  const surfaceContainerLowest = isDark ? '#322825' : '#ffffff';
-  const surfaceContainerHigh = isDark ? '#534340' : '#f5ddd9';
-  const surfaceContainer = isDark ? '#3d3230' : '#f0e0dc';
-  const onSurface = isDark ? '#f1dfda' : '#231917';
-  const onSurfaceVariant = isDark ? '#d8c2bd' : '#564340';
-
   return (
-    <View style={{ flex: 1, backgroundColor: surfaceBg }}>
-      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: surfaceBg }}>
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: onSurface }}>My Deals</Text>
+    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
+      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
+        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('customer.myDeals')}</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <AnimatedButton style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }} onPress={() => router.push('/(customer)/history')}>
-            <MaterialIcons name="history" size={18} color="#85736f" />
+          <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }} onPress={() => router.push('/(customer)/history')}>
+            <MaterialIcons name="history" size={18} color={colors.iconDefault} />
           </AnimatedButton>
-          <AnimatedButton style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
-            <MaterialIcons name="notifications" size={18} color="#85736f" />
+          <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
+            <MaterialIcons name="notifications" size={18} color={colors.iconDefault} />
           </AnimatedButton>
         </View>
       </View>
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 12 }}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor="#862045" colors={['#862045']} />}
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={colors.primary} colors={[colors.primary]} />}
       >
         <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
           <AnimatedEntrance index={0} delay={100}>
-            <View style={{ backgroundColor: '#862045', padding: 16, borderRadius: 8, marginBottom: 16, marginTop: 8 }}>
+            <View style={{ backgroundColor: colors.primary, padding: 16, borderRadius: Radius.md, marginBottom: 16, marginTop: 8 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontSize: 14, fontWeight: '700' }}>Deal Slots</Text>
+                <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontSize: 14, fontWeight: '700' }}>{t('customer.dealSlots')}</Text>
                 <MaterialIcons name="confirmation-number" size={18} color="#FFD700" />
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 }}>
                 {[0, 1, 2].map(i => (
                   <View key={i} style={{ flex: 1, alignItems: 'center' }}>
                     <View style={{
-                      width: 40, height: 40, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginBottom: 4,
+                      width: 40, height: 40, borderRadius: Radius.md, alignItems: 'center', justifyContent: 'center', marginBottom: 4,
                       backgroundColor: i < slotCount ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.1)',
                       borderWidth: i < slotCount ? 2 : 1, borderColor: i < slotCount ? '#fff' : 'rgba(255,255,255,0.2)',
                     }}>
                       <MaterialIcons name={i < slotCount ? 'confirmation-number' : 'add'} size={16} color={i < slotCount ? 'white' : 'rgba(255,255,255,0.4)'} />
                     </View>
                     <Text style={{ fontSize: 9, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, color: i < slotCount ? '#fff' : 'rgba(255,255,255,0.4)' }}>
-                      Slot {i + 1}
+                      {t('customer.slot')} {i + 1}
                     </Text>
                   </View>
                 ))}
               </View>
               <Text style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Manrope', fontSize: 12, textAlign: 'center' }}>
-                {slotCount === 0 ? 'All slots free! Claim a deal from the Feed.' : slotCount >= 3 ? 'All slots used. Rate a deal to free a slot.' : `${3 - slotCount} slot${3 - slotCount > 1 ? 's' : ''} available.`}
+                {slotCount === 0 ? t('customer.allSlotsFree') : slotCount >= 3 ? t('customer.allSlotsUsed') : t('customer.slotsAvailable', { count: 3 - slotCount })}
               </Text>
             </View>
           </AnimatedEntrance>
 
           <View style={{ flexDirection: 'row', gap: 12, marginBottom: 20 }}>
             <AnimatedEntrance index={1} delay={150} style={{ flex: 1 }}>
-              <View style={{ backgroundColor: surfaceContainerLowest, padding: 12, borderRadius: 8 }}>
-                <MaterialIcons name="local-offer" size={18} color="#862045" style={{ marginBottom: 6 }} />
-                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginBottom: 2 }}>{stats.totalClaimed}</Text>
-                <Text style={{ color: onSurfaceVariant, fontSize: 10, textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700' }}>Claimed</Text>
+              <View style={{ backgroundColor: colors.surfaceContainerLowest, padding: 12, borderRadius: Radius.md, borderWidth: 1, borderColor: colors.outlineVariant }}>
+                <MaterialIcons name="local-offer" size={18} color={colors.primary} style={{ marginBottom: 6 }} />
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: colors.onSurface, marginBottom: 2 }}>{stats.totalClaimed}</Text>
+                <Text style={{ color: colors.onSurfaceVariant, fontSize: 10, textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700' }}>{t('customer.claimed')}</Text>
               </View>
             </AnimatedEntrance>
             <AnimatedEntrance index={2} delay={200} style={{ flex: 1 }}>
-              <View style={{ backgroundColor: surfaceContainerLowest, padding: 12, borderRadius: 8 }}>
-                <MaterialIcons name="qr-code-scanner" size={18} color="#00694d" style={{ marginBottom: 6 }} />
-                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginBottom: 2 }}>{stats.totalRedeemed}</Text>
-                <Text style={{ color: onSurfaceVariant, fontSize: 10, textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700' }}>Redeemed</Text>
+              <View style={{ backgroundColor: colors.surfaceContainerLowest, padding: 12, borderRadius: Radius.md, borderWidth: 1, borderColor: colors.outlineVariant }}>
+                <MaterialIcons name="qr-code-scanner" size={18} color={colors.success} style={{ marginBottom: 6 }} />
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: colors.onSurface, marginBottom: 2 }}>{stats.totalRedeemed}</Text>
+                <Text style={{ color: colors.onSurfaceVariant, fontSize: 10, textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700' }}>{t('customer.redeemed')}</Text>
               </View>
             </AnimatedEntrance>
           </View>
 
           <AnimatedEntrance index={3} delay={250}>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface, marginBottom: 12 }}>Active Deals</Text>
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: colors.onSurface, marginBottom: 12 }}>{t('customer.activeDeals')}</Text>
             {isLoading ? (
               <View style={{ paddingVertical: 24, alignItems: 'center' }}>
-                <ActivityIndicator size="large" color="#862045" />
+                <ActivityIndicator size="large" color={colors.primary} />
               </View>
             ) : activeRedemptions.length === 0 ? (
-              <View style={{ borderRadius: 8, padding: 20, alignItems: 'center', backgroundColor: surfaceContainerLowest }}>
-                <MaterialIcons name="local-mall" size={32} color="#85736f" />
-                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: onSurface, marginTop: 12 }}>No Active Deals</Text>
-                <Text style={{ color: onSurfaceVariant, fontSize: 12, marginTop: 4, textAlign: 'center' }}>Head to the Feed to discover amazing deals!</Text>
-                <AnimatedButton variant="gradient" style={{ marginTop: 16, paddingHorizontal: 24, paddingVertical: 8, borderRadius: 8 }} onPress={() => router.push('/(customer)/feed')}>
-                  <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>Browse Deals</Text>
-                </AnimatedButton>
-              </View>
+              <EmptyState
+                icon="local-mall"
+                title={t('customer.noActiveDeals')}
+                message={t('customer.noActiveDealsDesc')}
+                ctaLabel={t('customer.browseDeals')}
+                onCtaPress={() => router.push('/(customer)/feed')}
+              />
             ) : (
-              <View style={{ backgroundColor: surfaceContainerLowest, borderRadius: 8, padding: 6 }}>
+              <View style={{ backgroundColor: colors.surfaceContainerLowest, borderRadius: Radius.md, padding: 6 }}>
                 {activeRedemptions.map((redemption, idx) => {
                   const discount = (redemption as any).discount;
                   const provider = discount?.provider;
@@ -166,7 +161,7 @@ export default function DashboardScreen() {
                   return (
                     <AnimatedButton
                       key={redemption.id}
-                      style={{ flexDirection: 'row', alignItems: 'center', padding: 12, backgroundColor: 'transparent', borderBottomWidth: idx !== activeRedemptions.length - 1 ? 1 : 0, borderBottomColor: surfaceContainer }}
+                      style={{ flexDirection: 'row', alignItems: 'center', padding: 12, backgroundColor: 'transparent', borderBottomWidth: idx !== activeRedemptions.length - 1 ? 1 : 0, borderBottomColor: colors.surfaceContainer }}
                       onPress={() => {
                         if (needsReview) {
                           router.push({ pathname: '/(customer)/rate/[redemptionId]', params: { redemptionId: redemption.id } } as any);
@@ -175,26 +170,26 @@ export default function DashboardScreen() {
                         }
                       }}
                     >
-                      <View style={{ width: 40, height: 40, borderRadius: 8, overflow: 'hidden', marginRight: 12, backgroundColor: surfaceContainerHigh }}>
+                      <View style={{ width: 40, height: 40, borderRadius: Radius.md, overflow: 'hidden', marginRight: 12, backgroundColor: colors.surfaceContainerHigh }}>
                         {discount?.image_url ? (
                           <Image source={{ uri: discount.image_url }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                         ) : (
                           <View style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(134,32,69,0.1)' }}>
-                            <MaterialIcons name="local-offer" size={18} color="#862045" />
+                            <MaterialIcons name="local-offer" size={18} color={colors.primary} />
                           </View>
                         )}
                       </View>
                       <View style={{ flex: 1 }}>
-                        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: onSurface }} numberOfLines={1}>{discount?.title || 'Deal'}</Text>
-                        <Text style={{ color: onSurfaceVariant, fontSize: 10, fontWeight: '500', marginTop: 2 }}>{provider?.business_name || 'Provider'} • {timeAgo(redemption.claimed_at)}</Text>
+                        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: colors.onSurface }} numberOfLines={1}>{discount?.title || t('customer.deal')}</Text>
+                        <Text style={{ color: colors.onSurfaceVariant, fontSize: 10, fontWeight: '500', marginTop: 2 }}>{provider?.business_name || t('customer.provider')} • {timeAgo(redemption.claimed_at)}</Text>
                       </View>
                       {isActive ? (
-                        <CircularProgress size={44} strokeWidth={3} progress={progress} daysLeft={daysLeft} isDark={isDark} />
+                        <CircularProgress size={44} strokeWidth={3} progress={progress} daysLeft={daysLeft} isDark={colors.isDark} />
                       ) : (
-                        <View style={{ paddingHorizontal: 10, paddingVertical: 6, borderRadius: 6, backgroundColor: isDark ? 'rgba(251,191,36,0.3)' : '#fef3c7', flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                          <MaterialIcons name="star" size={12} color={isDark ? '#fcd34d' : '#b45309'} />
-                          <Text style={{ fontSize: 9, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, color: isDark ? '#fcd34d' : '#b45309' }}>
-                            Review
+                        <View style={{ paddingHorizontal: 10, paddingVertical: 6, borderRadius: Radius.sm, backgroundColor: colors.warningBg, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                          <MaterialIcons name="star" size={12} color={colors.warning} />
+                          <Text style={{ fontSize: 9, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, color: colors.warningText }}>
+                            {t('customer.review')}
                           </Text>
                         </View>
                       )}

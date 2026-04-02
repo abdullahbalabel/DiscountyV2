@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, useColorScheme, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
 import { DealCard } from '../../../components/ui/DealCard';
@@ -11,20 +12,21 @@ import { fetchProviderById, fetchProviderDeals, fetchProviderReviews } from '../
 import { useSavedDeals } from '../../../contexts/savedDeals';
 import type { Discount, ProviderProfile as ProviderProfileType, Review } from '../../../lib/types';
 
-function timeAgo(date: string): string {
+function timeAgo(date: string, t: (key: string) => string): string {
   const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
-  if (seconds < 60) return 'Just now';
+  if (seconds < 60) return t('customer.justNow');
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
+  if (minutes < 60) return `${minutes}m ${t('customer.ago')}`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
+  if (hours < 24) return `${hours}h ${t('customer.ago')}`;
   const days = Math.floor(hours / 24);
-  if (days < 30) return `${days}d ago`;
+  if (days < 30) return `${days}d ${t('customer.ago')}`;
   const months = Math.floor(days / 30);
-  return `${months}mo ago`;
+  return `${months}mo ${t('customer.ago')}`;
 }
 
 export default function ProviderProfile() {
+  const { t } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const colorScheme = useColorScheme();
   const router = useRouter();
@@ -68,9 +70,9 @@ export default function ProviderProfile() {
     return (
       <View style={{ flex: 1, backgroundColor: surfaceBg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
         <MaterialIcons name="store" size={48} color="#85736f" />
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginTop: 16 }}>Provider Not Found</Text>
+        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginTop: 16 }}>{t('customer.providerNotFound')}</Text>
         <AnimatedButton style={{ marginTop: 24, paddingHorizontal: 24, paddingVertical: 12, backgroundColor: '#862045', borderRadius: 8 }} onPress={() => router.back()}>
-          <Text style={{ color: '#fff', fontWeight: '700' }}>Go Back</Text>
+          <Text style={{ color: '#fff', fontWeight: '700' }}>{t('customer.goBack')}</Text>
         </AnimatedButton>
       </View>
     );
@@ -85,7 +87,7 @@ export default function ProviderProfile() {
           <AnimatedButton style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }} onPress={() => router.back()}>
             <MaterialIcons name="arrow-back" size={24} color="#85736f" />
           </AnimatedButton>
-          <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 20, color: onSurface }}>Discounty</Text>
+          <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 20, color: onSurface }}>{t('discounty')}</Text>
         </View>
         <AnimatedButton style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
           <MaterialIcons name="share" size={24} color="#85736f" />
@@ -95,7 +97,7 @@ export default function ProviderProfile() {
       <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
         <View style={{ position: 'relative', height: 192, width: '100%' }}>
           <Image source={{ uri: provider.logo_url || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800' }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
-          <LinearGradient colors={['transparent', 'rgba(26,17,15,0.8)']} style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '60%' }} />
+          <LinearGradient colors={['transparent', 'rgba(26,17,15,0.8)']} style={{ position: 'absolute', bottom: 0, start: 0, end: 0, height: '60%' }} />
         </View>
 
         <AnimatedEntrance index={0} delay={100}>
@@ -114,7 +116,7 @@ export default function ProviderProfile() {
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <MaterialIcons name="star" size={16} color="#862045" />
                 <Text style={{ fontSize: 14, fontWeight: '700', color: '#862045' }}>{provider.average_rating?.toFixed(1) || '—'}</Text>
-                <Text style={{ color: onSurfaceVariant, fontSize: 12, fontWeight: '500' }}>({provider.total_reviews || 0} reviews)</Text>
+                <Text style={{ color: onSurfaceVariant, fontSize: 12, fontWeight: '500' }}>({provider.total_reviews || 0} {t('customer.reviews')})</Text>
               </View>
               {provider.category && (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
@@ -136,7 +138,7 @@ export default function ProviderProfile() {
               {provider.website && (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: surfaceContainer, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6 }}>
                   <MaterialIcons name="language" size={14} color="#85736f" />
-                  <Text style={{ fontSize: 12, fontWeight: '500', color: onSurfaceVariant }}>Website</Text>
+                  <Text style={{ fontSize: 12, fontWeight: '500', color: onSurfaceVariant }}>{t('customer.website')}</Text>
                 </View>
               )}
             </View>
@@ -154,14 +156,14 @@ export default function ProviderProfile() {
         <View style={{ paddingHorizontal: 24 }}>
           <View style={{ marginBottom: 40 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
-              <Text style={{ fontFamily: 'Epilogue', fontSize: 24, fontWeight: '700', letterSpacing: -0.5, color: onSurface }}>Active Deals</Text>
-              <Text style={{ color: '#862045', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 3 }}>{deals.length} deals</Text>
+              <Text style={{ fontFamily: 'Epilogue', fontSize: 24, fontWeight: '700', letterSpacing: -0.5, color: onSurface }}>{t('customer.activeDealsCount')}</Text>
+               <Text style={{ color: '#862045', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 3 }}>{deals.length} {t('customer.dealsCount')}</Text>
             </View>
             {deals.length === 0 ? (
               <View style={{ backgroundColor: surfaceContainerLowest, padding: 32, borderRadius: 16, borderWidth: 1, borderColor: outlineVariant, alignItems: 'center' }}>
                 <MaterialIcons name="local-offer" size={40} color="#85736f" />
-                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface, marginTop: 12 }}>No Active Deals</Text>
-                <Text style={{ color: onSurfaceVariant, fontSize: 14, marginTop: 4, textAlign: 'center' }}>This provider doesn't have any active deals right now.</Text>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface, marginTop: 12 }}>{t('customer.noActiveDeals')}</Text>
+                <Text style={{ color: onSurfaceVariant, fontSize: 14, marginTop: 4, textAlign: 'center' }}>{t('customer.noActiveDealsProvider')}</Text>
               </View>
             ) : (
               deals.map((deal, index) => {
@@ -186,14 +188,14 @@ export default function ProviderProfile() {
 
           <View style={{ marginBottom: 32 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
-              <Text style={{ fontFamily: 'Epilogue', fontSize: 24, fontWeight: '700', letterSpacing: -0.5, color: onSurface }}>Reviews</Text>
-              <Text style={{ color: onSurfaceVariant, fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 3 }}>{reviews.length} reviews</Text>
+              <Text style={{ fontFamily: 'Epilogue', fontSize: 24, fontWeight: '700', letterSpacing: -0.5, color: onSurface }}>{t('tabs.reviews')}</Text>
+               <Text style={{ color: onSurfaceVariant, fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 3 }}>{reviews.length} {t('customer.reviews')}</Text>
             </View>
             {reviews.length === 0 ? (
               <View style={{ backgroundColor: surfaceContainerLowest, padding: 32, borderRadius: 16, borderWidth: 1, borderColor: outlineVariant, alignItems: 'center' }}>
                 <MaterialIcons name="rate-review" size={40} color="#85736f" />
-                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface, marginTop: 12 }}>No Reviews Yet</Text>
-                <Text style={{ color: onSurfaceVariant, fontSize: 14, marginTop: 4, textAlign: 'center' }}>Be the first to review this provider!</Text>
+                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface, marginTop: 12 }}>{t('customer.noReviewsYet')}</Text>
+                <Text style={{ color: onSurfaceVariant, fontSize: 14, marginTop: 4, textAlign: 'center' }}>{t('customer.beFirstToReview')}</Text>
               </View>
             ) : (
               reviews.map((review, index) => {
@@ -212,8 +214,8 @@ export default function ProviderProfile() {
                           )}
                         </View>
                         <View style={{ flex: 1 }}>
-                          <Text style={{ fontWeight: '700', color: onSurface }}>{customerProfile?.display_name || 'Anonymous'}</Text>
-                          <Text style={{ fontSize: 12, color: onSurfaceVariant, fontWeight: '500', marginTop: 4 }}>{timeAgo(review.created_at)}</Text>
+                          <Text style={{ fontWeight: '700', color: onSurface }}>{customerProfile?.display_name || t('customer.anonymous')}</Text>
+                          <Text style={{ fontSize: 12, color: onSurfaceVariant, fontWeight: '500', marginTop: 4 }}>{timeAgo(review.created_at, t)}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', gap: 2 }}>
                           {[1, 2, 3, 4, 5].map(i => (
@@ -228,7 +230,7 @@ export default function ProviderProfile() {
                         <View style={{ marginTop: 16, padding: 16, borderRadius: 12, backgroundColor: surfaceContainer }}>
                           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 }}>
                             <MaterialIcons name="reply" size={14} color="#862045" />
-                            <Text style={{ fontSize: 12, fontWeight: '700', color: '#862045' }}>Business Response</Text>
+                            <Text style={{ fontSize: 12, fontWeight: '700', color: '#862045' }}>{t('customer.businessResponse')}</Text>
                           </View>
                           <Text style={{ color: onSurfaceVariant, fontSize: 14, fontFamily: 'Manrope', lineHeight: 22 }}>{review.provider_reply}</Text>
                         </View>

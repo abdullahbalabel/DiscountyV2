@@ -1,24 +1,27 @@
 import { Link, Stack } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
 export default function NotFoundScreen() {
+  const { t } = useTranslation();
+
   return (
     <>
-      <Stack.Screen options={{ title: 'Oops!' }} />
+      <Stack.Screen options={{ title: t('notFound.title') }} />
       <ThemedView style={styles.container}>
         <View style={styles.iconContainer}>
           <MaterialIcons name="error-outline" size={64} color="#85736f" />
         </View>
-        <ThemedText type="title">Page Not Found</ThemedText>
+        <ThemedText type="title">{t('notFound.pageTitle')}</ThemedText>
         <ThemedText style={styles.description}>
-          The page you're looking for doesn't exist or has been moved.
+          {t('notFound.description')}
         </ThemedText>
         <Link href="/" style={styles.link}>
-          <ThemedText type="link">Go to Home Screen</ThemedText>
+          <ThemedText type="link">{t('notFound.goHome')}</ThemedText>
         </Link>
       </ThemedView>
     </>

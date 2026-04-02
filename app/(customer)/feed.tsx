@@ -1,19 +1,22 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { FlatList, RefreshControl, ScrollView, Text, TextInput, useColorScheme, View } from 'react-native';
+import { FlatList, RefreshControl, ScrollView, Text, TextInput, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { DealCard } from '../../components/ui/DealCard';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { fetchActiveDeals, fetchCategories } from '../../lib/api';
 import { resolveMaterialIcon } from '../../lib/iconMapping';
 import { useSavedDeals } from '../../contexts/savedDeals';
+import { useThemeColors, Radius, Shadows } from '../../hooks/use-theme-colors';
 import type { Category, Discount } from '../../lib/types';
 
 export default function CustomerFeed() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const colors = useThemeColors();
   const router = useRouter();
+  const { t } = useTranslation();
   const { savedIds, toggleSave } = useSavedDeals();
 
   const [deals, setDeals] = useState<Discount[]>([]);
@@ -50,24 +53,18 @@ export default function CustomerFeed() {
     return `-$${deal.discount_value}`;
   };
 
-  const surfaceBg = isDark ? '#1a110f' : '#fff8f6';
-  const surfaceContainerLowest = isDark ? '#322825' : '#ffffff';
-  const surfaceContainerHigh = isDark ? '#534340' : '#f5ddd9';
-  const onSurface = isDark ? '#f1dfda' : '#231917';
-  const onSurfaceVariant = isDark ? '#d8c2bd' : '#564340';
-
   const renderHeader = () => (
     <View style={{ paddingTop: 16, paddingBottom: 12, paddingHorizontal: 16 }}>
       <View style={{ marginBottom: 16 }}>
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, marginBottom: 8, letterSpacing: -0.5, lineHeight: 26, maxWidth: '80%', color: onSurface }}>
-          Find the <Text style={{ color: '#862045' }}>Best Deals</Text> curated for you.
+        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, marginBottom: 8, letterSpacing: -0.5, lineHeight: 26, maxWidth: '80%', color: colors.onSurface }}>
+          {t('feed.tagline').replace('<0>', '').replace('</0>', '')}
         </Text>
-        <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', backgroundColor: surfaceContainerLowest, borderRadius: 12, paddingHorizontal: 12, paddingVertical: 10, marginTop: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 }}>
-          <MaterialIcons name="search" size={18} color="#85736f" style={{ marginRight: 8 }} />
+        <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surfaceContainerLowest, borderRadius: Radius.lg, paddingHorizontal: 12, paddingVertical: 10, marginTop: 4, ...Shadows.xs }}>
+          <MaterialIcons name="search" size={18} color={colors.iconDefault} style={{ marginEnd: 8 }} />
           <TextInput
-            style={{ flex: 1, fontFamily: 'Manrope', fontSize: 14, color: onSurface }}
-            placeholder="Search deals, brands, or categories..."
-            placeholderTextColor="#85736f"
+            style={{ flex: 1, fontFamily: 'Manrope', fontSize: 14, color: colors.onSurface }}
+            placeholder={t('feed.searchPlaceholder')}
+            placeholderTextColor={colors.onSurfaceVariant}
             clearButtonMode="while-editing"
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -76,10 +73,10 @@ export default function CustomerFeed() {
           />
           {searchQuery.length > 0 && (
             <AnimatedButton
-              style={{ width: 24, height: 24, borderRadius: 6, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}
+              style={{ width: 24, height: 24, borderRadius: Radius.sm, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}
               onPress={() => { setSearchQuery(''); loadData(); }}
             >
-              <MaterialIcons name="close" size={14} color="#85736f" />
+              <MaterialIcons name="close" size={14} color={colors.iconDefault} />
             </AnimatedButton>
           )}
         </View>
@@ -87,55 +84,51 @@ export default function CustomerFeed() {
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
         <AnimatedButton
-          style={{ paddingHorizontal: 16, paddingVertical: 6, borderRadius: 6, marginRight: 8, backgroundColor: !selectedCategory ? '#862045' : surfaceContainerHigh }}
+          style={{ paddingHorizontal: 14, paddingVertical: 6, borderRadius: Radius.full, marginEnd: 8, backgroundColor: !selectedCategory ? colors.primary : colors.surfaceContainerHigh }}
           onPress={() => setSelectedCategory(null)}
         >
-          <Text style={{ fontWeight: '600', fontSize: 12, color: !selectedCategory ? '#fff' : onSurface }}>All Deals</Text>
+          <Text style={{ fontWeight: '700', fontSize: 12, color: !selectedCategory ? '#fff' : colors.onSurface }}>{t('feed.allDeals')}</Text>
         </AnimatedButton>
         {categories.map((cat) => (
           <AnimatedButton
             key={cat.id}
             style={{
-              paddingHorizontal: 14, paddingVertical: 6, borderRadius: 6, marginRight: 8, flexDirection: 'row', alignItems: 'center', gap: 6,
-              backgroundColor: selectedCategory === cat.id ? '#862045' : surfaceContainerHigh,
+              paddingHorizontal: 14, paddingVertical: 6, borderRadius: Radius.full, marginEnd: 8, flexDirection: 'row', alignItems: 'center', gap: 6,
+              backgroundColor: selectedCategory === cat.id ? colors.primary : colors.surfaceContainerHigh,
             }}
             onPress={() => setSelectedCategory(selectedCategory === cat.id ? null : cat.id)}
           >
-            <MaterialIcons name={resolveMaterialIcon(cat.icon)} size={12} color={selectedCategory === cat.id ? 'white' : '#85736f'} />
-            <Text style={{ fontWeight: '600', fontSize: 12, color: selectedCategory === cat.id ? '#fff' : onSurface }}>{cat.name}</Text>
+            <MaterialIcons name={resolveMaterialIcon(cat.icon)} size={12} color={selectedCategory === cat.id ? 'white' : colors.iconDefault} />
+            <Text style={{ fontWeight: '700', fontSize: 12, color: selectedCategory === cat.id ? '#fff' : colors.onSurface }}>{cat.name}</Text>
           </AnimatedButton>
         ))}
       </ScrollView>
 
-      <Text style={{ fontFamily: 'Manrope', fontSize: 10, color: onSurfaceVariant, textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700', paddingHorizontal: 4 }}>
-        {isLoading ? 'Loading...' : `${deals.length} deals available`}
+      <Text style={{ fontFamily: 'Manrope', fontSize: 10, color: colors.onSurfaceVariant, textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700', paddingHorizontal: 4 }}>
+        {isLoading ? t('feed.loading') : t('feed.dealsAvailable', { count: deals.length })}
       </Text>
     </View>
   );
 
   const renderEmptyState = () => (
-    <View style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 48, paddingHorizontal: 24 }}>
-      <View style={{ width: 56, height: 56, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginBottom: 16, backgroundColor: surfaceContainerHigh }}>
-        <MaterialIcons name="search-off" size={28} color="#85736f" />
-      </View>
-      <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface, textAlign: 'center', marginBottom: 4 }}>No Deals Found</Text>
-      <Text style={{ fontFamily: 'Manrope', color: onSurfaceVariant, textAlign: 'center', fontSize: 12, lineHeight: 16 }}>
-        {searchQuery ? `No results for "${searchQuery}". Try a different search.` : selectedCategory ? 'No active deals in this category right now.' : 'No active deals available at the moment. Check back soon!'}
-      </Text>
-    </View>
+    <EmptyState
+      icon="search-off"
+      title={t('feed.noDealsFound')}
+      message={searchQuery ? t('feed.noSearchResults', { query: searchQuery }) : selectedCategory ? t('feed.noCategoryDeals') : t('feed.noActiveDeals')}
+    />
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: surfaceBg }}>
-      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: surfaceBg }}>
+    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
+      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <View style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: '#862045', alignItems: 'center', justifyContent: 'center' }}>
+          <View style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' }}>
             <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14 }}>D</Text>
           </View>
-          <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: onSurface }}>Discounty</Text>
+          <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>Discounty</Text>
         </View>
-        <AnimatedButton style={{ width: 32, height: 32, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
-          <MaterialIcons name="notifications" size={18} color="#85736f" />
+        <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
+          <MaterialIcons name="notifications" size={18} color={colors.iconDefault} />
         </AnimatedButton>
       </View>
 
@@ -148,7 +141,7 @@ export default function CustomerFeed() {
               <DealCard
                 id={item.id}
                 title={item.title}
-                provider={(item.provider as any)?.business_name || 'Unknown'}
+                provider={(item.provider as any)?.business_name || t('customer.unknown')}
                 providerLogo={(item.provider as any)?.logo_url}
                 imageUri={item.image_url || 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800'}
                 discountBadge={formatBadge(item)}
@@ -169,7 +162,7 @@ export default function CustomerFeed() {
         ListEmptyComponent={!isLoading ? renderEmptyState : null}
         contentContainerStyle={{ paddingBottom: 12 }}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor="#862045" colors={['#862045']} />}
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={colors.primary} colors={[colors.primary]} />}
       />
     </View>
   );

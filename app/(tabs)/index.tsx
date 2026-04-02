@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     height: 178,
     width: 290,
     bottom: 0,
-    left: 0,
+    start: 0,
     position: 'absolute',
   },
 });

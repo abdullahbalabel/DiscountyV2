@@ -1,25 +1,26 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import { useColorScheme } from 'react-native';
+import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { useThemeColors, Shadows } from '../../hooks/use-theme-colors';
 
 export default function ProviderLayout() {
-  const colorScheme = useColorScheme();
+  const colors = useThemeColors();
+  const { t } = useTranslation();
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#862045',
-        tabBarInactiveTintColor: colorScheme === 'dark' ? '#a08d88' : '#85736f',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.tabBarInactive,
         tabBarStyle: {
-          backgroundColor: colorScheme === 'dark' ? '#271d1b' : '#ffffff',
+          backgroundColor: colors.tabBarBg,
           borderTopWidth: 0,
-          elevation: 10,
-          shadowOpacity: 0.1,
-          shadowRadius: 10,
-          height: 56,
-          paddingBottom: 4,
-          paddingTop: 4,
+          ...Shadows.md,
+          height: 67,
+          paddingBottom: 6,
+          paddingTop: 6,
           borderTopLeftRadius: 0,
           borderTopRightRadius: 0,
         },
@@ -31,50 +32,98 @@ export default function ProviderLayout() {
           letterSpacing: 0.3,
           marginTop: 2,
         },
+        tabBarItemStyle: {
+          paddingTop: 4,
+        },
       }}
     >
       <Tabs.Screen
         name="dashboard"
         options={{
-          title: 'Dashboard',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="dashboard" size={size} color={color} />
+          title: t('tabs.dashboard'),
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={{ alignItems: 'center' }}>
+              {focused && (
+                <View style={{
+                  width: 4, height: 4, borderRadius: 2,
+                  backgroundColor: colors.primary,
+                  marginBottom: 2,
+                }} />
+              )}
+              <MaterialIcons name="dashboard" size={size} color={color} />
+            </View>
           ),
         }}
       />
       <Tabs.Screen
         name="deals"
         options={{
-          title: 'My Deals',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="local-offer" size={size} color={color} />
+          title: t('tabs.myDeals'),
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={{ alignItems: 'center' }}>
+              {focused && (
+                <View style={{
+                  width: 4, height: 4, borderRadius: 2,
+                  backgroundColor: colors.primary,
+                  marginBottom: 2,
+                }} />
+              )}
+              <MaterialIcons name="local-offer" size={size} color={color} />
+            </View>
           ),
         }}
       />
       <Tabs.Screen
         name="scan"
         options={{
-          title: 'Scan QR',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="qr-code-scanner" size={size} color={color} />
+          title: t('tabs.scanQR'),
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={{ alignItems: 'center' }}>
+              {focused && (
+                <View style={{
+                  width: 4, height: 4, borderRadius: 2,
+                  backgroundColor: colors.primary,
+                  marginBottom: 2,
+                }} />
+              )}
+              <MaterialIcons name="qr-code-scanner" size={size} color={color} />
+            </View>
           ),
         }}
       />
       <Tabs.Screen
         name="reviews"
         options={{
-          title: 'Reviews',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="rate-review" size={size} color={color} />
+          title: t('tabs.reviews'),
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={{ alignItems: 'center' }}>
+              {focused && (
+                <View style={{
+                  width: 4, height: 4, borderRadius: 2,
+                  backgroundColor: colors.primary,
+                  marginBottom: 2,
+                }} />
+              )}
+              <MaterialIcons name="rate-review" size={size} color={color} />
+            </View>
           ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="store" size={size} color={color} />
+          title: t('tabs.profile'),
+          tabBarIcon: ({ color, size, focused }) => (
+            <View style={{ alignItems: 'center' }}>
+              {focused && (
+                <View style={{
+                  width: 4, height: 4, borderRadius: 2,
+                  backgroundColor: colors.primary,
+                  marginBottom: 2,
+                }} />
+              )}
+              <MaterialIcons name="store" size={size} color={color} />
+            </View>
           ),
         }}
       />

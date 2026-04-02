@@ -25,11 +25,20 @@ SplashScreen.preventAutoHideAsync();
 
 function AppContent() {
   const { isLoading } = useAuth();
+  const colorScheme = useColorScheme();
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, backgroundColor: '#fff8f6', alignItems: 'center', justifyContent: 'center' }}>
-        <ActivityIndicator size="large" color="#862045" />
+      <View style={{
+        flex: 1,
+        backgroundColor: colorScheme === 'dark' ? '#1a110f' : '#fff8f6',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        <ActivityIndicator
+          size="large"
+          color={colorScheme === 'dark' ? '#fff' : '#862045'}
+        />
       </View>
     );
   }
