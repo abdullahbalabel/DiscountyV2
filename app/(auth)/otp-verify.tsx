@@ -3,7 +3,7 @@ import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, useColorScheme, View } from 'react-native';
+import { I18nManager, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, useColorScheme, View } from 'react-native';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { GlassView } from '../../components/ui/GlassView';
 import { useAuth } from '../../contexts/auth';
@@ -121,7 +121,7 @@ export default function OtpVerifyScreen() {
               onPress={() => router.back()}
               accessibilityLabel={t('customer.goBack')}
             >
-              <MaterialIcons name="arrow-back" size={20} color={iconColor} />
+              <MaterialIcons name="arrow-back" size={20} color={iconColor} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
             </AnimatedButton>
 
             {/* Header */}

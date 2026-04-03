@@ -170,7 +170,7 @@ export default function DashboardScreen() {
                         }
                       }}
                     >
-                      <View style={{ width: 40, height: 40, borderRadius: Radius.md, overflow: 'hidden', marginRight: 12, backgroundColor: colors.surfaceContainerHigh }}>
+                      <View style={{ width: 40, height: 40, borderRadius: Radius.md, overflow: 'hidden', marginEnd: 12, backgroundColor: colors.surfaceContainerHigh }}>
                         {discount?.image_url ? (
                           <Image source={{ uri: discount.image_url }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                         ) : (

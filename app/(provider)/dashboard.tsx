@@ -2,7 +2,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, I18nManager, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { useAuth } from '../../contexts/auth';
@@ -159,7 +159,7 @@ export default function ProviderDashboard() {
                     <MaterialIcons name={action.icon} size={18} color={action.color} />
                   </View>
                   <Text style={{ flex: 1, fontFamily: 'Epilogue', fontWeight: '600', fontSize: 14, color: colors.onSurface }}>{action.label}</Text>
-                  <MaterialIcons name="chevron-right" size={20} color={colors.iconDefault} />
+                  <MaterialIcons name="chevron-right" size={20} color={colors.iconDefault} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
                 </AnimatedButton>
               ))}
             </View>

@@ -122,11 +122,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Initialize auth state
   useEffect(() => {
     const initAuth = async () => {
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
-      setSession(currentSession);
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        setSession(currentSession);
 
-      if (currentSession?.user) {
-        await fetchUserRole(currentSession.user.id);
+        if (currentSession?.user) {
+          await fetchUserRole(currentSession.user.id);
+        }
+      } catch (err: any) {
+        // Refresh token is invalid or expired — clear stale session and send user to login
+        console.warn('[Auth] Session restore failed:', err?.message);
+        await supabase.auth.signOut();
+        setSession(null);
+        setRole(null);
+        setIsNewUser(false);
+        setApprovalStatus(null);
       }
       setIsLoading(false);
     };
@@ -135,7 +145,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, newSession) => {
+      async (event, newSession) => {
+        // If the SDK fires SIGNED_OUT due to a failed token refresh, clean up state
+        if (event === 'SIGNED_OUT') {
+          setSession(null);
+          setRole(null);
+          setIsNewUser(false);
+          setApprovalStatus(null);
+          return;
+        }
+
         setSession(newSession);
         if (newSession?.user) {
           await fetchUserRole(newSession.user.id);

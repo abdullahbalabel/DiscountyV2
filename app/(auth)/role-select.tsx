@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ScrollView, Text, View } from 'react-native';
+import { I18nManager, ScrollView, Text, View } from 'react-native';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { GlassView } from '../../components/ui/GlassView';
 import { useAuth } from '../../contexts/auth';
@@ -99,7 +99,7 @@ export default function RoleSelectScreen() {
                   {t('auth.customerDesc')}
                 </Text>
               </View>
-              <MaterialIcons name="chevron-right" size={24} color={textVeryFaint} />
+              <MaterialIcons name="chevron-right" size={24} color={textVeryFaint} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
             </AnimatedButton>
 
             {/* Provider Card */}
@@ -128,7 +128,7 @@ export default function RoleSelectScreen() {
                   {t('auth.businessDesc')}
                 </Text>
               </View>
-              <MaterialIcons name="chevron-right" size={24} color={textVeryFaint} />
+              <MaterialIcons name="chevron-right" size={24} color={textVeryFaint} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
             </AnimatedButton>
           </View>
 

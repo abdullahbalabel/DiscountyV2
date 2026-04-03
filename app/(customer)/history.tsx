@@ -119,7 +119,7 @@ export default function HistoryScreen() {
                     ...Shadows.sm,
                   }}>
                     <View style={{ flexDirection: 'row', padding: 12 }}>
-                      <View style={{ width: 56, height: 56, borderRadius: 10, overflow: 'hidden', marginRight: 12, backgroundColor: colors.surfaceContainerHigh }}>
+                      <View style={{ width: 56, height: 56, borderRadius: 10, overflow: 'hidden', marginEnd: 12, backgroundColor: colors.surfaceContainerHigh }}>
                         {discount?.image_url ? (
                           <Image source={{ uri: discount.image_url }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                         ) : (

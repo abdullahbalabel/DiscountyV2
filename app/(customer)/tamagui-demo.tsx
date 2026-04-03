@@ -267,13 +267,13 @@ export default function TamaguiDemoScreen() {
             {[1,2,3,4,5].map(i => (
               <Text key={i} style={{ fontSize: 24 }}>{i <= 4 ? '★' : '☆'}</Text>
             ))}
-            <Text style={{ fontSize: 14, fontWeight: '700', color: '#231917', marginLeft: 8 }}>4.0</Text>
+            <Text style={{ fontSize: 14, fontWeight: '700', color: '#231917', marginStart: 8 }}>4.0</Text>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
             {[1,2,3,4,5].map(i => (
               <Text key={i} style={{ fontSize: 24 }}>{i <= 5 ? '★' : '☆'}</Text>
             ))}
-            <Text style={{ fontSize: 14, fontWeight: '700', color: '#231917', marginLeft: 8 }}>5.0</Text>
+            <Text style={{ fontSize: 14, fontWeight: '700', color: '#231917', marginStart: 8 }}>5.0</Text>
           </View>
         </Section>
 

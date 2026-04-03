@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { I18nManager, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
@@ -44,7 +44,7 @@ export default function ProviderProfileScreen() {
         <View style={{ paddingHorizontal: 16, gap: 16, paddingTop: 8 }}>
           <AnimatedEntrance index={0} delay={100}>
             <View style={{ backgroundColor: colors.surfaceContainerLowest, padding: 16, borderRadius: Radius.xl, borderWidth: 1, borderColor: colors.outlineVariant, marginBottom: 20, flexDirection: 'row', alignItems: 'center' }}>
-              <View style={{ width: 48, height: 48, borderRadius: Radius.full, backgroundColor: 'rgba(134,32,69,0.1)', alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
+              <View style={{ width: 48, height: 48, borderRadius: Radius.full, backgroundColor: 'rgba(134,32,69,0.1)', alignItems: 'center', justifyContent: 'center', marginEnd: 12 }}>
                 <MaterialCommunityIcons name="store" size={24} color={colors.primary} />
               </View>
               <View style={{ flex: 1 }}>
@@ -68,11 +68,11 @@ export default function ProviderProfileScreen() {
                   key={item.id}
                   style={{ flexDirection: 'row', alignItems: 'center', padding: 12, borderBottomWidth: idx !== menuItems.length - 1 ? 1 : 0, borderBottomColor: colors.surfaceContainer }}
                 >
-                  <View style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
+                  <View style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', marginEnd: 12 }}>
                     <MaterialIcons name={item.icon as any} size={16} color={item.color} />
                   </View>
                   <Text style={{ flex: 1, fontFamily: 'Epilogue', fontWeight: '600', fontSize: 14, color: colors.onSurface }}>{item.title}</Text>
-                  <MaterialIcons name="chevron-right" size={20} color={colors.iconDefault} />
+                  <MaterialIcons name="chevron-right" size={20} color={colors.iconDefault} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
                 </TouchableOpacity>
               ))}
             </View>
@@ -84,7 +84,7 @@ export default function ProviderProfileScreen() {
               onPress={() => signOut()}
             >
               <MaterialIcons name="logout" size={16} color={colors.error} />
-              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: colors.error, marginLeft: 8 }}>{t('provider.signOut')}</Text>
+              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: colors.error, marginStart: 8 }}>{t('provider.signOut')}</Text>
             </TouchableOpacity>
           </AnimatedEntrance>
         </View>

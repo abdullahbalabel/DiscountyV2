@@ -142,7 +142,7 @@ export default function ProviderDealsScreen() {
           <View style={{ padding: 12 }}>
             {/* Title + Status */}
             <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 6 }}>
-              <View style={{ flex: 1, marginRight: 8 }}>
+              <View style={{ flex: 1, marginEnd: 8 }}>
                 <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: colors.onSurface }} numberOfLines={2}>
                   {item.title}
                 </Text>

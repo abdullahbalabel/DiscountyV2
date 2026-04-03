@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  I18nManager,
   KeyboardAvoidingView, Platform,
   ScrollView,
   Text,
@@ -212,7 +213,7 @@ export default function CreateDealScreen() {
   const labelStyle = {
     fontFamily: 'Manrope' as const, fontWeight: '700' as const, fontSize: 12,
     textTransform: 'uppercase' as const, letterSpacing: 0.05,
-    color: colors.onSurfaceVariant, marginLeft: 4, marginBottom: 8,
+    color: colors.onSurfaceVariant, marginStart: 4, marginBottom: 8,
   };
 
   // ── Step 3: Success ───────────────────────────
@@ -263,7 +264,7 @@ export default function CreateDealScreen() {
             style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', padding: 0 }}
             onPress={() => step === 2 ? setStep(1) : router.back()}
           >
-            <MaterialIcons name="arrow-back" size={18} color={colors.iconDefault} />
+            <MaterialIcons name="arrow-back" size={18} color={colors.iconDefault} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
           </AnimatedButton>
           <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.02, fontSize: 18, color: colors.onSurface }}>
             {step === 1 ? t('provider.createDeal') : t('provider.reviewAndPublish')}
@@ -465,7 +466,7 @@ export default function CreateDealScreen() {
           ) : (
             /* ── Step 2: Review ───────────────────── */
             <AnimatedEntrance index={1}>
-              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: colors.onSurface, marginLeft: 4, marginBottom: 12 }}>{t('provider.cardPreview')}</Text>
+              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: colors.onSurface, marginStart: 4, marginBottom: 12 }}>{t('provider.cardPreview')}</Text>
               <View style={{
                 backgroundColor: colors.surfaceContainerLowest, borderRadius: Radius.lg, overflow: 'hidden',
                 ...Shadows.xs,

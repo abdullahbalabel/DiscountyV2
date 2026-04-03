@@ -1,8 +1,8 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Appearance, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { setupRtl } from '../../i18n';
+import { Appearance, I18nManager, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { setupRtl, reloadForRtl } from '../../i18n';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { useAuth } from '../../contexts/auth';
@@ -17,9 +17,12 @@ export default function ProfileScreen() {
     Appearance.setColorScheme(colors.isDark ? 'light' : 'dark');
   };
 
-  const toggleLanguage = () => {
-    i18n.changeLanguage(i18n.language?.startsWith('ar') ? 'en' : 'ar');
-    setupRtl();
+  const toggleLanguage = async () => {
+    await i18n.changeLanguage(i18n.language?.startsWith('ar') ? 'en' : 'ar');
+    const needsReload = setupRtl();
+    if (needsReload) {
+      await reloadForRtl();
+    }
   };
 
   const menuItems = [
@@ -84,7 +87,7 @@ export default function ProfileScreen() {
                     <MaterialIcons name={item.icon as any} size={16} color={item.color} />
                   </View>
                   <Text style={{ flex: 1, fontFamily: 'Epilogue', fontWeight: '600', fontSize: 14, color: colors.onSurface }}>{item.title}</Text>
-                  <MaterialIcons name="chevron-right" size={20} color={colors.iconDefault} />
+                  <MaterialIcons name="chevron-right" size={20} color={colors.iconDefault} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
                 </TouchableOpacity>
               ))}
             </View>

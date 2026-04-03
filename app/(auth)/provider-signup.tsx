@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Alert,
+  I18nManager,
   KeyboardAvoidingView, Platform, Pressable,
   ScrollView,
   Text, TextInput,
@@ -63,20 +64,32 @@ export default function ProviderSignupScreen() {
   };
 
   const getCurrentLocation = async () => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert(t('auth.permissionDenied'), t('auth.locationPermissionNeeded'));
-      return;
-    }
-    const location = await Location.getCurrentPositionAsync({});
-    setLatitude(location.coords.latitude);
-    setLongitude(location.coords.longitude);
-    const [address] = await Location.reverseGeocodeAsync({
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    });
-    if (address) {
-      setLocationName([address.street, address.city, address.region].filter(Boolean).join(', '));
+    try {
+      const servicesEnabled = await Location.hasServicesEnabledAsync();
+      if (!servicesEnabled) {
+        Alert.alert(t('auth.locationUnavailable'), t('auth.enableLocationServices'));
+        return;
+      }
+
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(t('auth.permissionDenied'), t('auth.locationPermissionNeeded'));
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      setLatitude(location.coords.latitude);
+      setLongitude(location.coords.longitude);
+      const [address] = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+      if (address) {
+        setLocationName([address.street, address.city, address.region].filter(Boolean).join(', '));
+      }
+    } catch (err: any) {
+      console.error('Location error:', err);
+      Alert.alert(t('auth.locationUnavailable'), t('auth.locationErrorMessage'));
     }
   };
 
@@ -152,7 +165,7 @@ export default function ProviderSignupScreen() {
 
   const labelStyle = {
     fontFamily: 'Manrope', fontWeight: '700' as const, fontSize: 12, textTransform: 'uppercase' as const,
-    letterSpacing: 1.5, color: onSurfaceVariant, marginLeft: 4, marginBottom: 8,
+    letterSpacing: 1.5, color: onSurfaceVariant, marginStart: 4, marginBottom: 8,
   } as const;
 
   const renderStep0 = () => (
@@ -377,7 +390,7 @@ export default function ProviderSignupScreen() {
             style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}
             onPress={() => step > 0 ? setStep(step - 1) : router.back()}
           >
-            <MaterialIcons name="arrow-back" size={24} color="#85736f" />
+            <MaterialIcons name="arrow-back" size={24} color="#85736f" style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
           </AnimatedButton>
           <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 20, color: onSurface }}>
             {t('auth.businessRegistration')}

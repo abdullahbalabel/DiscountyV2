@@ -3,7 +3,7 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, I18nManager, ScrollView, Text, useColorScheme, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
@@ -85,7 +85,7 @@ export default function ProviderProfile() {
       <View style={{ width: '100%', paddingHorizontal: 24, paddingTop: 56, paddingBottom: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: surfaceBg }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
           <AnimatedButton style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }} onPress={() => router.back()}>
-            <MaterialIcons name="arrow-back" size={24} color="#85736f" />
+            <MaterialIcons name="arrow-back" size={24} color="#85736f" style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
           </AnimatedButton>
           <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 20, color: onSurface }}>{t('discounty')}</Text>
         </View>

@@ -65,7 +65,7 @@ export default function SavedScreen() {
       style={{
         width: 80,
         marginBottom: 12,
-        marginLeft: 4,
+        marginStart: 4,
         borderRadius: Radius.lg,
         backgroundColor: colors.error,
         alignItems: 'center',

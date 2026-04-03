@@ -3,7 +3,7 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, I18nManager, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, I18nManager, Modal, ScrollView, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
@@ -43,6 +43,8 @@ export default function DealDetails() {
   const [isClaiming, setIsClaiming] = useState(false);
   const [slotCount, setSlotCount] = useState(0);
   const [alreadyClaimed, setAlreadyClaimed] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [redemptionId, setRedemptionId] = useState<string | null>(null);
 
   const isSaved = deal ? savedIds.has(deal.id) : false;
 
@@ -69,13 +71,21 @@ export default function DealDetails() {
     const result = await claimDeal(deal.id);
     setIsClaiming(false);
     if (result.success) {
-      Alert.alert(t('customer.dealClaimed'), t('customer.qrCodeReady'), [
-        { text: t('customer.viewMyDeals'), onPress: () => router.replace('/(customer)/dashboard') },
-        { text: t('customer.stayHere'), style: 'cancel' },
-      ]);
       setSlotCount((prev) => prev + 1);
+      setAlreadyClaimed(true);
+      setRedemptionId(result.redemption_id || null);
+      setShowSuccess(true);
     } else {
       Alert.alert(t('customer.couldNotClaim'), result.error || t('customer.tryAgain'));
+    }
+  };
+
+  const handleViewQR = () => {
+    setShowSuccess(false);
+    if (redemptionId) {
+      router.push({ pathname: '/(customer)/qr/[redemptionId]', params: { redemptionId } } as any);
+    } else {
+      router.replace('/(customer)/dashboard');
     }
   };
 
@@ -129,7 +139,7 @@ export default function DealDetails() {
         <View style={{ position: 'relative', width: '100%', aspectRatio: 16/10, backgroundColor: colors.surfaceContainerHigh }}>
           <Image source={{ uri: deal.image_url || 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800' }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
           <LinearGradient colors={['transparent', 'rgba(26,17,15,0.9)']} style={{ position: 'absolute', bottom: 0, start: 0, end: 0, height: '60%' }} />
-          <View style={{ position: 'absolute', top: 64, end: 16, backgroundColor: colors.primaryContainer, padding: 12, borderRadius: Radius.lg, alignItems: 'center' }}>
+          <View style={{ position: 'absolute', top: 64, end: 16, backgroundColor: colors.primary, padding: 12, borderRadius: Radius.lg, alignItems: 'center' }}>
             <Text style={{ fontFamily: 'Epilogue', fontWeight: '800', fontSize: 18, color: '#fff', letterSpacing: -0.5 }}>{formattedDiscount}</Text>
             <Text style={{ fontFamily: 'Manrope', fontSize: 8, color: '#fff', textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700' }}>{t('customer.discount')}</Text>
           </View>
@@ -166,7 +176,7 @@ export default function DealDetails() {
                   </Text>
                 </View>
               </View>
-              <MaterialIcons name="chevron-right" size={20} color={colors.iconDefault} />
+              <MaterialIcons name="chevron-right" size={20} color={colors.iconDefault} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
             </AnimatedButton>
           )}
 
@@ -255,6 +265,45 @@ export default function DealDetails() {
           </AnimatedEntrance>
         </View>
       </ScrollView>
+
+      <Modal visible={showSuccess} transparent animationType="fade" onRequestClose={() => setShowSuccess(false)}>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+          <View style={{ backgroundColor: colors.surfaceBg, borderRadius: 24, padding: 32, alignItems: 'center', width: '100%', maxWidth: 340, ...Shadows.lg }}>
+            <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: '#dcfce7', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+              <MaterialIcons name="celebration" size={40} color="#16a34a" />
+            </View>
+            <Text style={{ fontFamily: 'Epilogue', fontWeight: '800', fontSize: 22, color: colors.onSurface, textAlign: 'center', letterSpacing: -0.5 }}>
+              {t('customer.dealClaimed')}
+            </Text>
+            <Text style={{ fontFamily: 'Manrope', fontSize: 14, color: colors.onSurfaceVariant, textAlign: 'center', marginTop: 8, lineHeight: 22 }}>
+              {t('customer.qrCodeReady')}
+            </Text>
+            <View style={{ width: '100%', marginTop: 24, gap: 10 }}>
+              <AnimatedButton
+                variant="gradient"
+                style={{ width: '100%', paddingVertical: 14, borderRadius: Radius.lg, alignItems: 'center', justifyContent: 'center' }}
+                onPress={handleViewQR}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <MaterialIcons name="qr-code" size={20} color="#fff" />
+                  <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 15 }}>
+                    {t('customer.viewQRCode')}
+                  </Text>
+                </View>
+              </AnimatedButton>
+              <AnimatedButton
+                variant="outline"
+                style={{ width: '100%', paddingVertical: 14, borderRadius: Radius.lg, alignItems: 'center', justifyContent: 'center' }}
+                onPress={() => setShowSuccess(false)}
+              >
+                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 15 }}>
+                  {t('customer.stayHere')}
+                </Text>
+              </AnimatedButton>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

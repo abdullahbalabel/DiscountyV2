@@ -1,7 +1,7 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Text, TextInput, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, Alert, I18nManager, Text, TextInput, useColorScheme, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
@@ -106,7 +106,7 @@ export default function RateScreen() {
           style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}
           onPress={() => router.back()}
         >
-          <MaterialIcons name="arrow-back" size={24} color="#85736f" />
+          <MaterialIcons name="arrow-back" size={24} color="#85736f" style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
         </AnimatedButton>
         <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 20, color: onSurface }}>{t('customer.rateExperience')}</Text>
       </View>
@@ -114,7 +114,7 @@ export default function RateScreen() {
       <View style={{ flex: 1, paddingHorizontal: 24 }}>
         <AnimatedEntrance index={0} delay={100}>
           <View style={{ backgroundColor: surfaceContainerLowest, borderRadius: 24, padding: 20, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: outlineVariant, marginBottom: 32 }}>
-            <View style={{ width: 56, height: 56, borderRadius: 16, marginRight: 16, backgroundColor: 'rgba(134,32,69,0.1)', alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ width: 56, height: 56, borderRadius: 16, marginEnd: 16, backgroundColor: 'rgba(134,32,69,0.1)', alignItems: 'center', justifyContent: 'center' }}>
               <MaterialIcons name="local-offer" size={28} color="#862045" />
             </View>
             <View style={{ flex: 1 }}>
