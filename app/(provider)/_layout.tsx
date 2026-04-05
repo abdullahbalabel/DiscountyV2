@@ -1,12 +1,28 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useThemeColors, Shadows } from '../../hooks/use-theme-colors';
+import { fetchUnrepliedReviewCount } from '../../lib/api';
 
 export default function ProviderLayout() {
   const colors = useThemeColors();
   const { t } = useTranslation();
+  const [unrepliedCount, setUnrepliedCount] = useState(0);
+
+  useEffect(() => {
+    let mounted = true;
+    const loadCount = async () => {
+      try {
+        const count = await fetchUnrepliedReviewCount();
+        if (mounted) setUnrepliedCount(count);
+      } catch { /* silent */ }
+    };
+    loadCount();
+    const interval = setInterval(loadCount, 30000);
+    return () => { mounted = false; clearInterval(interval); };
+  }, []);
 
   return (
     <Tabs
@@ -18,9 +34,9 @@ export default function ProviderLayout() {
           backgroundColor: colors.tabBarBg,
           borderTopWidth: 0,
           ...Shadows.md,
-          height: 67,
-          paddingBottom: 6,
-          paddingTop: 6,
+          height: 80,
+          paddingBottom: 8,
+          paddingTop: 8,
           borderTopLeftRadius: 0,
           borderTopRightRadius: 0,
         },
@@ -95,6 +111,16 @@ export default function ProviderLayout() {
         name="reviews"
         options={{
           title: t('tabs.reviews'),
+          tabBarBadge: unrepliedCount > 0 ? unrepliedCount : undefined,
+          tabBarBadgeStyle: {
+            backgroundColor: colors.primary,
+            fontFamily: 'Manrope',
+            fontSize: 10,
+            fontWeight: '700',
+            minWidth: 18,
+            height: 18,
+            borderRadius: 9,
+          },
           tabBarIcon: ({ color, size, focused }) => (
             <View style={{ alignItems: 'center' }}>
               {focused && (

@@ -4,7 +4,7 @@
 
 import { supabase } from './supabase';
 import type {
-  Category, Discount, DiscountType, DiscountStatus, ProviderProfile, Redemption,
+  Category, CustomerProfile, Discount, DiscountType, DiscountStatus, ProviderProfile, Redemption,
   Review, ClaimDealResult, SubmitReviewResult, RedeemDealResult,
 } from './types';
 
@@ -98,6 +98,40 @@ export async function fetchProviderById(providerId: string): Promise<ProviderPro
 
   if (error) throw error;
   return data as ProviderProfile | null;
+}
+
+// ── Customer Profile (Own) ──────────────────────
+
+export async function fetchOwnCustomerProfile(): Promise<CustomerProfile | null> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data, error } = await supabase
+    .from('customer_profiles')
+    .select('*')
+    .eq('user_id', user.id)
+    .single();
+
+  if (error) throw error;
+  return data as CustomerProfile | null;
+}
+
+export async function updateCustomerProfile(updates: {
+  display_name?: string;
+  avatar_url?: string;
+}): Promise<CustomerProfile> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data, error } = await supabase
+    .from('customer_profiles')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('user_id', user.id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as CustomerProfile;
 }
 
 export async function fetchProviderDeals(providerId: string): Promise<Discount[]> {
@@ -386,7 +420,8 @@ export async function fetchSavedDeals(): Promise<Discount[]> {
 
 export async function fetchCustomerStats() {
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { totalClaimed: 0, totalRedeemed: 0, totalSaved: 0 };
+  const empty = { totalClaimed: 0, totalRedeemed: 0, totalSaved: 0, activeDeals: 0 };
+  if (!user) return empty;
 
   const { data: profile } = await supabase
     .from('customer_profiles')
@@ -394,7 +429,7 @@ export async function fetchCustomerStats() {
     .eq('user_id', user.id)
     .single();
 
-  if (!profile) return { totalClaimed: 0, totalRedeemed: 0, totalSaved: 0 };
+  if (!profile) return empty;
 
   const { count: totalClaimed } = await supabase
     .from('redemptions')
@@ -407,12 +442,19 @@ export async function fetchCustomerStats() {
     .eq('customer_id', profile.id)
     .eq('status', 'redeemed');
 
+  const { count: activeDeals } = await supabase
+    .from('redemptions')
+    .select('id', { count: 'exact', head: true })
+    .eq('customer_id', profile.id)
+    .eq('status', 'claimed');
+
   const savedIds = await getSavedDealIds();
 
   return {
     totalClaimed: totalClaimed || 0,
     totalRedeemed: totalRedeemed || 0,
     totalSaved: savedIds.length,
+    activeDeals: activeDeals || 0,
   };
 }
 
@@ -696,6 +738,90 @@ export async function uploadDealImage(
     .getPublicUrl(path);
 
   return publicUrl;
+}
+
+// ── Avatar Upload ───────────────────────────────
+
+export async function uploadAvatar(base64Data: string, fileType: string): Promise<string> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const mimeType = fileType || 'image/jpeg';
+  const fileExt = mimeType.split('/')[1] || 'jpg';
+  const path = `${user.id}/avatar.${fileExt}`;
+
+  // Convert base64 to Uint8Array
+  const binaryString = atob(base64Data);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+
+  const { error } = await supabase.storage
+    .from('provider-assets')
+    .upload(path, bytes, {
+      contentType: mimeType,
+      upsert: true,
+    });
+
+  if (error) throw error;
+
+  const { data: { publicUrl } } = supabase.storage
+    .from('provider-assets')
+    .getPublicUrl(path);
+
+  return `${publicUrl}?t=${Date.now()}`;
+}
+
+// ── Provider Reviews (for provider's own reviews tab) ──
+
+export async function fetchProviderOwnReviews(): Promise<Review[]> {
+  const profile = await fetchOwnProviderProfile();
+  if (!profile) throw new Error('Provider profile not found');
+
+  const { data, error } = await supabase
+    .from('reviews')
+    .select(`
+      *,
+      customer_profile:customer_profiles!customer_id (
+        display_name, avatar_url
+      )
+    `)
+    .eq('provider_id', profile.id)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return (data || []) as Review[];
+}
+
+export async function replyToReview(reviewId: string, reply: string): Promise<void> {
+  const profile = await fetchOwnProviderProfile();
+  if (!profile) throw new Error('Provider profile not found');
+
+  const { error } = await supabase
+    .from('reviews')
+    .update({
+      provider_reply: reply,
+      replied_at: new Date().toISOString(),
+    })
+    .eq('id', reviewId)
+    .eq('provider_id', profile.id);
+
+  if (error) throw error;
+}
+
+export async function fetchUnrepliedReviewCount(): Promise<number> {
+  const profile = await fetchOwnProviderProfile();
+  if (!profile) return 0;
+
+  const { count, error } = await supabase
+    .from('reviews')
+    .select('id', { count: 'exact', head: true })
+    .eq('provider_id', profile.id)
+    .is('provider_reply', null);
+
+  if (error) return 0;
+  return count || 0;
 }
 
 // ── Deal Redemption Stats ───────────────────────

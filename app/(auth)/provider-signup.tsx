@@ -17,6 +17,7 @@ import {
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { useAuth } from '../../contexts/auth';
+import { resolveMaterialIcon } from '../../lib/iconMapping';
 import { supabase } from '../../lib/supabase';
 import type { Category, SocialLinks } from '../../lib/types';
 
@@ -217,7 +218,7 @@ export default function ProviderSignupScreen() {
                     borderWidth: 1, borderColor: selectedCategory === cat.id ? '#862045' : outlineVariant,
                   }}
                 >
-                  <MaterialIcons name={cat.icon as any} size={18} color={selectedCategory === cat.id ? 'white' : '#85736f'} />
+                  <MaterialIcons name={resolveMaterialIcon(cat.icon)} size={18} color={selectedCategory === cat.id ? 'white' : '#85736f'} />
                   <Text style={{
                     fontFamily: 'Manrope', fontWeight: '600', fontSize: 14,
                     color: selectedCategory === cat.id ? '#fff' : onSurface,

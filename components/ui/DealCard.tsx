@@ -159,7 +159,7 @@ export function DealCard({
               />
             ) : null}
             <Text style={{
-              color: colors.primary, fontWeight: '700', fontSize: 9,
+              color: colors.isDark ? '#d4a0b0' : colors.primary, fontWeight: '700', fontSize: 9,
               textTransform: 'uppercase', letterSpacing: 1.5,
             }}>
               {provider}
@@ -188,7 +188,7 @@ export function DealCard({
 
           <Text
             style={{
-              color: colors.brown, fontSize: 12, fontFamily: 'Manrope',
+              color: colors.isDark ? colors.onSurfaceVariant : colors.brown, fontSize: 12, fontFamily: 'Manrope',
               marginBottom: 10,
             }}
             numberOfLines={2}
@@ -204,7 +204,7 @@ export function DealCard({
                 </Text>
               )}
               {originalPrice && (
-                <Text style={{ color: colors.brown, fontSize: 12, textDecorationLine: 'line-through' }}>
+                <Text style={{ color: colors.isDark ? colors.onSurfaceVariant : colors.brown, fontSize: 12, textDecorationLine: 'line-through' }}>
                   {originalPrice}
                 </Text>
               )}
