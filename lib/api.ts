@@ -5,7 +5,7 @@
 import { supabase } from './supabase';
 import type {
   Category, CustomerProfile, Discount, DiscountType, DiscountStatus, ProviderProfile, Redemption,
-  Review, ClaimDealResult, SubmitReviewResult, RedeemDealResult,
+  Review, ClaimDealResult, SubmitReviewResult, RedeemDealResult, SocialLinks,
 } from './types';
 
 // ── Categories ──────────────────────────────────
@@ -337,7 +337,7 @@ export async function fetchRedemptionByQrHash(qrCodeHash: string) {
         )
       ),
       customer:customer_profiles!customer_id (
-        display_name, avatar_url
+        user_id, display_name, avatar_url
       )
     `)
     .eq('qr_code_hash', qrCodeHash)
@@ -476,6 +476,60 @@ export async function fetchOwnProviderProfile(): Promise<ProviderProfile | null>
 
   if (error) throw error;
   return data as ProviderProfile | null;
+}
+
+export async function updateProviderProfile(updates: {
+  business_name?: string;
+  description?: string | null;
+  phone?: string | null;
+  website?: string | null;
+  logo_url?: string | null;
+  cover_photo_url?: string | null;
+  social_links?: SocialLinks | null;
+  business_hours?: Record<string, string> | null;
+}): Promise<ProviderProfile> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const { data, error } = await supabase
+    .from('provider_profiles')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('user_id', user.id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as ProviderProfile;
+}
+
+export async function uploadProviderImage(base64Data: string, fileType: string, kind: 'logo' | 'cover'): Promise<string> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+
+  const mimeType = fileType || 'image/jpeg';
+  const fileExt = mimeType.split('/')[1] || 'jpg';
+  const path = `${user.id}/${kind}.${fileExt}`;
+
+  const binaryString = atob(base64Data);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+
+  const { error } = await supabase.storage
+    .from('provider-assets')
+    .upload(path, bytes, {
+      contentType: mimeType,
+      upsert: true,
+    });
+
+  if (error) throw error;
+
+  const { data: { publicUrl } } = supabase.storage
+    .from('provider-assets')
+    .getPublicUrl(path);
+
+  return `${publicUrl}?t=${Date.now()}`;
 }
 
 // ── Provider Stats (Dashboard) ──────────────────

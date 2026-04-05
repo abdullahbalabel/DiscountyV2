@@ -102,8 +102,8 @@ export default function DealDetails() {
     return (
       <View style={{ flex: 1, backgroundColor: colors.surfaceBg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 }}>
         <MaterialIcons name="error-outline" size={36} color={colors.iconDefault} />
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: colors.onSurface, marginTop: 12 }}>{t('customer.dealNotFound')}</Text>
-        <Text style={{ fontFamily: 'Manrope', color: colors.onSurfaceVariant, textAlign: 'center', fontSize: 14, marginTop: 4 }}>{t('customer.dealRemovedOrExpired')}</Text>
+        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, color: colors.onSurface, marginTop: 12 }}>{t('customer.dealNotFound')}</Text>
+        <Text style={{ fontFamily: 'Cairo', color: colors.onSurfaceVariant, textAlign: 'center', fontSize: 14, marginTop: 4 }}>{t('customer.dealRemovedOrExpired')}</Text>
         <AnimatedButton style={{ marginTop: 16, paddingHorizontal: 20, paddingVertical: 8, backgroundColor: colors.primary, borderRadius: Radius.md }} onPress={() => router.back()}>
           <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>{t('customer.goBack')}</Text>
         </AnimatedButton>
@@ -123,7 +123,7 @@ export default function DealDetails() {
           <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' }} onPress={() => router.back()}>
             <MaterialIcons name={I18nManager.isRTL ? "arrow-forward" : "arrow-back"} size={18} color="white" />
           </AnimatedButton>
-          <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('discounty')}</Text>
+          <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('discounty')}</Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' }}>
@@ -140,17 +140,17 @@ export default function DealDetails() {
           <Image source={{ uri: deal.image_url || 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800' }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
           <LinearGradient colors={['transparent', 'rgba(26,17,15,0.9)']} style={{ position: 'absolute', bottom: 0, start: 0, end: 0, height: '60%' }} />
           <View style={{ position: 'absolute', top: 64, end: 16, backgroundColor: colors.primary, padding: 12, borderRadius: Radius.lg, alignItems: 'center' }}>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '800', fontSize: 18, color: '#fff', letterSpacing: -0.5 }}>{formattedDiscount}</Text>
-            <Text style={{ fontFamily: 'Manrope', fontSize: 8, color: '#fff', textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700' }}>{t('customer.discount')}</Text>
+            <Text style={{ fontFamily: 'Cairo', fontWeight: '800', fontSize: 18, color: '#fff', letterSpacing: -0.5 }}>{formattedDiscount}</Text>
+            <Text style={{ fontFamily: 'Cairo', fontSize: 8, color: '#fff', textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: '700' }}>{t('customer.discount')}</Text>
           </View>
           <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16 }}>
             {category && (
               <View style={{ backgroundColor: colors.brown, alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: Radius.sm, marginBottom: 8, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <MaterialIcons name={resolveMaterialIcon(category.icon)} size={10} color="white" />
-                <Text style={{ color: '#fff', fontFamily: 'Manrope', fontSize: 9, textTransform: 'uppercase', letterSpacing: 3 }}>{category.name}</Text>
+                <Text style={{ color: '#fff', fontFamily: 'Cairo', fontSize: 9, textTransform: 'uppercase', letterSpacing: 0.5 }}>{category.name}</Text>
               </View>
             )}
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '800', color: '#fff', fontSize: 20, letterSpacing: -0.5 }}>{deal.title}</Text>
+            <Text style={{ fontFamily: 'Cairo', fontWeight: '800', color: '#fff', fontSize: 20, letterSpacing: -0.5 }}>{deal.title}</Text>
           </View>
         </View>
 
@@ -168,7 +168,7 @@ export default function DealDetails() {
                 </View>
               )}
               <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: colors.onSurface }}>{provider.business_name}</Text>
+                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 14, color: colors.onSurface }}>{provider.business_name}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 }}>
                   <MaterialIcons name="star" size={12} color={colors.warning} />
                   <Text style={{ color: colors.onSurfaceVariant, fontSize: 12, fontWeight: '600' }}>
@@ -187,8 +187,8 @@ export default function DealDetails() {
                   <MaterialIcons name="timer" size={20} color={colors.primary} />
                 </View>
                 <View>
-                  <Text style={{ fontFamily: 'Manrope', fontSize: 9, textTransform: 'uppercase', letterSpacing: 3, color: colors.onSurfaceVariant, fontWeight: '700' }}>{t('customer.dealExpiresIn')}</Text>
-                  <Text style={{ fontFamily: 'Epilogue', fontSize: 14, color: colors.onSurface, fontWeight: '700' }}>{timeLeft}</Text>
+                  <Text style={{ fontFamily: 'Cairo', fontSize: 9, textTransform: 'uppercase', letterSpacing: 0.5, color: colors.onSurfaceVariant, fontWeight: '700' }}>{t('customer.dealExpiresIn')}</Text>
+                  <Text style={{ fontFamily: 'Cairo', fontSize: 14, color: colors.onSurface, fontWeight: '700' }}>{timeLeft}</Text>
                 </View>
               </View>
             </View>
@@ -197,16 +197,16 @@ export default function DealDetails() {
           {deal.description && (
             <AnimatedEntrance index={1} delay={150}>
               <View style={{ marginBottom: 20 }}>
-                <Text style={{ fontFamily: 'Epilogue', fontSize: 16, color: colors.onSurface, marginBottom: 8, letterSpacing: -0.5 }}>{t('customer.aboutThisDeal')}</Text>
-                <Text style={{ color: colors.onSurfaceVariant, lineHeight: 22, fontSize: 14, fontFamily: 'Manrope' }}>{deal.description}</Text>
+                <Text style={{ fontFamily: 'Cairo', fontSize: 16, color: colors.onSurface, marginBottom: 8, letterSpacing: -0.5 }}>{t('customer.aboutThisDeal')}</Text>
+                <Text style={{ color: colors.onSurfaceVariant, lineHeight: 22, fontSize: 14, fontFamily: 'Cairo' }}>{deal.description}</Text>
               </View>
             </AnimatedEntrance>
           )}
 
           <AnimatedEntrance index={2} delay={200}>
             <View style={{ backgroundColor: colors.surfaceContainerHigh, padding: 16, borderRadius: Radius.xl, overflow: 'hidden', marginBottom: 20 }}>
-              <Text style={{ fontFamily: 'Manrope', fontSize: 9, textTransform: 'uppercase', letterSpacing: 3, color: colors.onSurfaceVariant, marginBottom: 4 }}>{t('customer.dealStats')}</Text>
-              <Text style={{ fontFamily: 'Epilogue', fontSize: 24, color: colors.onSurface, letterSpacing: -0.5, marginBottom: 16 }}>
+              <Text style={{ fontFamily: 'Cairo', fontSize: 9, textTransform: 'uppercase', letterSpacing: 0.5, color: colors.onSurfaceVariant, marginBottom: 4 }}>{t('customer.dealStats')}</Text>
+              <Text style={{ fontFamily: 'Cairo', fontSize: 24, color: colors.onSurface, letterSpacing: -0.5, marginBottom: 16 }}>
                 {formattedDiscount} <Text style={{ fontSize: 12, fontWeight: '400', color: colors.onSurfaceVariant }}>{t('customer.off')}</Text>
               </Text>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
@@ -240,15 +240,15 @@ export default function DealDetails() {
           <AnimatedEntrance index={4} delay={300}>
             {spotsLeft <= 0 ? (
               <View style={{ paddingVertical: 12, borderRadius: Radius.lg, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', marginBottom: 20 }}>
-                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14 }}>{t('customer.soldOut')}</Text>
+                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', fontWeight: '700', fontSize: 14 }}>{t('customer.soldOut')}</Text>
                </View>
              ) : timeLeft === t('deal.expired') ? (
                <View style={{ paddingVertical: 12, borderRadius: Radius.lg, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', marginBottom: 20 }}>
-                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14 }}>{t('customer.dealExpired')}</Text>
+                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', fontWeight: '700', fontSize: 14 }}>{t('customer.dealExpired')}</Text>
                </View>
              ) : alreadyClaimed ? (
                <View style={{ paddingVertical: 12, borderRadius: Radius.lg, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', marginBottom: 20 }}>
-                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14 }}>{t('customer.alreadyClaimed')}</Text>
+                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', fontWeight: '700', fontSize: 14 }}>{t('customer.alreadyClaimed')}</Text>
               </View>
             ) : (
               <AnimatedButton
@@ -257,7 +257,7 @@ export default function DealDetails() {
                 onPress={handleClaim}
                 disabled={isClaiming || slotCount >= 3}
               >
-                <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, textAlign: 'center' }}>
+                <Text style={{ color: '#fff', fontFamily: 'Cairo', fontWeight: '700', fontSize: 14, textAlign: 'center' }}>
                   {isClaiming ? t('customer.claiming') : slotCount >= 3 ? t('customer.slotsFullReview') : t('customer.claimDealNow')}
                 </Text>
               </AnimatedButton>
@@ -272,10 +272,10 @@ export default function DealDetails() {
             <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: '#dcfce7', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
               <MaterialIcons name="celebration" size={40} color="#16a34a" />
             </View>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '800', fontSize: 22, color: colors.onSurface, textAlign: 'center', letterSpacing: -0.5 }}>
+            <Text style={{ fontFamily: 'Cairo', fontWeight: '800', fontSize: 22, color: colors.onSurface, textAlign: 'center', letterSpacing: -0.5 }}>
               {t('customer.dealClaimed')}
             </Text>
-            <Text style={{ fontFamily: 'Manrope', fontSize: 14, color: colors.onSurfaceVariant, textAlign: 'center', marginTop: 8, lineHeight: 22 }}>
+            <Text style={{ fontFamily: 'Cairo', fontSize: 14, color: colors.onSurfaceVariant, textAlign: 'center', marginTop: 8, lineHeight: 22 }}>
               {t('customer.qrCodeReady')}
             </Text>
             <View style={{ width: '100%', marginTop: 24, gap: 10 }}>
@@ -286,7 +286,7 @@ export default function DealDetails() {
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                   <MaterialIcons name="qr-code" size={20} color="#fff" />
-                  <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 15 }}>
+                  <Text style={{ color: '#fff', fontFamily: 'Cairo', fontWeight: '700', fontSize: 15 }}>
                     {t('customer.viewQRCode')}
                   </Text>
                 </View>
@@ -296,7 +296,7 @@ export default function DealDetails() {
                 style={{ width: '100%', paddingVertical: 14, borderRadius: Radius.lg, alignItems: 'center', justifyContent: 'center' }}
                 onPress={() => setShowSuccess(false)}
               >
-                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 15 }}>
+                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', fontWeight: '700', fontSize: 15 }}>
                   {t('customer.stayHere')}
                 </Text>
               </AnimatedButton>

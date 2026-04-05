@@ -48,10 +48,10 @@ export function CircularProgress({ progress, size, strokeWidth, daysLeft, isDark
           originY={center}
         />
       </Svg>
-      <Text style={{ fontFamily: 'Epilogue', fontWeight: '800', fontSize: size * 0.28, color: textColor }}>
+      <Text style={{ fontFamily: 'Cairo', fontWeight: '800', fontSize: size * 0.28, color: textColor }}>
         {daysLeft}
       </Text>
-      <Text style={{ fontFamily: 'Manrope', fontSize: size * 0.1, color: subColor, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1, marginTop: -2 }}>
+      <Text style={{ fontFamily: 'Cairo', fontSize: size * 0.1, color: subColor, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 1, marginTop: -2 }}>
         {daysLeft === 1 ? 'day' : 'days'}
       </Text>
     </View>

@@ -25390,7 +25390,7 @@
   "tamaguiConfig": {
     "fonts": {
       "body": {
-        "family": "Manrope",
+        "family": "Cairo",
         "size": {
           "xs": 10,
           "sm": 12,
@@ -25443,7 +25443,7 @@
         }
       },
       "heading": {
-        "family": "Epilogue",
+        "family": "Cairo",
         "size": {
           "xs": 12,
           "sm": 14,
@@ -25496,7 +25496,7 @@
         }
       },
       "label": {
-        "family": "Manrope",
+        "family": "Cairo",
         "size": {
           "xs": 10,
           "sm": 12,

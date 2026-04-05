@@ -87,8 +87,8 @@ export const DarkColors = {
 // ─── Typography ──────────────────────────────────────────────────────────────
 
 export const Fonts = {
-  heading: 'Epilogue',
-  body: 'Manrope',
+  heading: 'Cairo',
+  body: 'Cairo',
 } as const;
 
 // ─── Spacing Scale ───────────────────────────────────────────────────────────

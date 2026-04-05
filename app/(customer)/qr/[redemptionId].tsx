@@ -65,8 +65,8 @@ export default function QRDisplayScreen() {
     return (
       <View style={{ flex: 1, backgroundColor: colors.surfaceBg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
         <MaterialIcons name="error-outline" size={48} color="#85736f" />
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: colors.onSurface, marginTop: 16 }}>{t('customer.notFound')}</Text>
-        <Text style={{ fontFamily: 'Manrope', color: colors.onSurfaceVariant, textAlign: 'center', marginTop: 8 }}>{t('customer.redemptionNotFound')}</Text>
+        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 20, color: colors.onSurface, marginTop: 16 }}>{t('customer.notFound')}</Text>
+        <Text style={{ fontFamily: 'Cairo', color: colors.onSurfaceVariant, textAlign: 'center', marginTop: 8 }}>{t('customer.redemptionNotFound')}</Text>
         <AnimatedButton style={{ marginTop: 24, paddingHorizontal: 24, paddingVertical: 12, backgroundColor: '#862045', borderRadius: 8 }} onPress={() => router.back()}>
           <Text style={{ color: '#fff', fontWeight: '700' }}>{t('customer.goBack')}</Text>
         </AnimatedButton>
@@ -90,21 +90,21 @@ export default function QRDisplayScreen() {
         >
           <MaterialIcons name={I18nManager.isRTL ? "arrow-forward" : "arrow-back"} size={20} color={colors.iconDefault} />
         </AnimatedButton>
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('customer.qrCode')}</Text>
+        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('customer.qrCode')}</Text>
       </View>
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {/* Deal Info */}
         <AnimatedEntrance index={0} delay={100}>
           <View style={{ alignItems: 'center', marginBottom: 28 }}>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '800', fontSize: 22, color: colors.onSurface, textAlign: 'center', letterSpacing: -0.5 }} numberOfLines={2}>
+            <Text style={{ fontFamily: 'Cairo', fontWeight: '800', fontSize: 22, color: colors.onSurface, textAlign: 'center', letterSpacing: -0.5 }} numberOfLines={2}>
               {deal?.title || t('customer.deal')}
             </Text>
-            <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Manrope', fontSize: 14, marginTop: 6, textAlign: 'center' }}>
+            <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', fontSize: 14, marginTop: 6, textAlign: 'center' }}>
               {provider?.business_name || t('customer.provider')}
             </Text>
             <View style={{ backgroundColor: colors.primary, marginTop: 12, paddingHorizontal: 16, paddingVertical: 6, borderRadius: Radius.md }}>
-              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', color: '#fff', fontSize: 16 }}>{formattedDiscount} {t('customer.off_upper')}</Text>
+              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', color: '#fff', fontSize: 16 }}>{formattedDiscount} {t('customer.off_upper')}</Text>
             </View>
           </View>
         </AnimatedEntrance>
@@ -127,7 +127,7 @@ export default function QRDisplayScreen() {
                     </Text>
                   </View>
                 )}
-                <Text style={{ color: colors.onSurfaceVariant, fontSize: 13, marginTop: 16, textAlign: 'center', fontFamily: 'Manrope' }}>
+                <Text style={{ color: colors.onSurfaceVariant, fontSize: 13, marginTop: 16, textAlign: 'center', fontFamily: 'Cairo' }}>
                   {t('customer.showToProvider')}
                 </Text>
               </>
@@ -136,8 +136,8 @@ export default function QRDisplayScreen() {
                 <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: '#dcfce7', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
                   <MaterialIcons name="check-circle" size={48} color="#16a34a" />
                 </View>
-                <Text style={{ color: '#15803d', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 18 }}>{t('customer.redeemed')}</Text>
-                <Text style={{ color: colors.onSurfaceVariant, fontSize: 14, marginTop: 8, textAlign: 'center', fontFamily: 'Manrope' }}>
+                <Text style={{ color: '#15803d', fontFamily: 'Cairo', fontWeight: '700', fontSize: 18 }}>{t('customer.redeemed')}</Text>
+                <Text style={{ color: colors.onSurfaceVariant, fontSize: 14, marginTop: 8, textAlign: 'center', fontFamily: 'Cairo' }}>
                   {t('customer.redeemedSuccess')}
                 </Text>
               </View>
@@ -158,7 +158,7 @@ export default function QRDisplayScreen() {
           }}>
             <MaterialIcons name="pending" size={18} color="#fff" />
             <Text style={{
-              fontFamily: 'Epilogue', fontWeight: '700', fontSize: 13, textTransform: 'uppercase', letterSpacing: 1,
+              fontFamily: 'Cairo', fontWeight: '700', fontSize: 13, textTransform: 'uppercase', letterSpacing: 1,
               color: '#fff',
             }}>
               {t('customer.readyToScan')}
@@ -175,7 +175,7 @@ export default function QRDisplayScreen() {
               color={isRedeemed ? '#16a34a' : '#85736f'}
             />
             <Text style={{
-              fontFamily: 'Epilogue', fontWeight: '700', fontSize: 13, textTransform: 'uppercase', letterSpacing: 1,
+              fontFamily: 'Cairo', fontWeight: '700', fontSize: 13, textTransform: 'uppercase', letterSpacing: 1,
               color: isRedeemed ? '#15803d' : colors.onSurfaceVariant,
             }}>
               {isRedeemed ? t('customer.redeemed') : redemption.status}
@@ -193,7 +193,7 @@ export default function QRDisplayScreen() {
             >
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                 <MaterialIcons name="star" size={20} color="white" />
-                <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 15 }}>{t('customer.rateExperience')}</Text>
+                <Text style={{ color: '#fff', fontFamily: 'Cairo', fontWeight: '700', fontSize: 15 }}>{t('customer.rateExperience')}</Text>
               </View>
             </AnimatedButton>
           </AnimatedEntrance>
@@ -206,7 +206,7 @@ export default function QRDisplayScreen() {
               marginTop: 24, padding: 20, borderRadius: Radius.xl,
               backgroundColor: colors.surfaceContainerLowest, borderWidth: 1, borderColor: colors.outlineVariant,
             }}>
-              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: colors.onSurface, marginBottom: 16 }}>{t('customer.howToRedeem')}</Text>
+              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, color: colors.onSurface, marginBottom: 16 }}>{t('customer.howToRedeem')}</Text>
               {[
                 { icon: 'store', text: t('customer.visitStore') },
                 { icon: 'qr-code', text: t('customer.showQR') },
@@ -217,7 +217,7 @@ export default function QRDisplayScreen() {
                   <View style={{ width: 36, height: 36, borderRadius: Radius.md, backgroundColor: colors.primaryContainer, alignItems: 'center', justifyContent: 'center' }}>
                     <MaterialIcons name={step.icon as any} size={18} color={colors.primary} />
                   </View>
-                  <Text style={{ color: colors.onSurface, fontSize: 14, fontFamily: 'Manrope', flex: 1, lineHeight: 20 }}>{step.text}</Text>
+                  <Text style={{ color: colors.onSurface, fontSize: 14, fontFamily: 'Cairo', flex: 1, lineHeight: 20 }}>{step.text}</Text>
                 </View>
               ))}
             </View>

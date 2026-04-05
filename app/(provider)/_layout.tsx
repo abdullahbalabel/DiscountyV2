@@ -5,11 +5,26 @@ import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useThemeColors, Shadows } from '../../hooks/use-theme-colors';
 import { fetchUnrepliedReviewCount } from '../../lib/api';
+import i18n, { setupRtl, reloadForRtl } from '../../i18n';
 
 export default function ProviderLayout() {
   const colors = useThemeColors();
   const { t } = useTranslation();
   const [unrepliedCount, setUnrepliedCount] = useState(0);
+
+  // Set default language to English for provider screens
+  useEffect(() => {
+    const setDefaultLanguage = async () => {
+      if (i18n.language?.startsWith('ar')) {
+        await i18n.changeLanguage('en');
+        const needsReload = setupRtl();
+        if (needsReload) {
+          await reloadForRtl();
+        }
+      }
+    };
+    setDefaultLanguage();
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -41,7 +56,7 @@ export default function ProviderLayout() {
           borderTopRightRadius: 0,
         },
         tabBarLabelStyle: {
-          fontFamily: 'Manrope',
+          fontFamily: 'Cairo',
           fontSize: 10,
           fontWeight: '600',
           textTransform: 'uppercase',
@@ -114,7 +129,7 @@ export default function ProviderLayout() {
           tabBarBadge: unrepliedCount > 0 ? unrepliedCount : undefined,
           tabBarBadgeStyle: {
             backgroundColor: colors.primary,
-            fontFamily: 'Manrope',
+            fontFamily: 'Cairo',
             fontSize: 10,
             fontWeight: '700',
             minWidth: 18,
@@ -168,6 +183,42 @@ export default function ProviderLayout() {
       />
       <Tabs.Screen
         name="scan-result"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="notifications"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="business-information"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="business-hours"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="social-media-links"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="help-support"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
         options={{
           href: null,
         }}

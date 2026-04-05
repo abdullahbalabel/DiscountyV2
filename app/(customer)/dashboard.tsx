@@ -8,7 +8,7 @@ import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { CircularProgress } from '../../components/ui/CircularProgress';
 import { EmptyState } from '../../components/ui/EmptyState';
-import { useAuth } from '../../contexts/auth';
+import { useNotifications } from '../../contexts/notifications';
 import { fetchCustomerStats, fetchMyRedemptions, getActiveSlotCount } from '../../lib/api';
 import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
 import type { Redemption } from '../../lib/types';
@@ -17,6 +17,7 @@ export default function DashboardScreen() {
   const colors = useThemeColors();
   const router = useRouter();
   const { t } = useTranslation();
+  const { unreadCount } = useNotifications();
 
   const timeAgo = useCallback((date: string): string => {
     const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
@@ -64,13 +65,18 @@ export default function DashboardScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
       <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('customer.myDeals')}</Text>
+        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('customer.myDeals')}</Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }} onPress={() => router.push('/(customer)/history')}>
             <MaterialIcons name="history" size={18} color={colors.iconDefault} />
           </AnimatedButton>
-          <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
+          <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', position: 'relative' }} onPress={() => router.push('/(customer)/notifications' as any)}>
             <MaterialIcons name="notifications" size={18} color={colors.iconDefault} />
+            {unreadCount > 0 && (
+              <View style={{ position: 'absolute', top: -2, right: -2, width: 16, height: 16, borderRadius: 8, backgroundColor: colors.error, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ color: '#fff', fontSize: 9, fontWeight: '700' }}>{unreadCount > 9 ? '9+' : unreadCount}</Text>
+              </View>
+            )}
           </AnimatedButton>
         </View>
       </View>
@@ -82,7 +88,7 @@ export default function DashboardScreen() {
           <AnimatedEntrance index={0} delay={100}>
             <View style={{ backgroundColor: colors.primary, padding: 16, borderRadius: Radius.md, marginBottom: 16, marginTop: 8 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontSize: 14, fontWeight: '700' }}>{t('customer.dealSlots')}</Text>
+                <Text style={{ color: '#fff', fontFamily: 'Cairo', fontSize: 14, fontWeight: '700' }}>{t('customer.dealSlots')}</Text>
                 <MaterialIcons name="confirmation-number" size={18} color="#FFD700" />
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 }}>
@@ -101,7 +107,7 @@ export default function DashboardScreen() {
                   </View>
                 ))}
               </View>
-              <Text style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Manrope', fontSize: 12, textAlign: 'center' }}>
+              <Text style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Cairo', fontSize: 12, textAlign: 'center' }}>
                 {slotCount === 0 ? t('customer.allSlotsFree') : slotCount >= 3 ? t('customer.allSlotsUsed') : t('customer.slotsAvailable', { count: 3 - slotCount })}
               </Text>
             </View>
@@ -111,21 +117,21 @@ export default function DashboardScreen() {
             <AnimatedEntrance index={1} delay={150} style={{ flex: 1 }}>
               <View style={{ backgroundColor: colors.surfaceContainerLowest, padding: 12, borderRadius: Radius.md, borderWidth: 1, borderColor: colors.outlineVariant }}>
                 <MaterialIcons name="local-offer" size={18} color={colors.primary} style={{ marginBottom: 6 }} />
-                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: colors.onSurface, marginBottom: 2 }}>{stats.totalClaimed}</Text>
-                <Text style={{ color: colors.onSurfaceVariant, fontSize: 10, textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700' }}>{t('customer.claimed')}</Text>
+                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 20, color: colors.onSurface, marginBottom: 2 }}>{stats.totalClaimed}</Text>
+                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: '700' }}>{t('customer.claimed')}</Text>
               </View>
             </AnimatedEntrance>
             <AnimatedEntrance index={2} delay={200} style={{ flex: 1 }}>
               <View style={{ backgroundColor: colors.surfaceContainerLowest, padding: 12, borderRadius: Radius.md, borderWidth: 1, borderColor: colors.outlineVariant }}>
                 <MaterialIcons name="qr-code-scanner" size={18} color={colors.success} style={{ marginBottom: 6 }} />
-                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: colors.onSurface, marginBottom: 2 }}>{stats.totalRedeemed}</Text>
-                <Text style={{ color: colors.onSurfaceVariant, fontSize: 10, textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700' }}>{t('customer.redeemed')}</Text>
+                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 20, color: colors.onSurface, marginBottom: 2 }}>{stats.totalRedeemed}</Text>
+                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: '700' }}>{t('customer.redeemed')}</Text>
               </View>
             </AnimatedEntrance>
           </View>
 
           <AnimatedEntrance index={3} delay={250}>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: colors.onSurface, marginBottom: 12 }}>{t('customer.activeDeals')}</Text>
+            <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, color: colors.onSurface, marginBottom: 12 }}>{t('customer.activeDeals')}</Text>
             {isLoading ? (
               <View style={{ paddingVertical: 24, alignItems: 'center' }}>
                 <ActivityIndicator size="large" color={colors.primary} />
@@ -180,7 +186,7 @@ export default function DashboardScreen() {
                         )}
                       </View>
                       <View style={{ flex: 1 }}>
-                        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: colors.onSurface }} numberOfLines={1}>{discount?.title || t('customer.deal')}</Text>
+                        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 14, color: colors.onSurface }} numberOfLines={1}>{discount?.title || t('customer.deal')}</Text>
                         <Text style={{ color: colors.onSurfaceVariant, fontSize: 10, fontWeight: '500', marginTop: 2 }}>{provider?.business_name || t('customer.provider')} • {timeAgo(redemption.claimed_at)}</Text>
                       </View>
                       {isActive ? (

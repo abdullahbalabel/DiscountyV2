@@ -161,11 +161,11 @@ export default function ProviderSignupScreen() {
   const inputStyle = {
     paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12,
     fontWeight: '500' as const, backgroundColor: surfaceContainerLowest,
-    borderWidth: 1, borderColor: outlineVariant, color: onSurface, fontFamily: 'Manrope', fontSize: 16,
+    borderWidth: 1, borderColor: outlineVariant, color: onSurface, fontFamily: 'Cairo', fontSize: 16,
   } as const;
 
   const labelStyle = {
-    fontFamily: 'Manrope', fontWeight: '700' as const, fontSize: 12, textTransform: 'uppercase' as const,
+    fontFamily: 'Cairo', fontWeight: '700' as const, fontSize: 12, textTransform: 'uppercase' as const,
     letterSpacing: 1.5, color: onSurfaceVariant, marginStart: 4, marginBottom: 8,
   } as const;
 
@@ -220,7 +220,7 @@ export default function ProviderSignupScreen() {
                 >
                   <MaterialIcons name={resolveMaterialIcon(cat.icon)} size={18} color={selectedCategory === cat.id ? 'white' : '#85736f'} />
                   <Text style={{
-                    fontFamily: 'Manrope', fontWeight: '600', fontSize: 14,
+                    fontFamily: 'Cairo', fontWeight: '600', fontSize: 14,
                     color: selectedCategory === cat.id ? '#fff' : onSurface,
                   }}>
                     {cat.name}
@@ -257,7 +257,7 @@ export default function ProviderSignupScreen() {
             onPress={getCurrentLocation}
           >
             <MaterialIcons name="my-location" size={20} color="#862045" />
-            <Text style={{ fontFamily: 'Manrope', flex: 1, color: locationName ? onSurface : onSurfaceVariant }}>
+            <Text style={{ fontFamily: 'Cairo', flex: 1, color: locationName ? onSurface : onSurfaceVariant }}>
               {locationName || t('auth.tapCurrentLocation')}
             </Text>
             {latitude && <MaterialIcons name="check-circle" size={20} color="#10b981" />}
@@ -295,7 +295,7 @@ export default function ProviderSignupScreen() {
           />
         </View>
 
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 18, color: onSurface, marginTop: 8 }}>{t('auth.socialMedia')}</Text>
+        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 18, color: onSurface, marginTop: 8 }}>{t('auth.socialMedia')}</Text>
 
         {[
           { key: 'instagram', label: t('auth.instagram'), icon: 'instagram', placeholder: '@your_handle' },
@@ -325,7 +325,7 @@ export default function ProviderSignupScreen() {
   const renderStep2 = () => (
     <AnimatedEntrance index={0}>
       <View style={{ gap: 16 }}>
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginBottom: 8 }}>{t('auth.reviewApplication')}</Text>
+        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 20, color: onSurface, marginBottom: 8 }}>{t('auth.reviewApplication')}</Text>
 
         <View style={{ borderRadius: 24, padding: 24, backgroundColor: surfaceContainerLowest, borderWidth: 1, borderColor: outlineVariant }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 16 }}>
@@ -337,7 +337,7 @@ export default function ProviderSignupScreen() {
               </View>
             )}
             <View style={{ flex: 1 }}>
-              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface }}>
+              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 20, color: onSurface }}>
                 {businessName || t('auth.businessName')}
               </Text>
               <Text style={{ color: onSurfaceVariant, fontSize: 14, fontWeight: '500', marginTop: 4 }}>
@@ -393,7 +393,7 @@ export default function ProviderSignupScreen() {
           >
             <MaterialIcons name="arrow-back" size={24} color="#85736f" style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
           </AnimatedButton>
-          <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 20, color: onSurface }}>
+          <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.5, fontSize: 20, color: onSurface }}>
             {t('auth.businessRegistration')}
           </Text>
         </View>
@@ -421,7 +421,7 @@ export default function ProviderSignupScreen() {
                       </Text>
                     )}
                   </View>
-                  <Text style={{ fontSize: 10, fontFamily: 'Manrope', fontWeight: '700', textTransform: 'uppercase', letterSpacing: 3, color: idx <= step ? '#862045' : onSurfaceVariant }}>
+                  <Text style={{ fontSize: 10, fontFamily: 'Cairo', fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.5, color: idx <= step ? '#862045' : onSurfaceVariant }}>
                     {label}
                   </Text>
                 </View>
@@ -451,7 +451,7 @@ export default function ProviderSignupScreen() {
             style={{ flex: 1, paddingVertical: 16, borderRadius: 999, borderWidth: 2, borderColor: outlineVariant, alignItems: 'center', justifyContent: 'center' }}
             onPress={() => setStep(step - 1)}
           >
-            <Text style={{ fontFamily: 'Manrope', fontWeight: '700', color: onSurface }}>{t('auth.back')}</Text>
+            <Text style={{ fontFamily: 'Cairo', fontWeight: '700', color: onSurface }}>{t('auth.back')}</Text>
           </AnimatedButton>
         )}
         <AnimatedButton
@@ -460,7 +460,7 @@ export default function ProviderSignupScreen() {
           onPress={step === STEPS.length - 1 ? handleSubmit : () => setStep(step + 1)}
           disabled={!canAdvance() || isLoading}
         >
-          <Text style={{ fontFamily: 'Manrope', fontWeight: '700', color: '#fff', fontSize: 16 }}>
+          <Text style={{ fontFamily: 'Cairo', fontWeight: '700', color: '#fff', fontSize: 16 }}>
             {isLoading ? t('auth.submitting') : step === STEPS.length - 1 ? t('auth.submitApplication') : t('auth.continue')}
           </Text>
         </AnimatedButton>

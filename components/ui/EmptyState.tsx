@@ -27,8 +27,8 @@ interface EmptyStateProps {
  * Design spec:
  *   - Icon container: 72×72, circular (Radius.full)
  *   - Icon size: 32
- *   - Title: Epilogue 700, size 18
- *   - Body: Manrope 400, size 13, lineHeight 20
+ *   - Title: Cairo 700, size 18
+ *   - Body: Cairo 400, size 13, lineHeight 20
  *   - Optional gradient CTA pill
  */
 export function EmptyState({ icon, title, message, ctaLabel, onCtaPress, primaryIcon }: EmptyStateProps) {
@@ -68,7 +68,7 @@ export function EmptyState({ icon, title, message, ctaLabel, onCtaPress, primary
 
         {/* Title */}
         <Text style={{
-          fontFamily: 'Epilogue', fontWeight: '700', fontSize: 18,
+          fontFamily: 'Cairo', fontWeight: '700', fontSize: 18,
           color: colors.onSurface, textAlign: 'center', marginBottom: 8,
         }}>
           {title}
@@ -76,7 +76,7 @@ export function EmptyState({ icon, title, message, ctaLabel, onCtaPress, primary
 
         {/* Body */}
         <Text style={{
-          fontFamily: 'Manrope', color: colors.onSurfaceVariant,
+          fontFamily: 'Cairo', color: colors.onSurfaceVariant,
           textAlign: 'center', fontSize: 13, lineHeight: 20, maxWidth: 280,
         }}>
           {message}
@@ -92,7 +92,7 @@ export function EmptyState({ icon, title, message, ctaLabel, onCtaPress, primary
             }}
             onPress={onCtaPress}
           >
-            <Text style={{ color: '#fff', fontFamily: 'Manrope', fontWeight: '700', fontSize: 14 }}>
+            <Text style={{ color: '#fff', fontFamily: 'Cairo', fontWeight: '700', fontSize: 14 }}>
               {ctaLabel}
             </Text>
           </AnimatedButton>

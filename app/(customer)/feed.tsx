@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { DealCard } from '../../components/ui/DealCard';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { useNotifications } from '../../contexts/notifications';
 import { fetchActiveDeals, fetchCategories } from '../../lib/api';
 import { resolveMaterialIcon } from '../../lib/iconMapping';
 import { useSavedDeals } from '../../contexts/savedDeals';
@@ -19,6 +20,7 @@ export default function CustomerFeed() {
   const router = useRouter();
   const { t } = useTranslation();
   const { savedIds, toggleSave } = useSavedDeals();
+  const { unreadCount } = useNotifications();
 
   const [deals, setDeals] = useState<Discount[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -127,8 +129,8 @@ export default function CustomerFeed() {
 
       {/* Deals counter */}
       <Text style={{
-        fontFamily: 'Manrope', fontSize: 10, color: colors.onSurfaceVariant,
-        textTransform: 'uppercase', letterSpacing: 3, fontWeight: '700',
+        fontFamily: 'Cairo', fontSize: 10, color: colors.onSurfaceVariant,
+        textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: '700',
         paddingHorizontal: Spacing.xl, paddingBottom: Spacing.sm,
       }}>
         {isLoading ? t('feed.loading') : t('feed.dealsAvailable', { count: deals.length })}
@@ -157,10 +159,10 @@ export default function CustomerFeed() {
             backgroundColor: colors.primary,
             alignItems: 'center', justifyContent: 'center',
           }}>
-            <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14 }}>D</Text>
+            <Text style={{ color: '#fff', fontFamily: 'Cairo', fontWeight: '700', fontSize: 14 }}>D</Text>
           </View>
           <Text style={{
-            fontFamily: 'Epilogue', fontWeight: '700',
+            fontFamily: 'Cairo', fontWeight: '700',
             letterSpacing: -0.5, fontSize: 18, color: colors.onSurface,
           }}>Discounty</Text>
         </View>
@@ -168,15 +170,21 @@ export default function CustomerFeed() {
           width: 32, height: 32, borderRadius: Radius.md,
           backgroundColor: colors.surfaceContainerHigh,
           alignItems: 'center', justifyContent: 'center',
-        }}>
+          position: 'relative',
+        }} onPress={() => router.push('/(customer)/notifications' as any)}>
           <MaterialIcons name="notifications" size={18} color={colors.iconDefault} />
+          {unreadCount > 0 && (
+            <View style={{ position: 'absolute', top: -2, right: -2, width: 16, height: 16, borderRadius: 8, backgroundColor: colors.error, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ color: '#fff', fontSize: 9, fontWeight: '700' }}>{unreadCount > 9 ? '9+' : unreadCount}</Text>
+            </View>
+          )}
         </AnimatedButton>
       </View>
 
       {/* Tagline + Search */}
       <View style={{ paddingHorizontal: Spacing.lg, paddingTop: Spacing.lg, paddingBottom: Spacing.xs }}>
         <Text style={{
-          fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16,
+          fontFamily: 'Cairo', fontWeight: '700', fontSize: 16,
           marginBottom: Spacing.sm, letterSpacing: -0.5,
           lineHeight: 22, maxWidth: '80%', color: colors.onSurface,
         }}>
@@ -190,7 +198,7 @@ export default function CustomerFeed() {
         }}>
           <MaterialIcons name="search" size={18} color={colors.iconDefault} style={{ marginEnd: Spacing.sm }} />
           <TextInput
-            style={{ flex: 1, fontFamily: 'Manrope', fontSize: 14, color: colors.onSurface }}
+            style={{ flex: 1, fontFamily: 'Cairo', fontSize: 14, color: colors.onSurface }}
             placeholder={t('feed.searchPlaceholder')}
             placeholderTextColor={colors.onSurfaceVariant}
             clearButtonMode="while-editing"

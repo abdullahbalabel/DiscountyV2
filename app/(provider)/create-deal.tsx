@@ -211,7 +211,7 @@ export default function CreateDealScreen() {
   };
 
   const labelStyle = {
-    fontFamily: 'Manrope' as const, fontWeight: '700' as const, fontSize: 12,
+    fontFamily: 'Cairo' as const, fontWeight: '700' as const, fontSize: 12,
     textTransform: 'uppercase' as const, letterSpacing: 0.05,
     color: colors.onSurfaceVariant, marginStart: 4, marginBottom: 8,
   };
@@ -225,10 +225,10 @@ export default function CreateDealScreen() {
             <View style={{ width: 64, height: 64, borderRadius: Radius.glass, backgroundColor: colors.successBg, alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
               <MaterialIcons name="check-circle" size={36} color={colors.success} />
             </View>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: colors.onSurface, textAlign: 'center', marginBottom: 8 }}>
+            <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 20, color: colors.onSurface, textAlign: 'center', marginBottom: 8 }}>
               {t('provider.dealPublished')}
             </Text>
-            <Text style={{ fontFamily: 'Manrope', color: colors.onSurfaceVariant, textAlign: 'center', fontSize: 14, lineHeight: 20, maxWidth: 260, marginBottom: 20 }}>
+            <Text style={{ fontFamily: 'Cairo', color: colors.onSurfaceVariant, textAlign: 'center', fontSize: 14, lineHeight: 20, maxWidth: 260, marginBottom: 20 }}>
               {t('provider.dealPublishedMsg', { title })}
             </Text>
             <AnimatedButton
@@ -236,7 +236,7 @@ export default function CreateDealScreen() {
               style={{ width: '100%', paddingVertical: 10, borderRadius: Radius.full, alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}
               onPress={() => router.push('/(provider)/dashboard')}
             >
-              <Text style={{ color: 'white', fontFamily: 'Manrope', fontWeight: '700', fontSize: 14 }}>{t('provider.backToDashboard')}</Text>
+              <Text style={{ color: 'white', fontFamily: 'Cairo', fontWeight: '700', fontSize: 14 }}>{t('provider.backToDashboard')}</Text>
             </AnimatedButton>
             <AnimatedButton
               style={{ width: '100%', paddingVertical: 10, borderRadius: Radius.full, borderWidth: 2, borderColor: colors.outlineVariant, alignItems: 'center', justifyContent: 'center' }}
@@ -247,7 +247,7 @@ export default function CreateDealScreen() {
                 setStep(1);
               }}
             >
-              <Text style={{ fontFamily: 'Manrope', fontWeight: '700', fontSize: 14, color: colors.onSurface }}>{t('provider.createAnotherDeal')}</Text>
+              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 14, color: colors.onSurface }}>{t('provider.createAnotherDeal')}</Text>
             </AnimatedButton>
           </View>
         </AnimatedEntrance>
@@ -266,7 +266,7 @@ export default function CreateDealScreen() {
           >
             <MaterialIcons name="arrow-back" size={18} color={colors.iconDefault} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
           </AnimatedButton>
-          <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.02, fontSize: 18, color: colors.onSurface }}>
+          <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.02, fontSize: 18, color: colors.onSurface }}>
             {step === 1 ? t('provider.createDeal') : t('provider.reviewAndPublish')}
           </Text>
         </View>
@@ -299,7 +299,7 @@ export default function CreateDealScreen() {
                       }}>{s.num}</Text>
                     </View>
                     <Text style={{
-                      fontSize: 9, fontFamily: 'Manrope', fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.15,
+                      fontSize: 9, fontFamily: 'Cairo', fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.15,
                       color: step >= s.num ? colors.primary : colors.onSurfaceVariant,
                     }}>{s.label}</Text>
                   </View>
@@ -313,7 +313,7 @@ export default function CreateDealScreen() {
             <AnimatedEntrance index={1} style={{ gap: 16 }}>
               {/* Image Upload */}
               <View>
-                <Text style={{ ...labelStyle, fontFamily: 'Epilogue', fontSize: 14, color: colors.onSurface, textTransform: 'none', letterSpacing: 0 }}>{t('provider.coverImage')}</Text>
+                <Text style={{ ...labelStyle, fontFamily: 'Cairo', fontSize: 14, color: colors.onSurface, textTransform: 'none', letterSpacing: 0 }}>{t('provider.coverImage')}</Text>
                 <AnimatedButton
                   style={{
                     width: '100%', aspectRatio: imageUri ? undefined : 16 / 9,
@@ -335,7 +335,7 @@ export default function CreateDealScreen() {
                   ) : (
                     <View style={{ alignItems: 'center', padding: 20 }}>
                       <MaterialIcons name="cloud-upload" size={28} color={colors.primary} />
-                        <Text style={{ fontFamily: 'Manrope', fontWeight: '600', fontSize: 14, color: colors.onSurface, marginTop: 6 }}>{t('provider.tapToUploadImage')}</Text>
+                        <Text style={{ fontFamily: 'Cairo', fontWeight: '600', fontSize: 14, color: colors.onSurface, marginTop: 6 }}>{t('provider.tapToUploadImage')}</Text>
                         <Text style={{ fontSize: 10, color: colors.onSurfaceVariant, marginTop: 2 }}>{t('provider.recommendedSize')}</Text>
                     </View>
                   )}
@@ -391,7 +391,7 @@ export default function CreateDealScreen() {
                         color={selectedCategoryId === cat.id ? colors.primary : colors.iconDefault}
                       />
                       <Text style={{
-                        fontFamily: 'Manrope', fontWeight: '600', fontSize: 12,
+                        fontFamily: 'Cairo', fontWeight: '600', fontSize: 12,
                         color: selectedCategoryId === cat.id ? colors.primary : colors.onSurfaceVariant,
                       }}>
                         {cat.name}
@@ -466,7 +466,7 @@ export default function CreateDealScreen() {
           ) : (
             /* ── Step 2: Review ───────────────────── */
             <AnimatedEntrance index={1}>
-              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: colors.onSurface, marginStart: 4, marginBottom: 12 }}>{t('provider.cardPreview')}</Text>
+              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, color: colors.onSurface, marginStart: 4, marginBottom: 12 }}>{t('provider.cardPreview')}</Text>
               <View style={{
                 backgroundColor: colors.surfaceContainerLowest, borderRadius: Radius.lg, overflow: 'hidden',
                 ...Shadows.xs,
@@ -488,19 +488,19 @@ export default function CreateDealScreen() {
                   <View style={{ position: 'absolute', bottom: 12, start: 16 }}>
                     {selectedCategoryId && (
                       <View style={{ backgroundColor: colors.primary, alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 4, borderRadius: Radius.full, marginBottom: 4 }}>
-                        <Text style={{ color: 'white', fontFamily: 'Manrope', fontWeight: '700', fontSize: 10, textTransform: 'uppercase', letterSpacing: -0.01 }}>
+                        <Text style={{ color: 'white', fontFamily: 'Cairo', fontWeight: '700', fontSize: 10, textTransform: 'uppercase', letterSpacing: -0.01 }}>
                           {categories.find(c => c.id === selectedCategoryId)?.name || 'DEAL'}
                         </Text>
                       </View>
                     )}
-                    <Text style={{ color: 'white', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 18, letterSpacing: -0.02 }}>
+                    <Text style={{ color: 'white', fontFamily: 'Cairo', fontWeight: '700', fontSize: 18, letterSpacing: -0.02 }}>
                       {title || t('provider.dealTitle')}
                     </Text>
                   </View>
                 </View>
                 <View style={{ padding: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                   <View>
-                    <Text style={{ color: colors.primary, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20 }}>
+                    <Text style={{ color: colors.primary, fontFamily: 'Cairo', fontWeight: '700', fontSize: 20 }}>
                       {discountType === 'percentage' ? `-${discountValue || '0'}%` : `$${discountValue || '0'} off`}
                     </Text>
                     <Text style={{ color: colors.onSurfaceVariant, fontSize: 10, fontWeight: '500' }}>
@@ -533,7 +533,7 @@ export default function CreateDealScreen() {
           flexDirection: 'row', alignItems: 'center', gap: 8,
         }}>
           <MaterialIcons name="error" size={16} color="white" />
-          <Text style={{ color: 'white', fontFamily: 'Manrope', fontSize: 12, flex: 1 }}>{formError}</Text>
+          <Text style={{ color: 'white', fontFamily: 'Cairo', fontSize: 12, flex: 1 }}>{formError}</Text>
           <AnimatedButton onPress={() => setFormError('')} style={{ padding: 4 }}>
             <MaterialIcons name="close" size={14} color="white" />
           </AnimatedButton>
@@ -558,7 +558,7 @@ export default function CreateDealScreen() {
               onPress={handleSaveDraft}
               disabled={submitting}
             >
-              <Text style={{ fontFamily: 'Manrope', fontWeight: '700', fontSize: 14, color: colors.onSurface }}>
+              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 14, color: colors.onSurface }}>
                 {submitting ? t('provider.saving') : t('provider.saveDraft')}
               </Text>
             </AnimatedButton>
@@ -567,7 +567,7 @@ export default function CreateDealScreen() {
               style={{ flex: 2, paddingVertical: 10, borderRadius: Radius.full, alignItems: 'center', justifyContent: 'center' }}
               onPress={handleNextStep}
             >
-              <Text style={{ fontFamily: 'Manrope', fontWeight: '700', color: 'white', fontSize: 14 }}>{t('provider.nextReview')}</Text>
+              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', color: 'white', fontSize: 14 }}>{t('provider.nextReview')}</Text>
             </AnimatedButton>
           </>
         ) : (
@@ -580,7 +580,7 @@ export default function CreateDealScreen() {
               }}
               onPress={() => setStep(1)}
             >
-              <Text style={{ fontFamily: 'Manrope', fontWeight: '700', fontSize: 14, color: colors.onSurface }}>{t('provider.edit')}</Text>
+              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 14, color: colors.onSurface }}>{t('provider.edit')}</Text>
             </AnimatedButton>
             <AnimatedButton
               variant="gradient"
@@ -593,7 +593,7 @@ export default function CreateDealScreen() {
               ) : (
                 <MaterialIcons name="publish" size={16} color="white" />
               )}
-              <Text style={{ fontFamily: 'Manrope', fontWeight: '700', color: 'white', fontSize: 14 }}>
+              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', color: 'white', fontSize: 14 }}>
                 {submitting ? t('provider.publishing') : t('provider.publishDeal')}
               </Text>
             </AnimatedButton>

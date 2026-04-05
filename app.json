@@ -1,17 +1,20 @@
 {
   "expo": {
-    "name": "temp_expo",
-    "slug": "temp_expo",
+    "name": "Discounty",
+    "slug": "discounty",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "tempexpo",
+    "scheme": "discounty",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.balabel.discounty"
     },
     "android": {
+      "package": "com.balabel.discounty",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -28,6 +31,18 @@
     "plugins": [
       "expo-router",
       [
+        "expo-font",
+        {
+          "fonts": [
+            "node_modules/@expo-google-fonts/cairo/400Regular/Cairo_400Regular.ttf",
+            "node_modules/@expo-google-fonts/cairo/500Medium/Cairo_500Medium.ttf",
+            "node_modules/@expo-google-fonts/cairo/600SemiBold/Cairo_600SemiBold.ttf",
+            "node_modules/@expo-google-fonts/cairo/700Bold/Cairo_700Bold.ttf",
+            "node_modules/@expo-google-fonts/cairo/800ExtraBold/Cairo_800ExtraBold.ttf"
+          ]
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-icon.png",
@@ -39,11 +54,26 @@
           }
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#862045",
+          "mode": "production"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "9c7f526e-57f5-4b7b-8475-e4882538f593"
+      }
+    },
+    "owner": "balabel"
   }
 }

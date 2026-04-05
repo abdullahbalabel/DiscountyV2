@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "49306419592",
+    "project_id": "discounty-451a0",
+    "storage_bucket": "discounty-451a0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:49306419592:android:0e6b154dafd733c5d5fa3d",
+        "android_client_info": {
+          "package_name": "com.balabel.discounty"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmyhQbr_kGtBROtSQAwO-e45gphEbvTqA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

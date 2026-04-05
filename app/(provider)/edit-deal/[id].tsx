@@ -209,7 +209,7 @@ export default function EditDealScreen() {
     return (
       <View style={{ flex: 1, backgroundColor: isDark ? '#1a110f' : '#fff8f6', alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" color="#862045" />
-        <Text style={{ color: isDark ? '#d8c2bd' : '#564340', fontFamily: 'Manrope', marginTop: 16 }}>{t('provider.loadingDeal')}</Text>
+        <Text style={{ color: isDark ? '#d8c2bd' : '#564340', fontFamily: 'Cairo', marginTop: 16 }}>{t('provider.loadingDeal')}</Text>
       </View>
     );
   }
@@ -228,7 +228,7 @@ export default function EditDealScreen() {
             <MaterialIcons name="arrow-back" size={24} color="#85736f" style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
           </AnimatedButton>
           <View>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.02, fontSize: 20, color: isDark ? '#f1dfda' : '#231917' }}>
+            <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.02, fontSize: 20, color: isDark ? '#f1dfda' : '#231917' }}>
               {t('provider.editDeal')}
             </Text>
             {deal && (
@@ -250,7 +250,7 @@ export default function EditDealScreen() {
               }}
             onPress={handleTogglePause}
           >
-            <Text style={{ fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', color: deal.status === 'active' ? '#d97706' : '#16a34a'
+            <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', color: deal.status === 'active' ? '#d97706' : '#16a34a'
               }}>
               {deal.status === 'active' ? t('provider.pauseDeal') : t('provider.activateDeal')}
             </Text>
@@ -277,7 +277,7 @@ export default function EditDealScreen() {
                     key={stat.label}
                     style={{ flex: 1, backgroundColor: isDark ? '#322825' : '#ffffff', padding: 16, borderRadius: 16, borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)', alignItems: 'center' }}
                   >
-                    <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: isDark ? '#f1dfda' : '#231917' }}>{stat.value}</Text>
+                    <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 20, color: isDark ? '#f1dfda' : '#231917' }}>{stat.value}</Text>
                     <Text style={{ fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.1, color: isDark ? '#d8c2bd' : '#564340', marginTop: 4 }}>{stat.label}</Text>
                   </View>
                 ))}
@@ -287,7 +287,7 @@ export default function EditDealScreen() {
 
           {/* Image */}
           <AnimatedEntrance index={1}>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 18, color: isDark ? '#f1dfda' : '#231917', marginStart: 4, marginBottom: 8 }}>{t('provider.coverImage')}</Text>
+            <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 18, color: isDark ? '#f1dfda' : '#231917', marginStart: 4, marginBottom: 8 }}>{t('provider.coverImage')}</Text>
             <AnimatedButton
               style={{ width: '100%', borderWidth: 2, borderStyle: 'dashed', borderColor: isDark ? 'rgba(160,141,136,0.3)' : 'rgba(133,115,111,0.3)', borderRadius: 12, backgroundColor: isDark ? '#271d1b' : '#fff0ed', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginBottom: 24 }}
               onPress={pickImage}
@@ -303,7 +303,7 @@ export default function EditDealScreen() {
               ) : (
                 <View style={{ alignItems: 'center', padding: 32, aspectRatio: 16/9, justifyContent: 'center' }}>
                   <MaterialIcons name="cloud-upload" size={40} color="#862045" />
-                  <Text style={{ fontFamily: 'Manrope', fontWeight: '600', color: isDark ? '#f1dfda' : '#231917', marginTop: 8 }}>{t('provider.tapToUpload')}</Text>
+                  <Text style={{ fontFamily: 'Cairo', fontWeight: '600', color: isDark ? '#f1dfda' : '#231917', marginTop: 8 }}>{t('provider.tapToUpload')}</Text>
                 </View>
               )}
             </AnimatedButton>
@@ -313,7 +313,7 @@ export default function EditDealScreen() {
           <AnimatedEntrance index={2} style={{ gap: 24 }}>
             {/* Title */}
             <View>
-              <Text style={{ fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginStart: 4, marginBottom: 8 }}>{t('provider.dealTitle')}</Text>
+              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginStart: 4, marginBottom: 8 }}>{t('provider.dealTitle')}</Text>
               <TextInput
                 style={{ width: '100%', paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12, backgroundColor: isDark ? '#322825' : '#ffffff', color: isDark ? '#f1dfda' : '#231917', fontWeight: '500', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }}
                 placeholderTextColor="#85736f"
@@ -324,7 +324,7 @@ export default function EditDealScreen() {
 
             {/* Description */}
             <View>
-              <Text style={{ fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginStart: 4, marginBottom: 8 }}>{t('provider.description')}</Text>
+              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginStart: 4, marginBottom: 8 }}>{t('provider.description')}</Text>
               <TextInput
                 style={{ width: '100%', paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12, backgroundColor: isDark ? '#322825' : '#ffffff', color: isDark ? '#f1dfda' : '#231917', fontWeight: '500', height: 96, textAlign: 'left', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }}
                 placeholderTextColor="#85736f"
@@ -338,7 +338,7 @@ export default function EditDealScreen() {
 
             {/* Category Picker */}
             <View>
-              <Text style={{ fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginStart: 4, marginBottom: 8 }}>{t('provider.category')}</Text>
+              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginStart: 4, marginBottom: 8 }}>{t('provider.category')}</Text>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
                 {categories.map((cat) => (
                   <AnimatedButton
@@ -360,7 +360,7 @@ export default function EditDealScreen() {
                       size={18}
                       color={selectedCategoryId === cat.id ? '#862045' : '#85736f'}
                     />
-                    <Text style={{ fontFamily: 'Manrope', fontWeight: '600', fontSize: 14, color: selectedCategoryId === cat.id ? '#862045' : isDark ? '#d8c2bd' : '#564340'
+                    <Text style={{ fontFamily: 'Cairo', fontWeight: '600', fontSize: 14, color: selectedCategoryId === cat.id ? '#862045' : isDark ? '#d8c2bd' : '#564340'
                       }}>
                       {cat.name}
                     </Text>
@@ -372,7 +372,7 @@ export default function EditDealScreen() {
             {/* Discount & Expiry */}
             <View style={{ flexDirection: 'row', gap: 16 }}>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginStart: 4, marginBottom: 8 }}>{t('provider.discount')}</Text>
+                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginStart: 4, marginBottom: 8 }}>{t('provider.discount')}</Text>
                 <View style={{ position: 'relative', flexDirection: 'row', alignItems: 'center' }}>
                   <TextInput
                     style={{ flex: 1, paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12, backgroundColor: isDark ? '#322825' : '#ffffff', color: isDark ? '#f1dfda' : '#231917', fontWeight: '500', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }}
@@ -387,7 +387,7 @@ export default function EditDealScreen() {
                 </View>
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginStart: 4, marginBottom: 8 }}>{t('provider.expiryDate')}</Text>
+                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginStart: 4, marginBottom: 8 }}>{t('provider.expiryDate')}</Text>
                 <TextInput
                   style={{ width: '100%', paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12, backgroundColor: isDark ? '#322825' : '#ffffff', color: isDark ? '#f1dfda' : '#231917', fontWeight: '500', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }}
                   value={endDate}
@@ -400,7 +400,7 @@ export default function EditDealScreen() {
 
             {/* Max Redemptions */}
             <View>
-              <Text style={{ fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginStart: 4, marginBottom: 8 }}>{t('provider.maxRedemptions')}</Text>
+              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginStart: 4, marginBottom: 8 }}>{t('provider.maxRedemptions')}</Text>
               <TextInput
                 style={{ width: '100%', paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12, backgroundColor: isDark ? '#322825' : '#ffffff', color: isDark ? '#f1dfda' : '#231917', fontWeight: '500', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }}
                 keyboardType="number-pad"

@@ -103,10 +103,10 @@ export default function ProviderReviewsScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
       <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('provider.reviews')}</Text>
+        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('provider.reviews')}</Text>
         {unrepliedCount > 0 && (
           <View style={{ backgroundColor: colors.primary, paddingHorizontal: 8, paddingVertical: 2, borderRadius: Radius.full }}>
-            <Text style={{ color: '#fff', fontSize: 11, fontWeight: '700', fontFamily: 'Manrope' }}>{t('provider.unrepliedReviews', { count: unrepliedCount })}</Text>
+            <Text style={{ color: '#fff', fontSize: 11, fontWeight: '700', fontFamily: 'Cairo' }}>{t('provider.unrepliedReviews', { count: unrepliedCount })}</Text>
           </View>
         )}
       </View>
@@ -130,7 +130,7 @@ export default function ProviderReviewsScreen() {
             <Text style={{
               fontSize: 12,
               fontWeight: '600',
-              fontFamily: 'Manrope',
+              fontFamily: 'Cairo',
               color: filter === tab.key ? '#fff' : colors.onSurfaceVariant,
             }}>
               {tab.label}
@@ -190,17 +190,17 @@ export default function ProviderReviewsScreen() {
                         <Image source={{ uri: customerProfile.avatar_url }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                       ) : (
                         <View style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(134,32,69,0.1)' }}>
-                          <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', color: colors.primary, fontSize: 16 }}>
+                          <Text style={{ fontFamily: 'Cairo', fontWeight: '700', color: colors.primary, fontSize: 16 }}>
                             {(customerProfile?.display_name || 'U').charAt(0).toUpperCase()}
                           </Text>
                         </View>
                       )}
                     </View>
                     <View style={{ flex: 1 }}>
-                      <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: colors.onSurface }}>
+                      <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 14, color: colors.onSurface }}>
                         {customerProfile?.display_name || t('customer.anonymous')}
                       </Text>
-                      <Text style={{ fontSize: 11, color: colors.onSurfaceVariant, fontWeight: '500', fontFamily: 'Manrope', marginTop: 2 }}>
+                      <Text style={{ fontSize: 11, color: colors.onSurfaceVariant, fontWeight: '500', fontFamily: 'Cairo', marginTop: 2 }}>
                         {timeAgo(review.created_at, t)}
                       </Text>
                     </View>
@@ -215,7 +215,7 @@ export default function ProviderReviewsScreen() {
                     <Text style={{
                       color: colors.onSurfaceVariant,
                       fontStyle: 'italic',
-                      fontFamily: 'Manrope',
+                      fontFamily: 'Cairo',
                       fontSize: 14,
                       lineHeight: 22,
                       marginBottom: hasReply || isReplying ? 12 : 0,
@@ -235,22 +235,22 @@ export default function ProviderReviewsScreen() {
                     }}>
                       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 }}>
                         <MaterialIcons name="reply" size={14} color={colors.primary} />
-                        <Text style={{ fontSize: 11, fontWeight: '700', color: colors.primary, fontFamily: 'Manrope' }}>
+                        <Text style={{ fontSize: 11, fontWeight: '700', color: colors.primary, fontFamily: 'Cairo' }}>
                           {t('provider.replied')}
                         </Text>
                         {review.replied_at && (
-                          <Text style={{ fontSize: 10, color: colors.onSurfaceVariant, fontFamily: 'Manrope' }}>
+                          <Text style={{ fontSize: 10, color: colors.onSurfaceVariant, fontFamily: 'Cairo' }}>
                             • {timeAgo(review.replied_at!, t)}
                           </Text>
                         )}
                         {justReplied && (
                           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                             <MaterialIcons name="check-circle" size={12} color={colors.success} />
-                            <Text style={{ fontSize: 10, fontWeight: '700', color: colors.success, fontFamily: 'Manrope' }}>{t('provider.replySent')}</Text>
+                            <Text style={{ fontSize: 10, fontWeight: '700', color: colors.success, fontFamily: 'Cairo' }}>{t('provider.replySent')}</Text>
                           </View>
                         )}
                       </View>
-                      <Text style={{ color: colors.onSurface, fontSize: 14, fontFamily: 'Manrope', lineHeight: 20 }}>
+                      <Text style={{ color: colors.onSurface, fontSize: 14, fontFamily: 'Cairo', lineHeight: 20 }}>
                         {review.provider_reply}
                       </Text>
                     </View>
@@ -272,7 +272,7 @@ export default function ProviderReviewsScreen() {
                       onPress={() => { setReplyingTo(review.id); setReplyText(''); }}
                     >
                       <MaterialIcons name="reply" size={14} color={colors.primary} />
-                      <Text style={{ fontSize: 12, fontWeight: '600', color: colors.primary, fontFamily: 'Manrope' }}>{t('provider.reply')}</Text>
+                      <Text style={{ fontSize: 12, fontWeight: '600', color: colors.primary, fontFamily: 'Cairo' }}>{t('provider.reply')}</Text>
                     </AnimatedButton>
                   )}
 
@@ -296,7 +296,7 @@ export default function ProviderReviewsScreen() {
                             style={{
                               color: colors.onSurface,
                               fontSize: 14,
-                              fontFamily: 'Manrope',
+                              fontFamily: 'Cairo',
                               minHeight: 36,
                               textAlignVertical: 'top',
                               writingDirection: I18nManager.isRTL ? 'rtl' : 'ltr',
@@ -333,7 +333,7 @@ export default function ProviderReviewsScreen() {
                         style={{ alignSelf: 'flex-start', marginTop: 8, paddingHorizontal: 12, paddingVertical: 4 }}
                         onPress={() => { setReplyingTo(null); setReplyText(''); }}
                       >
-                        <Text style={{ fontSize: 12, color: colors.onSurfaceVariant, fontFamily: 'Manrope' }}>{t('common.cancel')}</Text>
+                        <Text style={{ fontSize: 12, color: colors.onSurfaceVariant, fontFamily: 'Cairo' }}>{t('common.cancel')}</Text>
                       </AnimatedButton>
                     </View>
                   )}

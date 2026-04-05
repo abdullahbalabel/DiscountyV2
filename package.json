@@ -1,5 +1,5 @@
 {
-  "name": "temp_expo",
+  "name": "discounty",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
@@ -11,6 +11,7 @@
     "lint": "npx -y -p node@22 -- node node_modules/expo/bin/cli lint"
   },
   "dependencies": {
+    "@expo-google-fonts/cairo": "^0.4.2",
     "@expo-google-fonts/epilogue": "^0.4.2",
     "@expo-google-fonts/manrope": "^0.4.2",
     "@expo/vector-icons": "^15.0.3",
@@ -25,6 +26,8 @@
     "expo-camera": "~17.0.10",
     "expo-constants": "~18.0.13",
     "expo-crypto": "~15.0.8",
+    "expo-dev-client": "~6.0.20",
+    "expo-device": "~8.0.10",
     "expo-font": "~14.0.11",
     "expo-haptics": "~15.0.8",
     "expo-image": "~3.0.11",
@@ -33,6 +36,7 @@
     "expo-linking": "~8.0.11",
     "expo-localization": "~17.0.8",
     "expo-location": "^55.1.4",
+    "expo-notifications": "~0.32.16",
     "expo-router": "~6.0.23",
     "expo-secure-store": "~15.0.8",
     "expo-splash-screen": "~31.0.13",
@@ -59,12 +63,10 @@
     "@types/react": "~19.1.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
-    "lightningcss-win32-x64-msvc": "1.32.0",
     "typescript": "~5.9.2"
   },
   "overrides": {
-    "lightningcss": "1.32.0",
-    "lightningcss-win32-x64-msvc": "1.32.0"
+    "lightningcss": "1.32.0"
   },
   "private": true
 }

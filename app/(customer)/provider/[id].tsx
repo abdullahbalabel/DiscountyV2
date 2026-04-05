@@ -70,7 +70,7 @@ export default function ProviderProfile() {
     return (
       <View style={{ flex: 1, backgroundColor: surfaceBg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
         <MaterialIcons name="store" size={48} color="#85736f" />
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: onSurface, marginTop: 16 }}>{t('customer.providerNotFound')}</Text>
+        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 20, color: onSurface, marginTop: 16 }}>{t('customer.providerNotFound')}</Text>
         <AnimatedButton style={{ marginTop: 24, paddingHorizontal: 24, paddingVertical: 12, backgroundColor: '#862045', borderRadius: 8 }} onPress={() => router.back()}>
           <Text style={{ color: '#fff', fontWeight: '700' }}>{t('customer.goBack')}</Text>
         </AnimatedButton>
@@ -87,7 +87,7 @@ export default function ProviderProfile() {
           <AnimatedButton style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }} onPress={() => router.back()}>
             <MaterialIcons name="arrow-back" size={24} color="#85736f" style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
           </AnimatedButton>
-          <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 20, color: onSurface }}>{t('discounty')}</Text>
+          <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.5, fontSize: 20, color: onSurface }}>{t('discounty')}</Text>
         </View>
         <AnimatedButton style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
           <MaterialIcons name="share" size={24} color="#85736f" />
@@ -111,7 +111,7 @@ export default function ProviderProfile() {
                 <MaterialIcons name="store" size={40} color="#862045" />
               </View>
             )}
-            <Text style={{ fontFamily: 'Epilogue', fontSize: 20, fontWeight: '700', letterSpacing: -0.5, color: onSurface, marginBottom: 8, textAlign: 'center' }}>{provider.business_name}</Text>
+            <Text style={{ fontFamily: 'Cairo', fontSize: 20, fontWeight: '700', letterSpacing: -0.5, color: onSurface, marginBottom: 8, textAlign: 'center' }}>{provider.business_name}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 16 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <MaterialIcons name="star" size={16} color="#862045" />
@@ -126,7 +126,7 @@ export default function ProviderProfile() {
               )}
             </View>
             {provider.description && (
-              <Text style={{ color: onSurfaceVariant, textAlign: 'center', fontSize: 14, marginBottom: 24, lineHeight: 20, fontFamily: 'Manrope' }}>{provider.description}</Text>
+              <Text style={{ color: onSurfaceVariant, textAlign: 'center', fontSize: 14, marginBottom: 24, lineHeight: 20, fontFamily: 'Cairo' }}>{provider.description}</Text>
             )}
             <View style={{ flexDirection: 'row', gap: 12, marginBottom: 16 }}>
               {provider.phone && (
@@ -156,13 +156,13 @@ export default function ProviderProfile() {
         <View style={{ paddingHorizontal: 24 }}>
           <View style={{ marginBottom: 40 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
-              <Text style={{ fontFamily: 'Epilogue', fontSize: 24, fontWeight: '700', letterSpacing: -0.5, color: onSurface }}>{t('customer.activeDealsCount')}</Text>
-               <Text style={{ color: '#862045', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 3 }}>{deals.length} {t('customer.dealsCount')}</Text>
+              <Text style={{ fontFamily: 'Cairo', fontSize: 24, fontWeight: '700', letterSpacing: -0.5, color: onSurface }}>{t('customer.activeDealsCount')}</Text>
+               <Text style={{ color: '#862045', fontFamily: 'Cairo', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>{deals.length} {t('customer.dealsCount')}</Text>
             </View>
             {deals.length === 0 ? (
               <View style={{ backgroundColor: surfaceContainerLowest, padding: 32, borderRadius: 16, borderWidth: 1, borderColor: outlineVariant, alignItems: 'center' }}>
                 <MaterialIcons name="local-offer" size={40} color="#85736f" />
-                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface, marginTop: 12 }}>{t('customer.noActiveDeals')}</Text>
+                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, color: onSurface, marginTop: 12 }}>{t('customer.noActiveDeals')}</Text>
                 <Text style={{ color: onSurfaceVariant, fontSize: 14, marginTop: 4, textAlign: 'center' }}>{t('customer.noActiveDealsProvider')}</Text>
               </View>
             ) : (
@@ -188,13 +188,13 @@ export default function ProviderProfile() {
 
           <View style={{ marginBottom: 32 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
-              <Text style={{ fontFamily: 'Epilogue', fontSize: 24, fontWeight: '700', letterSpacing: -0.5, color: onSurface }}>{t('tabs.reviews')}</Text>
-               <Text style={{ color: onSurfaceVariant, fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 3 }}>{reviews.length} {t('customer.reviews')}</Text>
+              <Text style={{ fontFamily: 'Cairo', fontSize: 24, fontWeight: '700', letterSpacing: -0.5, color: onSurface }}>{t('tabs.reviews')}</Text>
+               <Text style={{ color: onSurfaceVariant, fontFamily: 'Cairo', fontWeight: '700', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.5 }}>{reviews.length} {t('customer.reviews')}</Text>
             </View>
             {reviews.length === 0 ? (
               <View style={{ backgroundColor: surfaceContainerLowest, padding: 32, borderRadius: 16, borderWidth: 1, borderColor: outlineVariant, alignItems: 'center' }}>
                 <MaterialIcons name="rate-review" size={40} color="#85736f" />
-                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface, marginTop: 12 }}>{t('customer.noReviewsYet')}</Text>
+                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, color: onSurface, marginTop: 12 }}>{t('customer.noReviewsYet')}</Text>
                 <Text style={{ color: onSurfaceVariant, fontSize: 14, marginTop: 4, textAlign: 'center' }}>{t('customer.beFirstToReview')}</Text>
               </View>
             ) : (
@@ -209,7 +209,7 @@ export default function ProviderProfile() {
                             <Image source={{ uri: customerProfile.avatar_url }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
                           ) : (
                             <View style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(134,32,69,0.1)' }}>
-                              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', color: '#862045', fontSize: 18 }}>{(customerProfile?.display_name || 'U').charAt(0).toUpperCase()}</Text>
+                              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', color: '#862045', fontSize: 18 }}>{(customerProfile?.display_name || 'U').charAt(0).toUpperCase()}</Text>
                             </View>
                           )}
                         </View>
@@ -224,7 +224,7 @@ export default function ProviderProfile() {
                         </View>
                       </View>
                       {review.comment && (
-                        <Text style={{ color: onSurfaceVariant, fontStyle: 'italic', fontFamily: 'Manrope', fontSize: 14, lineHeight: 22 }}>"{review.comment}"</Text>
+                        <Text style={{ color: onSurfaceVariant, fontStyle: 'italic', fontFamily: 'Cairo', fontSize: 14, lineHeight: 22 }}>"{review.comment}"</Text>
                       )}
                       {review.provider_reply && (
                         <View style={{ marginTop: 16, padding: 16, borderRadius: 12, backgroundColor: surfaceContainer }}>
@@ -232,7 +232,7 @@ export default function ProviderProfile() {
                             <MaterialIcons name="reply" size={14} color="#862045" />
                             <Text style={{ fontSize: 12, fontWeight: '700', color: '#862045' }}>{t('customer.businessResponse')}</Text>
                           </View>
-                          <Text style={{ color: onSurfaceVariant, fontSize: 14, fontFamily: 'Manrope', lineHeight: 22 }}>{review.provider_reply}</Text>
+                          <Text style={{ color: onSurfaceVariant, fontSize: 14, fontFamily: 'Cairo', lineHeight: 22 }}>{review.provider_reply}</Text>
                         </View>
                       )}
                     </View>

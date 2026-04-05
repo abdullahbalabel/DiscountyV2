@@ -63,10 +63,10 @@ export default function RoleSelectScreen() {
             <View style={{ width: 64, height: 64, borderRadius: 16, backgroundColor: cardBg, borderWidth: 1, borderColor: glassBorder, alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
               <MaterialIcons name="person-add" size={32} color={iconColor} />
             </View>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 30, color: textPrimary, textAlign: 'center', marginBottom: 8 }}>
+            <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 30, color: textPrimary, textAlign: 'center', marginBottom: 8 }}>
               {t('auth.welcomeToDiscounty')}
             </Text>
-            <Text style={{ fontFamily: 'Manrope', color: textSecondary, textAlign: 'center', fontSize: 16 }}>
+            <Text style={{ fontFamily: 'Cairo', color: textSecondary, textAlign: 'center', fontSize: 16 }}>
               {t('auth.howUseApp')}
             </Text>
           </View>
@@ -92,10 +92,10 @@ export default function RoleSelectScreen() {
                 </LinearGradient>
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: textPrimary, marginBottom: 4 }}>
+                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 20, color: textPrimary, marginBottom: 4 }}>
                   {isSettingRole ? t('auth.settingUp') : t('auth.imCustomer')}
                 </Text>
-                <Text style={{ fontFamily: 'Manrope', color: textMuted, fontSize: 14, lineHeight: 20 }}>
+                <Text style={{ fontFamily: 'Cairo', color: textMuted, fontSize: 14, lineHeight: 20 }}>
                   {t('auth.customerDesc')}
                 </Text>
               </View>
@@ -121,10 +121,10 @@ export default function RoleSelectScreen() {
                 </LinearGradient>
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 20, color: textPrimary, marginBottom: 4 }}>
+                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 20, color: textPrimary, marginBottom: 4 }}>
                   {t('auth.imBusiness')}
                 </Text>
-                <Text style={{ fontFamily: 'Manrope', color: textMuted, fontSize: 14, lineHeight: 20 }}>
+                <Text style={{ fontFamily: 'Cairo', color: textMuted, fontSize: 14, lineHeight: 20 }}>
                   {t('auth.businessDesc')}
                 </Text>
               </View>
@@ -135,13 +135,13 @@ export default function RoleSelectScreen() {
           {/* Error Message */}
           {error ? (
             <View style={{ marginTop: 16, backgroundColor: 'rgba(239,68,68,0.2)', borderWidth: 1, borderColor: 'rgba(248,113,113,0.3)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12 }}>
-              <Text style={{ color: '#ef4444', fontFamily: 'Manrope', fontSize: 14, textAlign: 'center' }}>{error}</Text>
+              <Text style={{ color: '#ef4444', fontFamily: 'Cairo', fontSize: 14, textAlign: 'center' }}>{error}</Text>
             </View>
           ) : null}
 
           {/* Footer */}
           <View style={{ marginTop: 32, paddingTop: 24, borderTopWidth: 1, borderColor: glassBorder, alignItems: 'center' }}>
-            <Text style={{ fontFamily: 'Manrope', color: textFaint, fontSize: 12, textAlign: 'center', lineHeight: 20 }}>
+            <Text style={{ fontFamily: 'Cairo', color: textFaint, fontSize: 12, textAlign: 'center', lineHeight: 20 }}>
               {t('auth.changeRoleLater')}
             </Text>
           </View>

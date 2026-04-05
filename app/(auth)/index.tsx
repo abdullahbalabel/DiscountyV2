@@ -5,7 +5,6 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
-import { GlassView } from '../../components/ui/GlassView';
 import { useAuth } from '../../contexts/auth';
 import { setupRtl } from '../../i18n';
 import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
@@ -93,33 +92,25 @@ export default function PhoneEntryScreen() {
   };
 
   const inputStyle = {
-    paddingHorizontal: 24, paddingVertical: 16, borderRadius: Radius.xl,
-    backgroundColor: colors.isDark ? 'rgba(255,255,255,0.1)' : colors.surfaceContainerHigh,
-    borderWidth: 1,
-    borderColor: colors.isDark ? 'rgba(255,255,255,0.2)' : colors.outlineVariant,
+    paddingHorizontal: 4, paddingVertical: 12,
+    backgroundColor: 'transparent',
     color: colors.isDark ? '#fff' : colors.onSurface,
-    fontFamily: 'Manrope', fontSize: 16,
+    fontFamily: 'Cairo', fontSize: 15,
   };
 
   const labelStyle = {
-    fontFamily: 'Manrope', fontSize: 12, textTransform: 'uppercase' as const,
+    fontFamily: 'Cairo', fontSize: 12, textTransform: 'uppercase' as const,
     letterSpacing: 2,
     color: colors.isDark ? 'rgba(255,255,255,0.9)' : colors.onSurfaceVariant,
     fontWeight: '600' as const,
     paddingHorizontal: 4,
   };
 
-  // Theme-aware glass card colors
+  // Theme-aware colors
   const textPrimary = colors.isDark ? '#fff' : colors.onSurface;
   const textSecondary = colors.isDark ? 'rgba(255,255,255,0.8)' : colors.onSurfaceVariant;
   const textMuted = colors.isDark ? 'rgba(255,255,255,0.6)' : colors.onSurfaceVariant;
   const textFaint = colors.isDark ? 'rgba(255,255,255,0.5)' : colors.onSurfaceVariant;
-  const glassBorder = colors.isDark ? 'rgba(255,255,255,0.2)' : colors.outlineVariant;
-  const toggleBg = colors.isDark ? 'rgba(255,255,255,0.1)' : colors.surfaceContainer;
-  const toggleActiveBg = colors.isDark ? 'rgba(255,255,255,0.2)' : colors.surfaceContainerHigh;
-  const toggleBorder = colors.isDark ? 'rgba(255,255,255,0.1)' : colors.outlineVariant;
-  const accentColor = colors.isDark ? '#ffb2be' : colors.primary;
-  const iconColor = colors.isDark ? 'white' : colors.onSurfaceVariant;
   const placeholderColor = colors.isDark ? 'rgba(255,255,255,0.5)' : colors.onSurfaceVariant;
 
   return (
@@ -136,12 +127,27 @@ export default function PhoneEntryScreen() {
         style={{ flex: 1 }}
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <GlassView
-            intensity={colors.isDark ? 30 : 50}
-            style={{ width: '90%', maxWidth: 520, marginHorizontal: 24, marginVertical: 24, borderRadius: Radius.glass, padding: 40, zIndex: 10, borderWidth: 1, borderColor: glassBorder }}
+          <View
+            style={{
+              width: '90%',
+              maxWidth: 520,
+              marginHorizontal: 24,
+              marginVertical: 12,
+              borderRadius: 24,
+              padding: 20,
+              zIndex: 10,
+              backgroundColor: colors.isDark ? 'rgba(30,30,30,0.95)' : 'rgba(255,255,255,0.95)',
+              borderWidth: 1,
+              borderColor: colors.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: colors.isDark ? 0.4 : 0.1,
+              shadowRadius: 24,
+              elevation: 12,
+            }}
           >
             {/* Language Switcher */}
-            <View style={{ alignItems: 'flex-end', marginBottom: 16 }}>
+            <View style={{ alignItems: 'flex-end', marginBottom: 12 }}>
               <Pressable
                 onPress={toggleLanguage}
                 accessibilityRole="button"
@@ -150,104 +156,171 @@ export default function PhoneEntryScreen() {
                   flexDirection: 'row', alignItems: 'center', gap: 6,
                   paddingHorizontal: 12, paddingVertical: 6,
                   borderRadius: Radius.full,
-                  backgroundColor: toggleBg,
-                  borderWidth: 1, borderColor: toggleBorder,
+                  backgroundColor: colors.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(134,32,69,0.08)',
+                  borderWidth: 1,
+                  borderColor: colors.isDark ? 'rgba(255,255,255,0.15)' : 'rgba(134,32,69,0.15)',
                 }}
               >
-                <MaterialIcons name="language" size={16} color={iconColor} />
-                <Text style={{ fontFamily: 'Manrope', fontWeight: '600', fontSize: 12, color: textPrimary }}>
+                <MaterialIcons name="translate" size={14} color={colors.primary} />
+                <Text style={{ fontFamily: 'Cairo', fontWeight: '600', fontSize: 11, color: colors.primary }}>
                   {i18n.language?.startsWith('ar') ? t('english') : t('arabic')}
                 </Text>
               </Pressable>
             </View>
 
             {/* Branding */}
-            <View style={{ marginBottom: 32 }}>
-              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 48, color: textPrimary }}>{t('discounty')}</Text>
-              <Text style={{ fontFamily: 'Manrope', color: textSecondary, marginTop: 8, fontSize: 18 }}>
+            <View style={{ marginBottom: 16, alignItems: 'center' }}>
+              <View style={{
+                width: 48, height: 48, borderRadius: 14,
+                backgroundColor: colors.primary,
+                alignItems: 'center', justifyContent: 'center',
+                marginBottom: 12,
+                shadowColor: colors.primary,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 8,
+                elevation: 6,
+              }}>
+                <MaterialIcons name="local-offer" size={26} color="#fff" />
+              </View>
+              <Text style={{ fontFamily: 'Cairo', fontWeight: '800', fontSize: 28, color: textPrimary, letterSpacing: -0.5 }}>{t('discounty')}</Text>
+              <Text style={{ fontFamily: 'Cairo', color: textSecondary, marginTop: 4, fontSize: 13, textAlign: 'center' }}>
                 {t('tagline')}
               </Text>
             </View>
 
             {/* Mode Toggle */}
-            <View style={{ flexDirection: 'row', backgroundColor: toggleBg, borderRadius: Radius.xl, padding: 4, marginBottom: 32, borderWidth: 1, borderColor: toggleBorder }}>
+            <View style={{ flexDirection: 'row', backgroundColor: colors.isDark ? 'rgba(255,255,255,0.06)' : '#F0F2F5', borderRadius: Radius.xl, padding: 4, marginBottom: 16, borderWidth: 1, borderColor: colors.isDark ? 'rgba(255,255,255,0.1)' : '#E5E7EB' }}>
               <Pressable
                 onPress={() => { setAuthMode('email'); setError(''); }}
-                style={{ flex: 1, paddingVertical: 12, borderRadius: Radius.lg, alignItems: 'center', backgroundColor: authMode === 'email' ? toggleActiveBg : 'transparent' }}
+                style={{
+                  flex: 1, paddingVertical: 10, borderRadius: Radius.lg, alignItems: 'center',
+                  backgroundColor: authMode === 'email' ? colors.primary : 'transparent',
+                  shadowColor: authMode === 'email' ? colors.primary : 'transparent',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: authMode === 'email' ? 0.3 : 0,
+                  shadowRadius: 4,
+                  elevation: authMode === 'email' ? 4 : 0,
+                }}
                 accessibilityRole="tab"
                 accessibilityState={{ selected: authMode === 'email' }}
               >
-                <Text style={{ fontFamily: 'Manrope', fontWeight: '600', fontSize: 14, color: authMode === 'email' ? textPrimary : textMuted }}>
-                  {t('email')}
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <MaterialIcons name="email" size={16} color={authMode === 'email' ? '#fff' : textMuted} />
+                  <Text style={{ fontFamily: 'Cairo', fontWeight: '600', fontSize: 14, color: authMode === 'email' ? '#fff' : textMuted }}>
+                    {t('email')}
+                  </Text>
+                </View>
               </Pressable>
               <Pressable
                 onPress={() => { setAuthMode('phone'); setError(''); }}
-                style={{ flex: 1, paddingVertical: 12, borderRadius: Radius.lg, alignItems: 'center', backgroundColor: authMode === 'phone' ? toggleActiveBg : 'transparent' }}
+                style={{
+                  flex: 1, paddingVertical: 10, borderRadius: Radius.lg, alignItems: 'center',
+                  backgroundColor: authMode === 'phone' ? colors.primary : 'transparent',
+                  shadowColor: authMode === 'phone' ? colors.primary : 'transparent',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: authMode === 'phone' ? 0.3 : 0,
+                  shadowRadius: 4,
+                  elevation: authMode === 'phone' ? 4 : 0,
+                }}
                 accessibilityRole="tab"
                 accessibilityState={{ selected: authMode === 'phone' }}
               >
-                <Text style={{ fontFamily: 'Manrope', fontWeight: '600', fontSize: 14, color: authMode === 'phone' ? textPrimary : textMuted }}>
-                  {t('phone')}
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <MaterialIcons name="phone" size={16} color={authMode === 'phone' ? '#fff' : textMuted} />
+                  <Text style={{ fontFamily: 'Cairo', fontWeight: '600', fontSize: 14, color: authMode === 'phone' ? '#fff' : textMuted }}>
+                    {t('phone')}
+                  </Text>
+                </View>
               </Pressable>
             </View>
 
-            <View style={{ gap: 20 }}>
+            <View style={{ gap: 12 }}>
               {authMode === 'email' ? (
                 <>
-                  <View style={{ gap: 8 }}>
+                  <View style={{ gap: 4, borderBottomWidth: 1, borderBottomColor: colors.isDark ? 'rgba(255,255,255,0.15)' : '#E0E0E0', paddingBottom: 8 }}>
                     <Text style={labelStyle}>{t('email')}</Text>
-                    <TextInput
-                      style={inputStyle}
-                      placeholder={t('auth.emailPlaceholder')}
-                      placeholderTextColor={placeholderColor}
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                      autoComplete="email"
-                      value={email}
-                      onChangeText={(v) => { setEmail(v); setError(''); }}
-                    />
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <View style={{ paddingRight: 10 }}>
+                        <MaterialIcons name="email" size={20} color={colors.isDark ? 'rgba(255,255,255,0.5)' : '#9E9E9E'} />
+                      </View>
+                      <TextInput
+                        style={{ ...inputStyle, flex: 1 }}
+                        placeholder={t('auth.emailPlaceholder')}
+                        placeholderTextColor={placeholderColor}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                        autoComplete="email"
+                        value={email}
+                        onChangeText={(v) => { setEmail(v); setError(''); }}
+                      />
+                    </View>
                   </View>
 
-                  <View style={{ gap: 8 }}>
+                  <View style={{ gap: 4, borderBottomWidth: 1, borderBottomColor: colors.isDark ? 'rgba(255,255,255,0.15)' : '#E0E0E0', paddingBottom: 8 }}>
                     <Text style={labelStyle}>{t('password')}</Text>
-                    <TextInput
-                      style={inputStyle}
-                      placeholder="••••••••"
-                      placeholderTextColor={placeholderColor}
-                      secureTextEntry
-                      value={password}
-                      onChangeText={(v) => { setPassword(v); setError(''); }}
-                    />
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <View style={{ paddingRight: 10 }}>
+                        <MaterialIcons name="lock" size={20} color={colors.isDark ? 'rgba(255,255,255,0.5)' : '#9E9E9E'} />
+                      </View>
+                      <TextInput
+                        style={{ ...inputStyle, flex: 1 }}
+                        placeholder="••••••••"
+                        placeholderTextColor={placeholderColor}
+                        secureTextEntry
+                        value={password}
+                        onChangeText={(v) => { setPassword(v); setError(''); }}
+                      />
+                    </View>
                   </View>
                 </>
               ) : (
-                <View style={{ gap: 8 }}>
+                <View style={{ gap: 4, borderBottomWidth: 1, borderBottomColor: colors.isDark ? 'rgba(255,255,255,0.15)' : '#E0E0E0', paddingBottom: 8 }}>
                   <Text style={labelStyle}>{t('phoneNumber')}</Text>
-                  <View style={{ flexDirection: 'row', gap: 12 }}>
+                  <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
                     <Pressable
                       onPress={() => setShowCountryPicker(!showCountryPicker)}
-                      style={{ paddingHorizontal: 16, paddingVertical: 16, borderRadius: Radius.xl, backgroundColor: colors.isDark ? 'rgba(255,255,255,0.1)' : colors.surfaceContainerHigh, borderWidth: 1, borderColor: glassBorder, flexDirection: 'row', alignItems: 'center', gap: 8 }}
+                      style={{
+                        paddingHorizontal: 8, paddingVertical: 8,
+                        flexDirection: 'row', alignItems: 'center', gap: 4,
+                      }}
                     >
-                      <Text style={{ fontSize: 20 }}>{selectedCountry.flag}</Text>
-                      <Text style={{ color: textPrimary, fontFamily: 'Manrope', fontWeight: '600' }}>{selectedCountry.code}</Text>
-                      <MaterialIcons name="arrow-drop-down" size={20} color={iconColor} />
+                      <Text style={{ fontSize: 18 }}>{selectedCountry.flag}</Text>
+                      <Text style={{ color: textPrimary, fontFamily: 'Cairo', fontWeight: '600', fontSize: 14 }}>{selectedCountry.code}</Text>
+                      <MaterialIcons name="keyboard-arrow-down" size={18} color={colors.isDark ? 'rgba(255,255,255,0.5)' : '#9E9E9E'} />
                     </Pressable>
 
-                    <TextInput
-                      style={{ ...inputStyle, flex: 1 }}
-                      placeholder={t('auth.phonePlaceholder')}
-                      placeholderTextColor={placeholderColor}
-                      keyboardType="phone-pad"
-                      value={phone}
-                      onChangeText={setPhone}
-                      maxLength={15}
-                    />
+                    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                      <View style={{ paddingRight: 10 }}>
+                        <MaterialIcons name="phone" size={20} color={colors.isDark ? 'rgba(255,255,255,0.5)' : '#9E9E9E'} />
+                      </View>
+                      <TextInput
+                        style={{ ...inputStyle, flex: 1 }}
+                        placeholder={t('auth.phonePlaceholder')}
+                        placeholderTextColor={placeholderColor}
+                        keyboardType="phone-pad"
+                        value={phone}
+                        onChangeText={setPhone}
+                        maxLength={15}
+                      />
+                    </View>
                   </View>
 
                   {showCountryPicker && (
-                    <View style={{ backgroundColor: colors.isDark ? 'rgba(0,0,0,0.8)' : colors.surfaceContainerLowest, borderRadius: Radius.xl, borderWidth: 1, borderColor: glassBorder, marginTop: 8, maxHeight: 240, overflow: 'hidden' }}>
+                    <View style={{
+                      backgroundColor: colors.isDark ? 'rgba(0,0,0,0.9)' : '#fff',
+                      borderRadius: Radius.xl,
+                      borderWidth: 1,
+                      borderColor: colors.isDark ? 'rgba(255,255,255,0.15)' : '#E8ECF0',
+                      marginTop: 8,
+                      maxHeight: 240,
+                      overflow: 'hidden',
+                      shadowColor: '#000',
+                      shadowOffset: { width: 0, height: 4 },
+                      shadowOpacity: 0.15,
+                      shadowRadius: 12,
+                      elevation: 8,
+                    }}>
                       <ScrollView nestedScrollEnabled>
                         {COUNTRY_CODES.map((country) => (
                           <Pressable
@@ -258,14 +331,17 @@ export default function PhoneEntryScreen() {
                             }}
                             style={{
                               flexDirection: 'row', alignItems: 'center', gap: 12,
-                              paddingHorizontal: 16, paddingVertical: 12,
-                              borderBottomWidth: 1, borderColor: colors.isDark ? 'rgba(255,255,255,0.1)' : colors.outlineVariant,
-                              backgroundColor: selectedCountry.code === country.code ? (colors.isDark ? 'rgba(255,255,255,0.1)' : colors.surfaceContainerHigh) : 'transparent',
+                              paddingHorizontal: 16, paddingVertical: 14,
+                              borderBottomWidth: 1,
+                              borderColor: colors.isDark ? 'rgba(255,255,255,0.08)' : '#F0F2F5',
+                              backgroundColor: selectedCountry.code === country.code
+                                ? (colors.isDark ? 'rgba(134,32,69,0.2)' : 'rgba(134,32,69,0.08)')
+                                : 'transparent',
                             }}
                           >
-                            <Text style={{ fontSize: 18 }}>{country.flag}</Text>
-                            <Text style={{ color: textPrimary, fontFamily: 'Manrope', flex: 1 }}>{country.name}</Text>
-                            <Text style={{ color: textMuted, fontFamily: 'Manrope' }}>{country.code}</Text>
+                            <Text style={{ fontSize: 20 }}>{country.flag}</Text>
+                            <Text style={{ color: textPrimary, fontFamily: 'Cairo', flex: 1, fontSize: 14 }}>{country.name}</Text>
+                            <Text style={{ color: colors.primary, fontFamily: 'Cairo', fontWeight: '600', fontSize: 13 }}>{country.code}</Text>
                           </Pressable>
                         ))}
                       </ScrollView>
@@ -276,37 +352,71 @@ export default function PhoneEntryScreen() {
 
               {/* Error Message */}
               {error ? (
-                <View style={{ backgroundColor: 'rgba(239,68,68,0.2)', borderWidth: 1, borderColor: 'rgba(248,113,113,0.3)', borderRadius: Radius.lg, paddingHorizontal: 16, paddingVertical: 12 }}>
-                  <Text style={{ color: '#ef4444', fontFamily: 'Manrope', fontSize: 14 }}>{error}</Text>
+                <View style={{
+                  backgroundColor: colors.isDark ? 'rgba(239,68,68,0.15)' : '#FEF2F2',
+                  borderWidth: 1,
+                  borderColor: colors.isDark ? 'rgba(239,68,68,0.3)' : '#FECACA',
+                  borderRadius: Radius.lg,
+                  paddingHorizontal: 12,
+                  paddingVertical: 10,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 8,
+                }}>
+                  <MaterialIcons name="error-outline" size={18} color="#ef4444" />
+                  <Text style={{ color: '#ef4444', fontFamily: 'Cairo', fontSize: 13, flex: 1 }}>{error}</Text>
                 </View>
               ) : null}
 
               {/* Action Button */}
-              <View style={{ marginTop: 8, gap: 16 }}>
+              <View style={{ marginTop: 8, gap: 8 }}>
                 <AnimatedButton
                   variant="gradient"
-                  style={{ paddingVertical: 16, borderRadius: Radius.xl, opacity: isLoading ? 0.6 : 1 }}
+                  style={{
+                    paddingVertical: 14,
+                    borderRadius: Radius.xl,
+                    opacity: isLoading ? 0.7 : 1,
+                    shadowColor: colors.primary,
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                    elevation: 6,
+                  }}
                   onPress={authMode === 'email' ? handleEmailAuth : handleSendOtp}
                   disabled={isLoading}
                 >
-                  <Text style={{ color: '#fff', fontFamily: 'Manrope', fontWeight: '700', fontSize: 18, textAlign: 'center' }}>
-                    {isLoading
-                      ? (authMode === 'email' ? t('signingIn') : t('sending'))
-                      : authMode === 'email'
-                        ? (isSignUp ? t('createAccount') : t('signIn'))
-                        : t('sendVerificationCode')}
-                  </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                    {isLoading ? (
+                      <MaterialIcons name="hourglass-empty" size={20} color="#fff" />
+                    ) : (
+                      <MaterialIcons
+                        name={authMode === 'email' ? 'login' : 'send'}
+                        size={20}
+                        color="#fff"
+                      />
+                    )}
+                    <Text style={{ color: '#fff', fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, textAlign: 'center' }}>
+                      {isLoading
+                        ? (authMode === 'email' ? t('signingIn') : t('sending'))
+                        : authMode === 'email'
+                          ? (isSignUp ? t('createAccount') : t('signIn'))
+                          : t('sendVerificationCode')}
+                    </Text>
+                  </View>
                 </AnimatedButton>
               </View>
 
               {/* Toggle sign-in/sign-up for email mode */}
               {authMode === 'email' && (
-                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
-                  <Text style={{ fontFamily: 'Manrope', color: textMuted, fontSize: 14 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 4, marginTop: 4 }}>
+                  <Text style={{ fontFamily: 'Cairo', color: textMuted, fontSize: 13 }}>
                     {isSignUp ? t('alreadyHaveAccount') : t('dontHaveAccount')}
                   </Text>
-                  <Pressable onPress={() => { setIsSignUp(!isSignUp); setError(''); }}>
-                    <Text style={{ fontFamily: 'Manrope', color: accentColor, fontWeight: '700', fontSize: 14 }}>
+                  <Pressable
+                    onPress={() => { setIsSignUp(!isSignUp); setError(''); }}
+                    style={{ paddingVertical: 4, paddingHorizontal: 8 }}
+                  >
+                    <Text style={{ fontFamily: 'Cairo', color: colors.primary, fontWeight: '700', fontSize: 13 }}>
                       {isSignUp ? t('signIn') : t('signUp')}
                     </Text>
                   </Pressable>
@@ -314,8 +424,8 @@ export default function PhoneEntryScreen() {
               )}
 
               {/* Info */}
-              <View style={{ marginTop: 8, alignItems: 'center' }}>
-                <Text style={{ fontFamily: 'Manrope', fontSize: 12, color: textMuted, textAlign: 'center', lineHeight: 20 }}>
+              <View style={{ marginTop: 4, alignItems: 'center' }}>
+                <Text style={{ fontFamily: 'Cairo', fontSize: 12, color: textMuted, textAlign: 'center', lineHeight: 20 }}>
                   {authMode === 'email'
                     ? t('signInWithEmail')
                     : t('sendOtpDesc')}
@@ -323,12 +433,12 @@ export default function PhoneEntryScreen() {
               </View>
 
               {/* Footer */}
-              <View style={{ marginTop: 16, paddingTop: 24, borderTopWidth: 1, borderColor: glassBorder, flexDirection: 'row', justifyContent: 'center', gap: 24 }}>
-                <Text style={{ fontFamily: 'Manrope', fontSize: 12, color: textFaint }}>{t('privacy')}</Text>
-                <Text style={{ fontFamily: 'Manrope', fontSize: 12, color: textFaint }}>{t('terms')}</Text>
+              <View style={{ marginTop: 12, paddingTop: 16, borderTopWidth: 1, borderColor: colors.isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)', flexDirection: 'row', justifyContent: 'center', gap: 24 }}>
+                <Text style={{ fontFamily: 'Cairo', fontSize: 12, color: textFaint }}>{t('privacy')}</Text>
+                <Text style={{ fontFamily: 'Cairo', fontSize: 12, color: textFaint }}>{t('terms')}</Text>
               </View>
             </View>
-          </GlassView>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </View>

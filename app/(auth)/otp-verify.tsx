@@ -126,10 +126,10 @@ export default function OtpVerifyScreen() {
 
             {/* Header */}
             <View style={{ marginBottom: 32 }}>
-              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 30, color: textPrimary, marginBottom: 8 }}>
+              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 30, color: textPrimary, marginBottom: 8 }}>
                 {t('auth.verificationCode')}
               </Text>
-              <Text style={{ fontFamily: 'Manrope', color: textSecondary, fontSize: 16, lineHeight: 24 }}>
+              <Text style={{ fontFamily: 'Cairo', color: textSecondary, fontSize: 16, lineHeight: 24 }}>
                 {t('auth.sentCodeTo')}{'\n'}
                 <Text style={{ color: textPrimary, fontWeight: '600' }}>{maskedPhone}</Text>
               </Text>
@@ -143,7 +143,7 @@ export default function OtpVerifyScreen() {
                   ref={(ref) => { inputRefs.current[index] = ref; }}
                   style={{
                     flex: 1, aspectRatio: 1, borderRadius: 16, textAlign: 'center',
-                    color: textPrimary, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 24,
+                    color: textPrimary, fontFamily: 'Cairo', fontWeight: '700', fontSize: 24,
                     backgroundColor: digit ? inputBgFilled : inputBg,
                     borderWidth: digit ? 2 : 1,
                     borderColor: digit ? accentColor : glassBorder,
@@ -161,7 +161,7 @@ export default function OtpVerifyScreen() {
             {/* Error */}
             {error ? (
               <View style={{ backgroundColor: 'rgba(239,68,68,0.2)', borderWidth: 1, borderColor: 'rgba(248,113,113,0.3)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, marginBottom: 16 }}>
-                <Text style={{ color: '#ef4444', fontFamily: 'Manrope', fontSize: 14 }}>{error}</Text>
+                <Text style={{ color: '#ef4444', fontFamily: 'Cairo', fontSize: 14 }}>{error}</Text>
               </View>
             ) : null}
 
@@ -172,21 +172,21 @@ export default function OtpVerifyScreen() {
               onPress={() => handleVerify(otp.join(''))}
               disabled={isLoading || otp.some((d) => !d)}
             >
-              <Text style={{ color: '#fff', fontFamily: 'Manrope', fontWeight: '700', fontSize: 18, textAlign: 'center' }}>
+              <Text style={{ color: '#fff', fontFamily: 'Cairo', fontWeight: '700', fontSize: 18, textAlign: 'center' }}>
                 {isLoading ? t('auth.verifying') : t('auth.verify')}
               </Text>
             </AnimatedButton>
 
             {/* Resend */}
             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
-              <Text style={{ fontFamily: 'Manrope', color: textMuted, fontSize: 14 }}>{t('auth.didntReceive')}</Text>
+              <Text style={{ fontFamily: 'Cairo', color: textMuted, fontSize: 14 }}>{t('auth.didntReceive')}</Text>
               {resendTimer > 0 ? (
-                <Text style={{ fontFamily: 'Manrope', color: textFaint, fontSize: 14 }}>
+                <Text style={{ fontFamily: 'Cairo', color: textFaint, fontSize: 14 }}>
                   {t('auth.resendIn')} {resendTimer}s
                 </Text>
               ) : (
                 <AnimatedButton onPress={handleResend}>
-                  <Text style={{ fontFamily: 'Manrope', color: accentColor, fontWeight: '700', fontSize: 14 }}>{t('auth.resend')}</Text>
+                  <Text style={{ fontFamily: 'Cairo', color: accentColor, fontWeight: '700', fontSize: 14 }}>{t('auth.resend')}</Text>
                 </AnimatedButton>
               )}
             </View>

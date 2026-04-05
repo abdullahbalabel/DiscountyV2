@@ -35,10 +35,10 @@ export default function ScanResultScreen() {
           }}>
             <MaterialIcons name={isSuccess ? 'check-circle' : 'cancel'} size={72} color={isSuccess ? '#16a34a' : '#dc2626'} />
           </View>
-          <Text style={{ fontFamily: 'Epilogue', fontWeight: '800', fontSize: 30, color: onSurface, textAlign: 'center', letterSpacing: -0.5, marginBottom: 12 }}>
+          <Text style={{ fontFamily: 'Cairo', fontWeight: '800', fontSize: 30, color: onSurface, textAlign: 'center', letterSpacing: -0.5, marginBottom: 12 }}>
             {isSuccess ? t('provider.dealRedeemed') : t('provider.scanFailed')}
           </Text>
-          <Text style={{ color: onSurfaceVariant, fontFamily: 'Manrope', fontSize: 16, textAlign: 'center', lineHeight: 24, maxWidth: 280 }}>
+          <Text style={{ color: onSurfaceVariant, fontFamily: 'Cairo', fontSize: 16, textAlign: 'center', lineHeight: 24, maxWidth: 280 }}>
             {isSuccess ? t('provider.dealRedeemedDesc') : t('provider.scanFailedDesc')}
           </Text>
         </View>
@@ -52,13 +52,13 @@ export default function ScanResultScreen() {
                 <MaterialIcons name="local-offer" size={24} color="#862045" />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: onSurface }} numberOfLines={2}>{dealTitle}</Text>
+                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, color: onSurface }} numberOfLines={2}>{dealTitle}</Text>
               </View>
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 16, borderTopWidth: 1, borderColor: outlineVariant }}>
               <Text style={{ color: onSurfaceVariant, fontSize: 14 }}>{t('provider.discountApplied')}</Text>
               <View style={{ backgroundColor: isDark ? 'rgba(22,163,74,0.3)' : '#dcfce7', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 999 }}>
-                <Text style={{ color: isDark ? '#86efac' : '#15803d', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 18 }}>{formattedDiscount}</Text>
+                <Text style={{ color: isDark ? '#86efac' : '#15803d', fontFamily: 'Cairo', fontWeight: '700', fontSize: 18 }}>{formattedDiscount}</Text>
               </View>
             </View>
           </View>
@@ -70,11 +70,11 @@ export default function ScanResultScreen() {
           <AnimatedButton variant="gradient" style={{ paddingVertical: 16, borderRadius: 16 }} onPress={() => router.replace('/(provider)/scan')}>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
               <MaterialIcons name="qr-code-scanner" size={20} color="white" />
-              <Text style={{ color: '#fff', fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16 }}>{t('provider.scanAnother')}</Text>
+              <Text style={{ color: '#fff', fontFamily: 'Cairo', fontWeight: '700', fontSize: 16 }}>{t('provider.scanAnother')}</Text>
             </View>
           </AnimatedButton>
           <AnimatedButton style={{ paddingVertical: 16, borderRadius: 16, borderWidth: 1, borderColor: outlineVariant }} onPress={() => router.replace('/(provider)/dashboard')}>
-            <Text style={{ color: onSurface, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, textAlign: 'center' }}>{t('provider.backToDashboard')}</Text>
+            <Text style={{ color: onSurface, fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, textAlign: 'center' }}>{t('provider.backToDashboard')}</Text>
           </AnimatedButton>
         </View>
       </AnimatedEntrance>

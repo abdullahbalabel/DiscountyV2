@@ -557,7 +557,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   headerTitle: {
-    fontFamily: 'Epilogue',
+    fontFamily: 'Cairo',
     fontWeight: '700',
     letterSpacing: -0.5,
     fontSize: 20,
@@ -587,7 +587,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 14,
-    fontFamily: 'Manrope',
+    fontFamily: 'Cairo',
     padding: 0,
   },
   filterList: {
@@ -606,7 +606,7 @@ const styles = StyleSheet.create({
   },
   filterTabText: {
     fontSize: 12,
-    fontFamily: 'Manrope',
+    fontFamily: 'Cairo',
     fontWeight: '700',
   },
   filterCount: {
@@ -657,12 +657,12 @@ const styles = StyleSheet.create({
   },
   discountBadgeText: {
     color: 'white',
-    fontFamily: 'Epilogue',
+    fontFamily: 'Cairo',
     fontWeight: '700',
     fontSize: 10,
   },
   noImageDiscount: {
-    fontFamily: 'Epilogue',
+    fontFamily: 'Cairo',
     fontWeight: '700',
     fontSize: 16,
   },
@@ -679,7 +679,7 @@ const styles = StyleSheet.create({
   },
   dealTitle: {
     flex: 1,
-    fontFamily: 'Epilogue',
+    fontFamily: 'Cairo',
     fontWeight: '700',
     fontSize: 13,
     lineHeight: 16,
@@ -791,7 +791,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   errorTitle: {
-    fontFamily: 'Epilogue',
+    fontFamily: 'Cairo',
     fontWeight: '700',
     fontSize: 16,
     textAlign: 'center',
@@ -836,7 +836,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 13,
     fontWeight: '600',
-    fontFamily: 'Manrope',
+    fontFamily: 'Cairo',
   },
 });
 

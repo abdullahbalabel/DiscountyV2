@@ -15,26 +15,26 @@ export default function TamaguiDemoScreen() {
       <View style={{ padding: 16, gap: 24 }}>
 
         {/* Header */}
-        <Text style={{ fontFamily: 'Epilogue', fontSize: 30, fontWeight: '700', color: '#231917' }}>
+        <Text style={{ fontFamily: 'Cairo', fontSize: 30, fontWeight: '700', color: '#231917' }}>
           Component Library
         </Text>
 
         {/* ── Typography ── */}
         <Section title="Typography">
-          <Text style={{ fontFamily: 'Epilogue', fontSize: 36, fontWeight: '700', color: '#231917' }}>
+          <Text style={{ fontFamily: 'Cairo', fontSize: 36, fontWeight: '700', color: '#231917' }}>
             Heading 4xl
           </Text>
-          <Text style={{ fontFamily: 'Epilogue', fontSize: 24, fontWeight: '700', color: '#231917' }}>
+          <Text style={{ fontFamily: 'Cairo', fontSize: 24, fontWeight: '700', color: '#231917' }}>
             Heading 2xl
           </Text>
-          <Text style={{ fontFamily: 'Epilogue', fontSize: 18, fontWeight: '700', color: '#231917' }}>
+          <Text style={{ fontFamily: 'Cairo', fontSize: 18, fontWeight: '700', color: '#231917' }}>
             Heading lg
           </Text>
-          <Text style={{ fontFamily: 'Manrope', fontSize: 14, color: '#231917' }}>
-            Body text — Manrope regular at md size for readable content.
+          <Text style={{ fontFamily: 'Cairo', fontSize: 14, color: '#231917' }}>
+            Body text — Cairo regular at md size for readable content.
           </Text>
           <Text style={{
-            fontFamily: 'Manrope', fontSize: 12, color: '#7b5733',
+            fontFamily: 'Cairo', fontSize: 12, color: '#7b5733',
             textTransform: 'uppercase', letterSpacing: 1.5,
           }}>
             Label / Caption
@@ -79,7 +79,7 @@ export default function TamaguiDemoScreen() {
               style={{ padding: 24, minHeight: 180, justifyContent: 'center' }}
             >
               <GlassView intensity={40} style={{ padding: 20, borderRadius: 16 }}>
-                <Text style={{ fontFamily: 'Epilogue', fontSize: 18, color: '#fff', fontWeight: '700' }}>
+                <Text style={{ fontFamily: 'Cairo', fontSize: 18, color: '#fff', fontWeight: '700' }}>
                   GlassView Component
                 </Text>
                 <Text style={{ fontSize: 14, color: 'rgba(255,255,255,0.9)', marginTop: 8 }}>
@@ -160,7 +160,7 @@ export default function TamaguiDemoScreen() {
             shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.06, shadowRadius: 12, elevation: 3,
           }}>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: '#231917' }}>
+            <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, color: '#231917' }}>
               Simple Card
             </Text>
             <Text style={{ fontSize: 13, color: '#7b5733', marginTop: 6 }}>
@@ -168,7 +168,7 @@ export default function TamaguiDemoScreen() {
             </Text>
           </View>
           <View style={{ backgroundColor: '#2c1600', borderRadius: 16, padding: 16 }}>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: '#fff' }}>
+            <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, color: '#fff' }}>
               Dark Card
             </Text>
             <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)', marginTop: 6 }}>
@@ -176,7 +176,7 @@ export default function TamaguiDemoScreen() {
             </Text>
           </View>
           <View style={{ backgroundColor: '#fff', borderRadius: 16, padding: 16, borderWidth: 1, borderColor: '#d8c2bd' }}>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: '#231917' }}>
+            <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, color: '#231917' }}>
               Bordered Card
             </Text>
             <Text style={{ fontSize: 13, color: '#7b5733', marginTop: 6 }}>
@@ -306,7 +306,7 @@ export default function TamaguiDemoScreen() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <View style={{ gap: 12 }}>
-      <Text style={{ fontFamily: 'Epilogue', fontSize: 18, fontWeight: '700', color: '#231917' }}>
+      <Text style={{ fontFamily: 'Cairo', fontSize: 18, fontWeight: '700', color: '#231917' }}>
         {title}
       </Text>
       {children}

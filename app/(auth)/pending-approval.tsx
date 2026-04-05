@@ -25,12 +25,12 @@ export default function PendingApprovalScreen() {
           </View>
 
           {/* Title */}
-          <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 30, color: isDark ? '#f1dfda' : '#231917', textAlign: 'center', marginBottom: 12 }}>
+          <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 30, color: isDark ? '#f1dfda' : '#231917', textAlign: 'center', marginBottom: 12 }}>
             {t('auth.applicationSubmitted')}
           </Text>
 
           {/* Description */}
-          <Text style={{ fontFamily: 'Manrope', color: isDark ? '#d8c2bd' : '#564340', textAlign: 'center', fontSize: 16, lineHeight: 24, marginBottom: 32, maxWidth: 300 }}>
+          <Text style={{ fontFamily: 'Cairo', color: isDark ? '#d8c2bd' : '#564340', textAlign: 'center', fontSize: 16, lineHeight: 24, marginBottom: 32, maxWidth: 300 }}>
             {t('auth.businessRegReview')}
           </Text>
 
@@ -40,7 +40,7 @@ export default function PendingApprovalScreen() {
               <View style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: '#fef3c7', alignItems: 'center', justifyContent: 'center' }}>
                 <MaterialIcons name="pending" size={18} color="#f59e0b" />
               </View>
-              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: isDark ? '#f1dfda' : '#231917' }}>
+              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, color: isDark ? '#f1dfda' : '#231917' }}>
                 {t('auth.statusPendingReview')}
               </Text>
             </View>
@@ -63,7 +63,7 @@ export default function PendingApprovalScreen() {
                     ) : null}
                   </View>
                   <Text style={{
-                    fontFamily: 'Manrope', fontSize: 14,
+                    fontFamily: 'Cairo', fontSize: 14,
                     color: item.done ? '#16a34a' : item.active ? '#d97706' : (isDark ? '#d8c2bd' : '#564340'),
                     fontWeight: (item.done || item.active) ? '600' : '400',
                   }}>
@@ -75,7 +75,7 @@ export default function PendingApprovalScreen() {
           </View>
 
           {/* Info */}
-          <Text style={{ fontFamily: 'Manrope', color: isDark ? '#d8c2bd' : '#564340', textAlign: 'center', fontSize: 12, lineHeight: 20, marginBottom: 32 }}>
+          <Text style={{ fontFamily: 'Cairo', color: isDark ? '#d8c2bd' : '#564340', textAlign: 'center', fontSize: 12, lineHeight: 20, marginBottom: 32 }}>
             {t('auth.notifyWhenApproved')}{'\n'}
             {t('auth.startPostingAfterApproval')}
           </Text>
@@ -85,7 +85,7 @@ export default function PendingApprovalScreen() {
             style={{ paddingHorizontal: 32, paddingVertical: 12, borderRadius: 999, borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.3)' : 'rgba(133,115,111,0.3)' }}
             onPress={() => signOut()}
           >
-            <Text style={{ fontFamily: 'Manrope', fontWeight: '600', color: isDark ? '#d8c2bd' : '#564340' }}>{t('auth.signOut')}</Text>
+            <Text style={{ fontFamily: 'Cairo', fontWeight: '600', color: isDark ? '#d8c2bd' : '#564340' }}>{t('auth.signOut')}</Text>
           </AnimatedButton>
         </View>
       </AnimatedEntrance>

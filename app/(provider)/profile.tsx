@@ -1,4 +1,5 @@
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { I18nManager, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +14,7 @@ export default function ProviderProfileScreen() {
   const { t } = useTranslation();
   const { signOut, session } = useAuth();
   const colors = useThemeColors();
+  const router = useRouter();
   const [profile, setProfile] = useState<ProviderProfile | null>(null);
 
   useEffect(() => {
@@ -25,17 +27,17 @@ export default function ProviderProfileScreen() {
   }, [session]);
 
   const menuItems = [
-    { id: '1', title: t('provider.businessInformation'), icon: 'store', color: colors.brown },
-    { id: '2', title: t('provider.businessHours'), icon: 'schedule', color: colors.success },
-    { id: '3', title: t('provider.socialMediaLinks'), icon: 'share', color: colors.purple },
-    { id: '4', title: t('provider.helpSupport'), icon: 'help-outline', color: colors.iconDefault },
+    { id: '1', title: t('provider.businessInformation'), icon: 'store', color: colors.brown, route: '/(provider)/business-information' as const },
+    { id: '2', title: t('provider.businessHours'), icon: 'schedule', color: colors.success, route: '/(provider)/business-hours' as const },
+    { id: '3', title: t('provider.socialMediaLinks'), icon: 'share', color: colors.purple, route: '/(provider)/social-media-links' as const },
+    { id: '4', title: t('provider.helpSupport'), icon: 'help-outline', color: colors.iconDefault, route: '/(provider)/help-support' as const },
   ];
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
       <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
-        <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('provider.profile')}</Text>
-        <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
+        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('provider.profile')}</Text>
+        <AnimatedButton onPress={() => router.push('/(provider)/settings')} style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
           <MaterialIcons name="settings" size={18} color={colors.iconDefault} />
         </AnimatedButton>
       </View>
@@ -48,8 +50,8 @@ export default function ProviderProfileScreen() {
                 <MaterialCommunityIcons name="store" size={24} color={colors.primary} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 16, color: colors.onSurface }}>{profile?.business_name || t('provider.yourBusiness')}</Text>
-                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Manrope', fontSize: 12, marginTop: 2 }}>{profile?.category || t('provider.category')}</Text>
+                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, color: colors.onSurface }}>{profile?.business_name || t('provider.yourBusiness')}</Text>
+                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', fontSize: 12, marginTop: 2 }}>{profile?.category || t('provider.category')}</Text>
                 {profile?.average_rating ? (
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 }}>
                     <MaterialIcons name="star" size={12} color={colors.warning} />
@@ -61,17 +63,18 @@ export default function ProviderProfileScreen() {
           </AnimatedEntrance>
 
           <AnimatedEntrance index={1} delay={150}>
-            <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: colors.onSurface, marginBottom: 8 }}>{t('provider.settings')}</Text>
+            <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 14, color: colors.onSurface, marginBottom: 8 }}>{t('provider.settings')}</Text>
             <View style={{ backgroundColor: colors.surfaceContainerLowest, borderRadius: Radius.xl, overflow: 'hidden', borderWidth: 1, borderColor: colors.outlineVariant, marginBottom: 20 }}>
               {menuItems.map((item, idx) => (
                 <TouchableOpacity
                   key={item.id}
+                  onPress={() => router.push(item.route as any)}
                   style={{ flexDirection: 'row', alignItems: 'center', padding: 12, borderBottomWidth: idx !== menuItems.length - 1 ? 1 : 0, borderBottomColor: colors.surfaceContainer }}
                 >
                   <View style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', marginEnd: 12 }}>
                     <MaterialIcons name={item.icon as any} size={16} color={item.color} />
                   </View>
-                  <Text style={{ flex: 1, fontFamily: 'Epilogue', fontWeight: '600', fontSize: 14, color: colors.onSurface }}>{item.title}</Text>
+                  <Text style={{ flex: 1, fontFamily: 'Cairo', fontWeight: '600', fontSize: 14, color: colors.onSurface }}>{item.title}</Text>
                   <MaterialIcons name="chevron-right" size={20} color={colors.iconDefault} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
                 </TouchableOpacity>
               ))}
@@ -84,7 +87,7 @@ export default function ProviderProfileScreen() {
               onPress={() => signOut()}
             >
               <MaterialIcons name="logout" size={16} color={colors.error} />
-              <Text style={{ fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14, color: colors.error, marginStart: 8 }}>{t('provider.signOut')}</Text>
+              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 14, color: colors.error, marginStart: 8 }}>{t('provider.signOut')}</Text>
             </TouchableOpacity>
           </AnimatedEntrance>
         </View>

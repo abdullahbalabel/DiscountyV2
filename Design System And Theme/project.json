@@ -13,12 +13,12 @@
   "deviceType": "DESKTOP",
   "designTheme": {
     "colorMode": "LIGHT",
-    "font": "EPILOGUE",
+    "font": "CAIRO",
     "roundness": "ROUND_FULL",
     "customColor": "#FF4757",
-    "headlineFont": "EPILOGUE",
-    "bodyFont": "MANROPE",
-    "labelFont": "MANROPE",
+    "headlineFont": "CAIRO",
+    "bodyFont": "CAIRO",
+    "labelFont": "CAIRO",
     "namedColors": {
       "background": "#f9f9ff",
       "error": "#ba1a1a",

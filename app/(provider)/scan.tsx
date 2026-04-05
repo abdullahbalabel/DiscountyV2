@@ -5,7 +5,9 @@ import { Alert, Platform, StyleSheet, Text, TextInput, useColorScheme, View } fr
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
-import { redeemDeal } from '../../lib/api';
+import { redeemDeal, fetchRedemptionByQrHash } from '../../lib/api';
+import { notifyDealRedeemed, notifyProviderDealRedeemed, sendLocalNotification } from '../../lib/notifications';
+import { supabase } from '../../lib/supabase';
 import type { RedeemDealResult } from '../../lib/types';
 
 // Camera is only available on native platforms
@@ -30,6 +32,7 @@ export default function ScanScreen() {
   const [manualCode, setManualCode] = useState('');
   const [showManualEntry, setShowManualEntry] = useState(Platform.OS === 'web');
   const [scanResult, setScanResult] = useState<RedeemDealResult | null>(null);
+  const [isScanningActive, setIsScanningActive] = useState(false);
 
   // Camera permission (native only)
   const permissionHook = useCameraPermissions ? useCameraPermissions() : [null, null];
@@ -58,8 +61,8 @@ export default function ScanScreen() {
     textOnSurfaceVariant: { color: textOnSurfaceVariant },
     textWhite: { color: 'white' },
     textPrimary: { color: '#862045' },
-    fontHeadline: { fontFamily: 'Epilogue' },
-    fontBody: { fontFamily: 'Manrope' },
+    fontHeadline: { fontFamily: 'Cairo' },
+    fontBody: { fontFamily: 'Cairo' },
     absolute: { position: 'absolute' as const },
     absoluteInset0: { position: 'absolute' as const, top: 0, end: 0, bottom: 0, start: 0 },
     relative: { position: 'relative' as const },
@@ -137,6 +140,39 @@ export default function ScanScreen() {
       setScanResult(result);
 
       if (result.success) {
+        // Send notification to customer and provider about deal redemption
+        try {
+          if (result.redemption_id) {
+            const redemption = await fetchRedemptionByQrHash(data);
+            const dealTitle = result.deal_title || 'Deal';
+
+            if (redemption?.customer?.user_id) {
+              await notifyDealRedeemed(
+                redemption.customer.user_id,
+                dealTitle,
+                ''
+              );
+            }
+
+            // Notify provider (DB + local notification)
+            const { data: { user: providerUser } } = await supabase.auth.getUser();
+            if (providerUser) {
+              await notifyProviderDealRedeemed(
+                providerUser.id,
+                dealTitle,
+                result.redemption_id
+              );
+              await sendLocalNotification(
+                'Deal Redeemed!',
+                `Your deal "${dealTitle}" has been redeemed by a customer.`,
+                { type: 'deal_redeemed' }
+              );
+            }
+          }
+        } catch (notifErr) {
+          console.warn('Failed to send redemption notification:', notifErr);
+        }
+
         // Navigate to scan result screen with the result data
         router.push({
           pathname: '/(provider)/scan-result',
@@ -277,7 +313,7 @@ export default function ScanScreen() {
         barcodeScannerSettings={{
           barcodeTypes: ['qr'],
         }}
-        onBarcodeScanned={scanned ? undefined : (result: any) => handleBarCodeScanned({ data: result.data })}
+        onBarcodeScanned={scanned || !isScanningActive ? undefined : (result: any) => handleBarCodeScanned({ data: result.data })}
       />
 
       {/* Scanner Overlay */}
@@ -311,18 +347,44 @@ export default function ScanScreen() {
 
       {/* Bottom Instructions */}
       <View style={[s.absolute, s.bottom0, s.wFull, s.px6, {paddingBottom: 128}, s.itemsCenter]}>
-        <View style={[s.bgWhite20, s.rounded2xl, s.px6, s.py4]}>
-          <Text style={[s.textWhite, s.fontBody, s.textSm, s.textCenter]}>
-            {t('provider.pointCamera')}
-          </Text>
-        </View>
-        {scanned && (
+        {!isScanningActive && !scanned ? (
           <AnimatedButton
-            style={[s.mt4, s.bgWhite20, s.px6, s.py3, s.roundedFull]}
-            onPress={() => { setScanned(false); setScanResult(null); }}
+            variant="gradient"
+            style={[s.px8, s.py4, s.rounded2xl]}
+            onPress={() => { setIsScanningActive(true); setScanned(false); setScanResult(null); }}
           >
-            <Text style={[s.textWhite, s.fontBold, s.textSm]}>{t('provider.tapScanAgain')}</Text>
+            <View style={[s.flexRow, s.itemsCenter, s.justifyCenter, s.gap2]}>
+              <MaterialIcons name="qr-code-scanner" size={20} color="white" />
+              <Text style={[s.textWhite, s.fontHeadline, s.fontBold, s.textBase]}>
+                {t('provider.startScanning')}
+              </Text>
+            </View>
           </AnimatedButton>
+        ) : scanned ? (
+          <AnimatedButton
+            variant="gradient"
+            style={[s.px8, s.py4, s.rounded2xl]}
+            onPress={() => { setScanned(false); setScanResult(null); setIsScanningActive(true); }}
+          >
+            <View style={[s.flexRow, s.itemsCenter, s.justifyCenter, s.gap2]}>
+              <MaterialIcons name="refresh" size={20} color="white" />
+              <Text style={[s.textWhite, s.fontHeadline, s.fontBold, s.textBase]}>{t('provider.tapScanAgain')}</Text>
+            </View>
+          </AnimatedButton>
+        ) : (
+          <View style={[s.itemsCenter]}>
+            <View style={[s.bgWhite20, s.rounded2xl, s.px6, s.py4, s.mb4]}>
+              <Text style={[s.textWhite, s.fontBody, s.textSm, s.textCenter]}>
+                {t('provider.pointCamera')}
+              </Text>
+            </View>
+            <AnimatedButton
+              style={[s.bgWhite20, s.px6, s.py3, s.roundedFull]}
+              onPress={() => setIsScanningActive(false)}
+            >
+              <Text style={[s.textWhite, s.fontBold, s.textSm]}>{t('provider.stopScanning')}</Text>
+            </AnimatedButton>
+          </View>
         )}
       </View>
 

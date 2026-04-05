@@ -94,7 +94,7 @@ export function DealCard({
             borderRadius: Radius.lg, zIndex: 10,
             ...Shadows.badge,
           }}>
-            <Text style={{ color: colors.onPrimary, fontFamily: 'Epilogue', fontWeight: '700', fontSize: 12 }}>
+            <Text style={{ color: colors.onPrimary, fontFamily: 'Cairo', fontWeight: '700', fontSize: 12 }}>
               {discountBadge}
             </Text>
           </View>
@@ -107,7 +107,7 @@ export function DealCard({
               borderRadius: Radius.md, flexDirection: 'row', alignItems: 'center', gap: 4,
             }}>
               <MaterialIcons name="timer" size={10} color="white" />
-              <Text style={{ color: '#fff', fontFamily: 'Manrope', fontSize: 9, fontWeight: '700', textTransform: 'uppercase' }}>
+              <Text style={{ color: '#fff', fontFamily: 'Cairo', fontSize: 9, fontWeight: '700', textTransform: 'uppercase' }}>
                 {formatTimeLeft(endTime, t)}
               </Text>
             </View>
@@ -138,7 +138,7 @@ export function DealCard({
                 <MaterialIcons name={resolveMaterialIcon(categoryIcon)} size={10} color="white" />
               )}
               <Text style={{
-                color: '#fff', fontFamily: 'Manrope', fontSize: 9, fontWeight: '700',
+                color: '#fff', fontFamily: 'Cairo', fontSize: 9, fontWeight: '700',
                 textTransform: 'uppercase', letterSpacing: 1.5,
               }}>
                 {categoryName}
@@ -180,7 +180,7 @@ export function DealCard({
           </View>
 
           <Text style={{
-            fontFamily: 'Epilogue', fontWeight: '700', fontSize: 14,
+            fontFamily: 'Cairo', fontWeight: '700', fontSize: 14,
             color: colors.onSurface, marginBottom: 4,
           }}>
             {title}
@@ -188,7 +188,7 @@ export function DealCard({
 
           <Text
             style={{
-              color: colors.isDark ? colors.onSurfaceVariant : colors.brown, fontSize: 12, fontFamily: 'Manrope',
+              color: colors.isDark ? colors.onSurfaceVariant : colors.brown, fontSize: 12, fontFamily: 'Cairo',
               marginBottom: 10,
             }}
             numberOfLines={2}

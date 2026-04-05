@@ -5,20 +5,21 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { useColorScheme, ActivityIndicator, View } from 'react-native';
+import { Appearance, useColorScheme, ActivityIndicator, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AuthProvider, useAuth } from '../contexts/auth';
 import { SavedDealsProvider } from '../contexts/savedDeals';
+import { NotificationsProvider } from '../contexts/notifications';
+import {
+  Cairo_400Regular,
+  Cairo_500Medium,
+  Cairo_600SemiBold,
+  Cairo_700Bold,
+  Cairo_800ExtraBold,
+} from '@expo-google-fonts/cairo';
 
-import {
-  Epilogue_700Bold,
-  Epilogue_800ExtraBold,
-} from '@expo-google-fonts/epilogue';
-import {
-  Manrope_400Regular,
-  Manrope_500Medium,
-  Manrope_600SemiBold,
-} from '@expo-google-fonts/manrope';
+// Set default theme to light
+Appearance.setColorScheme('light');
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -59,11 +60,11 @@ function AppContent() {
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    Epilogue: Epilogue_700Bold,
-    Epilogue_800ExtraBold,
-    Manrope: Manrope_400Regular,
-    Manrope_500Medium,
-    Manrope_600SemiBold,
+    Cairo: Cairo_700Bold,
+    Cairo_400Regular,
+    Cairo_500Medium,
+    Cairo_600SemiBold,
+    Cairo_800ExtraBold,
   });
 
   useEffect(() => {
@@ -80,9 +81,11 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <AuthProvider>
-          <SavedDealsProvider>
-            <AppContent />
-          </SavedDealsProvider>
+          <NotificationsProvider>
+            <SavedDealsProvider>
+              <AppContent />
+            </SavedDealsProvider>
+          </NotificationsProvider>
         </AuthProvider>
       </ThemeProvider>
     </GestureHandlerRootView>
