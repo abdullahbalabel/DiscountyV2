@@ -1,0 +1,3 @@
+[submodule "admin-web"]
+	path = admin-web
+	url = https://github.com/abdullahbalabel/DiscountyV2-admin-web.git
