@@ -63,7 +63,7 @@ export default function RoleSelectScreen() {
             <View style={{ width: 64, height: 64, borderRadius: 16, backgroundColor: cardBg, borderWidth: 1, borderColor: glassBorder, alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
               <MaterialIcons name="person-add" size={32} color={iconColor} />
             </View>
-            <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 30, color: textPrimary, textAlign: 'center', marginBottom: 8 }}>
+            <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 30, color: textPrimary, textAlign: 'center', marginBottom: 8 }}>
               {t('auth.welcomeToDiscounty')}
             </Text>
             <Text style={{ fontFamily: 'Cairo', color: textSecondary, textAlign: 'center', fontSize: 16 }}>
@@ -92,7 +92,7 @@ export default function RoleSelectScreen() {
                 </LinearGradient>
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 20, color: textPrimary, marginBottom: 4 }}>
+                <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 20, color: textPrimary, marginBottom: 4 }}>
                   {isSettingRole ? t('auth.settingUp') : t('auth.imCustomer')}
                 </Text>
                 <Text style={{ fontFamily: 'Cairo', color: textMuted, fontSize: 14, lineHeight: 20 }}>
@@ -121,7 +121,7 @@ export default function RoleSelectScreen() {
                 </LinearGradient>
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 20, color: textPrimary, marginBottom: 4 }}>
+                <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 20, color: textPrimary, marginBottom: 4 }}>
                   {t('auth.imBusiness')}
                 </Text>
                 <Text style={{ fontFamily: 'Cairo', color: textMuted, fontSize: 14, lineHeight: 20 }}>

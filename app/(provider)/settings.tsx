@@ -51,7 +51,7 @@ export default function SettingsScreen() {
         <TouchableOpacity onPress={() => router.back()} style={{ marginEnd: 12 }}>
           <MaterialIcons name={I18nManager.isRTL ? 'chevron-right' : 'chevron-left'} size={24} color={colors.onSurface} />
         </TouchableOpacity>
-        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>
+        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>
           {t('provider.settingsTitle')}
         </Text>
       </View>
@@ -60,7 +60,7 @@ export default function SettingsScreen() {
         <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
           <AnimatedEntrance index={0} delay={50}>
             <Text style={{
-              fontFamily: 'Cairo', fontWeight: '700', fontSize: 10,
+              fontFamily: 'Cairo_700Bold', fontSize: 10,
               textTransform: 'uppercase', letterSpacing: 1.5,
               color: colors.onSurfaceVariant, marginBottom: 8, marginStart: 4,
             }}>
@@ -87,7 +87,7 @@ export default function SettingsScreen() {
                   }}>
                     <MaterialIcons name={item.icon as any} size={20} color={item.color} />
                   </View>
-                  <Text style={{ flex: 1, fontFamily: 'Cairo', fontWeight: '600', fontSize: 14, color: colors.onSurface }}>
+                  <Text style={{ flex: 1, fontFamily: 'Cairo_600SemiBold', fontSize: 14, color: colors.onSurface }}>
                     {item.title}
                   </Text>
                   <MaterialIcons name="sync" size={16} color={colors.iconDefault} />

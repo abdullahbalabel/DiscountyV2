@@ -122,7 +122,12 @@
     "signOut": "Sign Out",
     "emailPlaceholder": "you@example.com",
     "phonePlaceholder": "5XX XXX XXX",
-    "businessNamePlaceholder": "e.g. Coffee Corner"
+    "businessNamePlaceholder": "e.g. Coffee Corner",
+    "accountSuspended": "Account Suspended",
+    "accountSuspendedDesc": "Your account has been suspended by an administrator. You can no longer access the app.",
+    "suspendedStatus": "Account Suspended",
+    "suspendedNotice": "Your account has been suspended due to a violation of our terms of service. All active deal claims have been frozen.",
+    "contactSupportIfMistake": "If you believe this is a mistake, please contact our support team."
   },
 
   "customer": {

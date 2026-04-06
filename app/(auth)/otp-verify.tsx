@@ -126,7 +126,7 @@ export default function OtpVerifyScreen() {
 
             {/* Header */}
             <View style={{ marginBottom: 32 }}>
-              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 30, color: textPrimary, marginBottom: 8 }}>
+              <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 30, color: textPrimary, marginBottom: 8 }}>
                 {t('auth.verificationCode')}
               </Text>
               <Text style={{ fontFamily: 'Cairo', color: textSecondary, fontSize: 16, lineHeight: 24 }}>
@@ -143,7 +143,7 @@ export default function OtpVerifyScreen() {
                   ref={(ref) => { inputRefs.current[index] = ref; }}
                   style={{
                     flex: 1, aspectRatio: 1, borderRadius: 16, textAlign: 'center',
-                    color: textPrimary, fontFamily: 'Cairo', fontWeight: '700', fontSize: 24,
+                    color: textPrimary, fontFamily: 'Cairo_700Bold', fontSize: 24,
                     backgroundColor: digit ? inputBgFilled : inputBg,
                     borderWidth: digit ? 2 : 1,
                     borderColor: digit ? accentColor : glassBorder,
@@ -172,7 +172,7 @@ export default function OtpVerifyScreen() {
               onPress={() => handleVerify(otp.join(''))}
               disabled={isLoading || otp.some((d) => !d)}
             >
-              <Text style={{ color: '#fff', fontFamily: 'Cairo', fontWeight: '700', fontSize: 18, textAlign: 'center' }}>
+              <Text style={{ color: '#fff', fontFamily: 'Cairo_700Bold', fontSize: 18, textAlign: 'center' }}>
                 {isLoading ? t('auth.verifying') : t('auth.verify')}
               </Text>
             </AnimatedButton>
@@ -186,7 +186,7 @@ export default function OtpVerifyScreen() {
                 </Text>
               ) : (
                 <AnimatedButton onPress={handleResend}>
-                  <Text style={{ fontFamily: 'Cairo', color: accentColor, fontWeight: '700', fontSize: 14 }}>{t('auth.resend')}</Text>
+                  <Text style={{ fontFamily: 'Cairo_700Bold', color: accentColor, fontSize: 14 }}>{t('auth.resend')}</Text>
                 </AnimatedButton>
               )}
             </View>

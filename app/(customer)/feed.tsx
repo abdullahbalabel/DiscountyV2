@@ -129,8 +129,8 @@ export default function CustomerFeed() {
 
       {/* Deals counter */}
       <Text style={{
-        fontFamily: 'Cairo', fontSize: 10, color: colors.onSurfaceVariant,
-        textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: '700',
+        fontFamily: 'Cairo_700Bold', fontSize: 10, color: colors.onSurfaceVariant,
+        textTransform: 'uppercase', letterSpacing: 0.5,
         paddingHorizontal: Spacing.xl, paddingBottom: Spacing.sm,
       }}>
         {isLoading ? t('feed.loading') : t('feed.dealsAvailable', { count: deals.length })}
@@ -159,10 +159,10 @@ export default function CustomerFeed() {
             backgroundColor: colors.primary,
             alignItems: 'center', justifyContent: 'center',
           }}>
-            <Text style={{ color: '#fff', fontFamily: 'Cairo', fontWeight: '700', fontSize: 14 }}>D</Text>
+            <Text style={{ color: '#fff', fontFamily: 'Cairo_700Bold', fontSize: 14 }}>D</Text>
           </View>
           <Text style={{
-            fontFamily: 'Cairo', fontWeight: '700',
+            fontFamily: 'Cairo_700Bold',
             letterSpacing: -0.5, fontSize: 18, color: colors.onSurface,
           }}>Discounty</Text>
         </View>
@@ -184,7 +184,7 @@ export default function CustomerFeed() {
       {/* Tagline + Search */}
       <View style={{ paddingHorizontal: Spacing.lg, paddingTop: Spacing.lg, paddingBottom: Spacing.xs }}>
         <Text style={{
-          fontFamily: 'Cairo', fontWeight: '700', fontSize: 16,
+          fontFamily: 'Cairo_700Bold', fontSize: 16,
           marginBottom: Spacing.sm, letterSpacing: -0.5,
           lineHeight: 22, maxWidth: '80%', color: colors.onSurface,
         }}>

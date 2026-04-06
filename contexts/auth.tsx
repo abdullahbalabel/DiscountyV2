@@ -10,6 +10,7 @@ interface AuthState {
   isLoading: boolean;
   isNewUser: boolean;
   approvalStatus: string | null;
+  isBanned: boolean;
   signInWithOtp: (phone: string) => Promise<{ error: string | null }>;
   verifyOtp: (phone: string, token: string) => Promise<{ error: string | null }>;
   signInWithEmail: (email: string, password: string) => Promise<{ error: string | null }>;
@@ -24,6 +25,7 @@ const AuthContext = createContext<AuthState>({
   isLoading: true,
   isNewUser: false,
   approvalStatus: null,
+  isBanned: false,
   signInWithOtp: async () => ({ error: null }),
   verifyOtp: async () => ({ error: null }),
   signInWithEmail: async () => ({ error: null }),
@@ -36,7 +38,7 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-function useProtectedRoute(session: Session | null, role: UserRole | null, isLoading: boolean, isNewUser: boolean, approvalStatus: string | null) {
+function useProtectedRoute(session: Session | null, role: UserRole | null, isLoading: boolean, isNewUser: boolean, approvalStatus: string | null, isBanned: boolean) {
   const segments = useSegments();
   const router = useRouter();
 
@@ -60,8 +62,14 @@ function useProtectedRoute(session: Session | null, role: UserRole | null, isLoa
       if (!role) {
         // No role yet → send to role selection
         router.replace('/(auth)/role-select');
+      } else if (isBanned) {
+        // Customer is banned → send to banned screen
+        router.replace('/(auth)/account-suspended');
+      } else if (role === 'provider' && approvalStatus === 'rejected') {
+        // Provider was suspended → send to banned screen
+        router.replace('/(auth)/account-suspended');
       }
-      // If they have a role, let them stay where they are
+      // If they have a role and are not banned, let them stay where they are
     } else if (session && inAuthGroup) {
       // Determine the current auth sub-screen
       const currentScreen = segments[1] || 'index';
@@ -72,6 +80,11 @@ function useProtectedRoute(session: Session | null, role: UserRole | null, isLoa
           router.replace('/(auth)/role-select');
         }
         // Let them stay on role-select, provider-signup, pending-approval
+      } else if (isBanned || (role === 'provider' && approvalStatus === 'rejected')) {
+        // Banned customer or suspended provider → show banned screen
+        if (currentScreen !== 'account-suspended') {
+          router.replace('/(auth)/account-suspended');
+        }
       } else if (role === 'provider' && approvalStatus === 'pending') {
         router.replace('/(auth)/pending-approval');
       } else if (role === 'customer') {
@@ -80,7 +93,7 @@ function useProtectedRoute(session: Session | null, role: UserRole | null, isLoa
         router.replace('/(provider)/dashboard');
       }
     }
-  }, [session, role, isLoading, isNewUser, approvalStatus, segments]);
+  }, [session, role, isLoading, isNewUser, approvalStatus, isBanned, segments]);
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -89,6 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isNewUser, setIsNewUser] = useState(false);
   const [approvalStatus, setApprovalStatus] = useState<string | null>(null);
+  const [isBanned, setIsBanned] = useState(false);
 
   // Fetch user role from database
   const fetchUserRole = useCallback(async (userId: string) => {
@@ -101,6 +115,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error || !data) {
       setIsNewUser(true);
       setRole(null);
+      setIsBanned(false);
       return;
     }
 
@@ -116,6 +131,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .single();
 
       setApprovalStatus(providerData?.approval_status || null);
+      setIsBanned(false);
+    }
+
+    // If customer, check ban status
+    if (data.role === 'customer') {
+      const { data: customerData } = await supabase
+        .from('customer_profiles')
+        .select('is_banned')
+        .eq('user_id', userId)
+        .single();
+
+      setIsBanned(customerData?.is_banned || false);
+      setApprovalStatus(null);
     }
   }, []);
 
@@ -137,6 +165,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setRole(null);
         setIsNewUser(false);
         setApprovalStatus(null);
+        setIsBanned(false);
       }
       setIsLoading(false);
     };
@@ -152,6 +181,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setRole(null);
           setIsNewUser(false);
           setApprovalStatus(null);
+          setIsBanned(false);
           return;
         }
 
@@ -162,6 +192,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setRole(null);
           setIsNewUser(false);
           setApprovalStatus(null);
+          setIsBanned(false);
         }
       }
     );
@@ -238,9 +269,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setRole(null);
     setIsNewUser(false);
     setApprovalStatus(null);
+    setIsBanned(false);
   }, []);
 
-  useProtectedRoute(session, role, isLoading, isNewUser, approvalStatus);
+  useProtectedRoute(session, role, isLoading, isNewUser, approvalStatus, isBanned);
 
   return (
     <AuthContext.Provider
@@ -250,6 +282,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         isNewUser,
         approvalStatus,
+        isBanned,
         signInWithOtp,
         verifyOtp,
         signInWithEmail,

@@ -32,6 +32,7 @@ export interface CustomerProfile {
   display_name: string | null;
   avatar_url: string | null;
   preferences: string[];
+  is_banned: boolean;
   created_at: string;
   updated_at: string;
 }

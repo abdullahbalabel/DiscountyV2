@@ -99,10 +99,9 @@ export default function PhoneEntryScreen() {
   };
 
   const labelStyle = {
-    fontFamily: 'Cairo', fontSize: 12, textTransform: 'uppercase' as const,
+    fontFamily: 'Cairo_600SemiBold', fontSize: 12, textTransform: 'uppercase' as const,
     letterSpacing: 2,
     color: colors.isDark ? 'rgba(255,255,255,0.9)' : colors.onSurfaceVariant,
-    fontWeight: '600' as const,
     paddingHorizontal: 4,
   };
 
@@ -162,7 +161,7 @@ export default function PhoneEntryScreen() {
                 }}
               >
                 <MaterialIcons name="translate" size={14} color={colors.primary} />
-                <Text style={{ fontFamily: 'Cairo', fontWeight: '600', fontSize: 11, color: colors.primary }}>
+                <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 11, color: colors.primary }}>
                   {i18n.language?.startsWith('ar') ? t('english') : t('arabic')}
                 </Text>
               </Pressable>
@@ -183,7 +182,7 @@ export default function PhoneEntryScreen() {
               }}>
                 <MaterialIcons name="local-offer" size={26} color="#fff" />
               </View>
-              <Text style={{ fontFamily: 'Cairo', fontWeight: '800', fontSize: 28, color: textPrimary, letterSpacing: -0.5 }}>{t('discounty')}</Text>
+              <Text style={{ fontFamily: 'Cairo_800ExtraBold', fontSize: 28, color: textPrimary, letterSpacing: -0.5 }}>{t('discounty')}</Text>
               <Text style={{ fontFamily: 'Cairo', color: textSecondary, marginTop: 4, fontSize: 13, textAlign: 'center' }}>
                 {t('tagline')}
               </Text>
@@ -207,7 +206,7 @@ export default function PhoneEntryScreen() {
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                   <MaterialIcons name="email" size={16} color={authMode === 'email' ? '#fff' : textMuted} />
-                  <Text style={{ fontFamily: 'Cairo', fontWeight: '600', fontSize: 14, color: authMode === 'email' ? '#fff' : textMuted }}>
+                  <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 14, color: authMode === 'email' ? '#fff' : textMuted }}>
                     {t('email')}
                   </Text>
                 </View>
@@ -228,7 +227,7 @@ export default function PhoneEntryScreen() {
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                   <MaterialIcons name="phone" size={16} color={authMode === 'phone' ? '#fff' : textMuted} />
-                  <Text style={{ fontFamily: 'Cairo', fontWeight: '600', fontSize: 14, color: authMode === 'phone' ? '#fff' : textMuted }}>
+                  <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 14, color: authMode === 'phone' ? '#fff' : textMuted }}>
                     {t('phone')}
                   </Text>
                 </View>
@@ -286,7 +285,7 @@ export default function PhoneEntryScreen() {
                       }}
                     >
                       <Text style={{ fontSize: 18 }}>{selectedCountry.flag}</Text>
-                      <Text style={{ color: textPrimary, fontFamily: 'Cairo', fontWeight: '600', fontSize: 14 }}>{selectedCountry.code}</Text>
+                      <Text style={{ color: textPrimary, fontFamily: 'Cairo_600SemiBold', fontSize: 14 }}>{selectedCountry.code}</Text>
                       <MaterialIcons name="keyboard-arrow-down" size={18} color={colors.isDark ? 'rgba(255,255,255,0.5)' : '#9E9E9E'} />
                     </Pressable>
 
@@ -341,7 +340,7 @@ export default function PhoneEntryScreen() {
                           >
                             <Text style={{ fontSize: 20 }}>{country.flag}</Text>
                             <Text style={{ color: textPrimary, fontFamily: 'Cairo', flex: 1, fontSize: 14 }}>{country.name}</Text>
-                            <Text style={{ color: colors.primary, fontFamily: 'Cairo', fontWeight: '600', fontSize: 13 }}>{country.code}</Text>
+                            <Text style={{ color: colors.primary, fontFamily: 'Cairo_600SemiBold', fontSize: 13 }}>{country.code}</Text>
                           </Pressable>
                         ))}
                       </ScrollView>
@@ -395,7 +394,7 @@ export default function PhoneEntryScreen() {
                         color="#fff"
                       />
                     )}
-                    <Text style={{ color: '#fff', fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, textAlign: 'center' }}>
+                    <Text style={{ color: '#fff', fontFamily: 'Cairo_700Bold', fontSize: 16, textAlign: 'center' }}>
                       {isLoading
                         ? (authMode === 'email' ? t('signingIn') : t('sending'))
                         : authMode === 'email'
@@ -416,7 +415,7 @@ export default function PhoneEntryScreen() {
                     onPress={() => { setIsSignUp(!isSignUp); setError(''); }}
                     style={{ paddingVertical: 4, paddingHorizontal: 8 }}
                   >
-                    <Text style={{ fontFamily: 'Cairo', color: colors.primary, fontWeight: '700', fontSize: 13 }}>
+                    <Text style={{ fontFamily: 'Cairo_700Bold', color: colors.primary, fontSize: 13 }}>
                       {isSignUp ? t('signIn') : t('signUp')}
                     </Text>
                   </Pressable>

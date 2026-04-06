@@ -63,7 +63,7 @@ export default function HistoryScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
       <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
-        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('customer.history')}</Text>
+        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('customer.history')}</Text>
       </View>
 
       <View style={{ paddingHorizontal: 16, paddingTop: 8, flexDirection: 'row', gap: 8, marginBottom: 8 }}>
@@ -79,7 +79,7 @@ export default function HistoryScreen() {
             onPress={() => setFilter(f)}
           >
             <Text style={{
-              fontSize: 12, fontWeight: '700', fontFamily: 'Cairo', textTransform: 'capitalize',
+              fontSize: 12, fontFamily: 'Cairo_700Bold', textTransform: 'capitalize',
               color: filter === f ? '#fff' : colors.onSurfaceVariant,
             }}>
               {f === 'all' ? t('customer.all') : f === 'reviewed' ? t('customer.reviewed') : t('deal.expired')}
@@ -129,7 +129,7 @@ export default function HistoryScreen() {
                         )}
                       </View>
                       <View style={{ flex: 1, justifyContent: 'center' }}>
-                        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 14, color: colors.onSurface }} numberOfLines={1}>
+                        <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 14, color: colors.onSurface }} numberOfLines={1}>
                           {discount?.title || t('customer.deal')}
                         </Text>
                         <Text style={{ color: colors.onSurfaceVariant, fontSize: 11, fontWeight: '500', marginTop: 2 }}>

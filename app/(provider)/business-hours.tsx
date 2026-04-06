@@ -110,7 +110,7 @@ export default function BusinessHoursScreen() {
         <TouchableOpacity onPress={() => router.back()} style={{ marginEnd: 12 }}>
           <MaterialIcons name={I18nManager.isRTL ? 'chevron-right' : 'chevron-left'} size={24} color={colors.onSurface} />
         </TouchableOpacity>
-        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface, flex: 1 }}>
+        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface, flex: 1 }}>
           {t('provider.businessHoursTitle')}
         </Text>
         <TouchableOpacity
@@ -121,7 +121,7 @@ export default function BusinessHoursScreen() {
           {isSaving ? (
             <ActivityIndicator size="small" color={colors.onPrimary} />
           ) : (
-            <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 13, color: colors.onPrimary }}>{t('provider.saveChanges')}</Text>
+            <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 13, color: colors.onPrimary }}>{t('provider.saveChanges')}</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -143,7 +143,7 @@ export default function BusinessHoursScreen() {
                   marginBottom: 10,
                 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: dayHours.closed ? 0 : 10 }}>
-                    <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 14, color: colors.onSurface, textTransform: 'capitalize' }}>
+                    <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 14, color: colors.onSurface, textTransform: 'capitalize' }}>
                       {t(`provider.${day}`)}
                     </Text>
                     <View style={{ flexDirection: 'row', gap: 8 }}>
@@ -151,7 +151,7 @@ export default function BusinessHoursScreen() {
                         onPress={() => applyToAll(day)}
                         style={{ paddingHorizontal: 10, paddingVertical: 4, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh }}
                       >
-                        <Text style={{ fontFamily: 'Cairo', fontWeight: '600', fontSize: 11, color: colors.onSurfaceVariant }}>{t('provider.everyDay')}</Text>
+                        <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 11, color: colors.onSurfaceVariant }}>{t('provider.everyDay')}</Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => updateDay(day, { closed: !dayHours.closed })}
@@ -161,7 +161,7 @@ export default function BusinessHoursScreen() {
                         }}
                       >
                         <Text style={{
-                          fontFamily: 'Cairo', fontWeight: '700', fontSize: 11,
+                          fontFamily: 'Cairo_700Bold', fontSize: 11,
                           color: dayHours.closed ? colors.error : colors.successText,
                         }}>
                           {dayHours.closed ? t('provider.closed') : t('provider.open')}
@@ -173,7 +173,7 @@ export default function BusinessHoursScreen() {
                   {!dayHours.closed && (
                     <View style={{ flexDirection: 'row', gap: 10 }}>
                       <View style={{ flex: 1 }}>
-                        <Text style={{ fontFamily: 'Cairo', fontWeight: '600', fontSize: 11, color: colors.onSurfaceVariant, marginStart: 4, marginBottom: 4 }}>
+                        <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 11, color: colors.onSurfaceVariant, marginStart: 4, marginBottom: 4 }}>
                           {t('provider.openTime')}
                         </Text>
                         <TouchableOpacity
@@ -185,12 +185,12 @@ export default function BusinessHoursScreen() {
                             borderColor: activePicker?.day === day && activePicker.field === 'open' ? colors.primary : colors.outlineVariant,
                           }}
                         >
-                          <Text style={{ fontFamily: 'Cairo', fontWeight: '600', fontSize: 14, color: colors.onSurface }}>{dayHours.open}</Text>
+                          <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 14, color: colors.onSurface }}>{dayHours.open}</Text>
                           <MaterialIcons name="access-time" size={16} color={colors.iconDefault} />
                         </TouchableOpacity>
                       </View>
                       <View style={{ flex: 1 }}>
-                        <Text style={{ fontFamily: 'Cairo', fontWeight: '600', fontSize: 11, color: colors.onSurfaceVariant, marginStart: 4, marginBottom: 4 }}>
+                        <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 11, color: colors.onSurfaceVariant, marginStart: 4, marginBottom: 4 }}>
                           {t('provider.closeTime')}
                         </Text>
                         <TouchableOpacity
@@ -202,7 +202,7 @@ export default function BusinessHoursScreen() {
                             borderColor: activePicker?.day === day && activePicker.field === 'close' ? colors.primary : colors.outlineVariant,
                           }}
                         >
-                          <Text style={{ fontFamily: 'Cairo', fontWeight: '600', fontSize: 14, color: colors.onSurface }}>{dayHours.close}</Text>
+                          <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 14, color: colors.onSurface }}>{dayHours.close}</Text>
                           <MaterialIcons name="access-time" size={16} color={colors.iconDefault} />
                         </TouchableOpacity>
                       </View>
@@ -225,7 +225,7 @@ export default function BusinessHoursScreen() {
                             }}
                           >
                             <Text style={{
-                              fontFamily: 'Cairo', fontWeight: '600', fontSize: 12,
+                              fontFamily: 'Cairo_600SemiBold', fontSize: 12,
                               color: dayHours[activePicker.field] === time ? colors.onPrimary : colors.onSurface,
                             }}>
                               {time}

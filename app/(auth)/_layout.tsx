@@ -8,6 +8,7 @@ export default function AuthLayout() {
       <Stack.Screen name="role-select" />
       <Stack.Screen name="provider-signup" />
       <Stack.Screen name="pending-approval" />
+      <Stack.Screen name="account-suspended" />
     </Stack>
   );
 }

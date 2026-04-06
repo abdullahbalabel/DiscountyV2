@@ -152,7 +152,7 @@ export default function ProfileScreen() {
     index: number,
   ) => (
     <AnimatedEntrance index={index + 1} delay={150 + index * 50}>
-      <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 10, textTransform: 'uppercase', letterSpacing: 1.5, color: colors.onSurfaceVariant, marginBottom: 8, marginStart: 4 }}>{title}</Text>
+      <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 10, textTransform: 'uppercase', letterSpacing: 1.5, color: colors.onSurfaceVariant, marginBottom: 8, marginStart: 4 }}>{title}</Text>
       <View style={{ backgroundColor: colors.surfaceContainerLowest, borderRadius: Radius.xl, overflow: 'hidden', borderWidth: 1, borderColor: colors.outlineVariant, marginBottom: 20 }}>
         {items.map((item, idx) => (
           <TouchableOpacity
@@ -164,7 +164,7 @@ export default function ProfileScreen() {
               <MaterialIcons name={item.icon as any} size={20} color={item.color as any} />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontFamily: 'Cairo', fontWeight: '600', fontSize: 14, color: colors.onSurface }}>{item.title}</Text>
+              <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 14, color: colors.onSurface }}>{item.title}</Text>
               {item.subtitle ? (
                 <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', fontSize: 11, marginTop: 2 }}>{item.subtitle}</Text>
               ) : null}
@@ -187,7 +187,7 @@ export default function ProfileScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
       <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
-        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('customer.profile')}</Text>
+        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('customer.profile')}</Text>
         <TouchableOpacity style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', position: 'relative' }} onPress={() => router.push('/(customer)/notifications' as any)}>
           <MaterialIcons name="notifications" size={18} color={colors.onSurfaceVariant} />
           {unreadCount > 0 && (
@@ -253,7 +253,7 @@ export default function ProfileScreen() {
               </View>
               <TouchableOpacity onPress={handleEditName} activeOpacity={0.7}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <Text style={{ fontFamily: 'Cairo', fontWeight: '800', fontSize: 24, color: colors.onSurface, letterSpacing: -0.5 }}>{displayName}</Text>
+                  <Text style={{ fontFamily: 'Cairo_800ExtraBold', fontSize: 24, color: colors.onSurface, letterSpacing: -0.5 }}>{displayName}</Text>
                   <MaterialIcons name="edit" size={16} color={colors.onSurfaceVariant} />
                 </View>
               </TouchableOpacity>
@@ -268,7 +268,7 @@ export default function ProfileScreen() {
                 marginTop: 8,
               }}>
                 <MaterialIcons name="workspace-premium" size={14} color={colors.primary} />
-                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: colors.primary }}>{t('customer.premiumMember')}</Text>
+                <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 11, textTransform: 'uppercase', letterSpacing: 1, color: colors.primary }}>{t('customer.premiumMember')}</Text>
               </View>
             </View>
           </AnimatedEntrance>
@@ -284,8 +284,8 @@ export default function ProfileScreen() {
                 borderWidth: 1,
                 borderColor: colors.outlineVariant,
               }}>
-                <Text style={{ fontFamily: 'Cairo', fontWeight: '900', fontSize: 28, color: colors.primary, letterSpacing: -1 }}>{stats.totalSaved}</Text>
-                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 10, textTransform: 'uppercase', letterSpacing: 1.2, color: colors.onSurfaceVariant, marginTop: 4 }}>{t('customer.totalSaved')}</Text>
+                <Text style={{ fontFamily: 'Cairo_900Black', fontSize: 28, color: colors.primary, letterSpacing: -1 }}>{stats.totalSaved}</Text>
+                <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 10, textTransform: 'uppercase', letterSpacing: 1.2, color: colors.onSurfaceVariant, marginTop: 4 }}>{t('customer.totalSaved')}</Text>
               </View>
               <View style={{
                 flex: 1,
@@ -294,8 +294,8 @@ export default function ProfileScreen() {
                 borderRadius: Radius.xl,
                 ...Shadows.md,
               }}>
-                <Text style={{ fontFamily: 'Cairo', fontWeight: '900', fontSize: 28, color: '#ffffff', letterSpacing: -1 }}>{stats.activeDeals}</Text>
-                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 10, textTransform: 'uppercase', letterSpacing: 1.2, color: 'rgba(255,255,255,0.7)', marginTop: 4 }}>{t('customer.activeDeals')}</Text>
+                <Text style={{ fontFamily: 'Cairo_900Black', fontSize: 28, color: '#ffffff', letterSpacing: -1 }}>{stats.activeDeals}</Text>
+                <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 10, textTransform: 'uppercase', letterSpacing: 1.2, color: 'rgba(255,255,255,0.7)', marginTop: 4 }}>{t('customer.activeDeals')}</Text>
               </View>
             </View>
           </AnimatedEntrance>
@@ -315,7 +315,7 @@ export default function ProfileScreen() {
                   <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', marginEnd: 14 }}>
                     <MaterialIcons name={item.icon as any} size={20} color={item.color} />
                   </View>
-                  <Text style={{ flex: 1, fontFamily: 'Cairo', fontWeight: '600', fontSize: 14, color: colors.onSurface }}>{item.title}</Text>
+                  <Text style={{ flex: 1, fontFamily: 'Cairo_600SemiBold', fontSize: 14, color: colors.onSurface }}>{item.title}</Text>
                   <MaterialIcons name="sync" size={16} color={colors.iconDefault} />
                 </TouchableOpacity>
               ))}
@@ -329,7 +329,7 @@ export default function ProfileScreen() {
               onPress={() => signOut()}
             >
               <MaterialIcons name="logout" size={18} color={colors.error} style={{ marginEnd: 8 }} />
-              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 14, color: colors.error }}>{t('customer.logOutAccount')}</Text>
+              <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 14, color: colors.error }}>{t('customer.logOutAccount')}</Text>
             </TouchableOpacity>
           </AnimatedEntrance>
         </View>
@@ -340,8 +340,8 @@ export default function ProfileScreen() {
         <TouchableOpacity activeOpacity={1} onPress={() => setShowNameModal(false)} style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 24 }}>
           <TouchableOpacity activeOpacity={1} onPress={(e) => e.stopPropagation()}>
             <View style={{ backgroundColor: colors.surfaceContainerLowest, borderRadius: Radius.xl, padding: 24, ...Shadows.lg }}>
-              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 18, color: colors.onSurface, marginBottom: 16 }}>{t('customer.personalInfo')}</Text>
-              <Text style={{ fontFamily: 'Cairo', fontWeight: '600', fontSize: 12, color: colors.onSurfaceVariant, marginBottom: 8 }}>Display Name</Text>
+              <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 18, color: colors.onSurface, marginBottom: 16 }}>{t('customer.personalInfo')}</Text>
+              <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 12, color: colors.onSurfaceVariant, marginBottom: 8 }}>Display Name</Text>
               <TextInput
                 value={editingName}
                 onChangeText={setEditingName}
@@ -366,13 +366,13 @@ export default function ProfileScreen() {
                   onPress={() => setShowNameModal(false)}
                   style={{ flex: 1, padding: 14, borderRadius: Radius.lg, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center' }}
                 >
-                  <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 14, color: colors.onSurface }}>{t('common.cancel')}</Text>
+                  <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 14, color: colors.onSurface }}>{t('common.cancel')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={handleSaveName}
                   style={{ flex: 1, padding: 14, borderRadius: Radius.lg, backgroundColor: colors.primary, alignItems: 'center' }}
                 >
-                  <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 14, color: colors.onPrimary }}>Save</Text>
+                  <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 14, color: colors.onPrimary }}>Save</Text>
                 </TouchableOpacity>
               </View>
             </View>

@@ -20,6 +20,11 @@ BEGIN
     RETURN json_build_object('success', false, 'error', 'Customer profile not found');
   END IF;
 
+  -- Check if customer is banned
+  IF EXISTS (SELECT 1 FROM public.customer_profiles WHERE id = v_customer_id AND is_banned = true) THEN
+    RETURN json_build_object('success', false, 'error', 'Your account has been suspended');
+  END IF;
+
   SELECT r.*, d.provider_id
   INTO v_redemption
   FROM public.redemptions r

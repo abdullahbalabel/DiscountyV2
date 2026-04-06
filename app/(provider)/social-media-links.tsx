@@ -76,7 +76,7 @@ export default function SocialMediaLinksScreen() {
         <TouchableOpacity onPress={() => router.back()} style={{ marginEnd: 12 }}>
           <MaterialIcons name={I18nManager.isRTL ? 'chevron-right' : 'chevron-left'} size={24} color={colors.onSurface} />
         </TouchableOpacity>
-        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface, flex: 1 }}>
+        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface, flex: 1 }}>
           {t('provider.socialMediaTitle')}
         </Text>
         <TouchableOpacity
@@ -87,7 +87,7 @@ export default function SocialMediaLinksScreen() {
           {isSaving ? (
             <ActivityIndicator size="small" color={colors.onPrimary} />
           ) : (
-            <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 13, color: colors.onPrimary }}>{t('provider.saveChanges')}</Text>
+            <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 13, color: colors.onPrimary }}>{t('provider.saveChanges')}</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -120,7 +120,7 @@ export default function SocialMediaLinksScreen() {
                         <MaterialIcons name={field.icon as any} size={18} color={colors.onSurfaceVariant} />
                       )}
                     </View>
-                    <Text style={{ fontFamily: 'Cairo', fontWeight: '600', fontSize: 14, color: colors.onSurface }}>
+                    <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 14, color: colors.onSurface }}>
                       {t(field.labelKey)}
                     </Text>
                   </View>

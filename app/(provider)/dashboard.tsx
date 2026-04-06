@@ -55,7 +55,7 @@ export default function ProviderDashboard() {
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
       <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
         <View>
-          <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('provider.dashboard')}</Text>
+          <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('provider.dashboard')}</Text>
           {profile && <Text style={{ color: colors.onSurfaceVariant, fontSize: 10, fontFamily: 'Cairo', marginTop: 2 }}>{profile.business_name}</Text>}
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -80,10 +80,10 @@ export default function ProviderDashboard() {
           <AnimatedEntrance index={0} delay={100}>
             <View style={{ backgroundColor: colors.primary, padding: 16, borderRadius: Radius.md, marginBottom: 16, marginTop: 8 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                <Text style={{ color: '#fff', fontFamily: 'Cairo', fontSize: 14, fontWeight: '700' }}>{t('provider.yourRating')}</Text>
+                <Text style={{ color: '#fff', fontFamily: 'Cairo_700Bold', fontSize: 14 }}>{t('provider.yourRating')}</Text>
                 <MaterialIcons name="star" size={18} color="#FFD700" />
               </View>
-              <Text style={{ color: '#fff', fontFamily: 'Cairo', fontWeight: '800', fontSize: 30, letterSpacing: -0.5, marginBottom: 4 }}>
+              <Text style={{ color: '#fff', fontFamily: 'Cairo_800ExtraBold', fontSize: 30, letterSpacing: -0.5, marginBottom: 4 }}>
                 {(stats?.averageRating || 0) > 0 ? stats!.averageRating.toFixed(1) : '—'}
               </Text>
               <Text style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Cairo', fontSize: 12 }}>
@@ -98,8 +98,8 @@ export default function ProviderDashboard() {
                 <View style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
                   <MaterialIcons name="local-offer" size={18} color={colors.primary} />
                 </View>
-                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 20, color: colors.onSurface, marginBottom: 2 }}>{stats?.activeDeals || 0}</Text>
-                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: '700' }}>{t('provider.activeDeals')}</Text>
+                <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 20, color: colors.onSurface, marginBottom: 2 }}>{stats?.activeDeals || 0}</Text>
+                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo_700Bold', fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}>{t('provider.activeDeals')}</Text>
               </View>
             </AnimatedEntrance>
             <AnimatedEntrance index={2} delay={200} style={{ flex: 1 }}>
@@ -107,8 +107,8 @@ export default function ProviderDashboard() {
                 <View style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
                   <MaterialIcons name="qr-code" size={18} color={colors.success} />
                 </View>
-                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 20, color: colors.onSurface, marginBottom: 2 }}>{stats?.totalRedemptions || 0}</Text>
-                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: '700' }}>{t('provider.redemptions')}</Text>
+                <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 20, color: colors.onSurface, marginBottom: 2 }}>{stats?.totalRedemptions || 0}</Text>
+                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo_700Bold', fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}>{t('provider.redemptions')}</Text>
               </View>
             </AnimatedEntrance>
           </View>
@@ -119,8 +119,8 @@ export default function ProviderDashboard() {
                 <View style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
                   <MaterialIcons name="hourglass-top" size={18} color={colors.warning} />
                 </View>
-                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 20, color: colors.onSurface, marginBottom: 2 }}>{stats?.claimedRedemptions || 0}</Text>
-                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: '700' }}>{t('provider.pending')}</Text>
+                <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 20, color: colors.onSurface, marginBottom: 2 }}>{stats?.claimedRedemptions || 0}</Text>
+                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo_700Bold', fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}>{t('provider.pending')}</Text>
               </View>
             </AnimatedEntrance>
             <AnimatedEntrance index={4} delay={300} style={{ flex: 1 }}>
@@ -128,15 +128,15 @@ export default function ProviderDashboard() {
                 <View style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
                   <MaterialIcons name="check-circle" size={18} color={colors.success} />
                 </View>
-                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 20, color: colors.onSurface, marginBottom: 2 }}>{stats?.redeemedRedemptions || 0}</Text>
-                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5, fontWeight: '700' }}>{t('provider.completed')}</Text>
+                <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 20, color: colors.onSurface, marginBottom: 2 }}>{stats?.redeemedRedemptions || 0}</Text>
+                <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo_700Bold', fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}>{t('provider.completed')}</Text>
               </View>
             </AnimatedEntrance>
           </View>
 
           {stats?.recentRedemptions && stats.recentRedemptions.length > 0 && (
             <AnimatedEntrance index={5} delay={350}>
-              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, color: colors.onSurface, marginBottom: 12 }}>{t('provider.recentActivity')}</Text>
+              <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 16, color: colors.onSurface, marginBottom: 12 }}>{t('provider.recentActivity')}</Text>
               <View style={{ backgroundColor: colors.surfaceContainerLowest, borderRadius: Radius.md, overflow: 'hidden', borderWidth: 1, borderColor: colors.outlineVariant, marginBottom: 20 }}>
                 {stats.recentRedemptions.map((redemption, idx) => (
                   <View key={redemption.id} style={{ flexDirection: 'row', alignItems: 'center', padding: 12, borderBottomWidth: idx !== stats.recentRedemptions.length - 1 ? 1 : 0, borderBottomColor: colors.surfaceContainer }}>
@@ -144,7 +144,7 @@ export default function ProviderDashboard() {
                       <MaterialIcons name={redemption.status === 'redeemed' ? 'check-circle' : 'hourglass-top'} size={16} color={redemption.status === 'redeemed' ? colors.success : colors.warning} />
                     </View>
                     <View style={{ flex: 1 }}>
-                      <Text style={{ fontFamily: 'Cairo', fontWeight: '600', fontSize: 12, color: colors.onSurface }} numberOfLines={1}>{(redemption.discount as any)?.title || t('provider.deal')}</Text>
+                      <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 12, color: colors.onSurface }} numberOfLines={1}>{(redemption.discount as any)?.title || t('provider.deal')}</Text>
                       <Text style={{ color: colors.onSurfaceVariant, fontSize: 10, fontFamily: 'Cairo', marginTop: 2 }}>
                         {redemption.status === 'redeemed' ? t('provider.redeemed') : t('provider.claimed')} • {new Date(redemption.claimed_at).toLocaleDateString()}
                       </Text>
@@ -159,7 +159,7 @@ export default function ProviderDashboard() {
           )}
 
           <AnimatedEntrance index={6} delay={400}>
-            <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, color: colors.onSurface, marginBottom: 12 }}>{t('provider.quickActions')}</Text>
+            <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 16, color: colors.onSurface, marginBottom: 12 }}>{t('provider.quickActions')}</Text>
             <View style={{ gap: 8 }}>
               {quickActions.map((action) => (
                 <AnimatedButton
@@ -170,7 +170,7 @@ export default function ProviderDashboard() {
                   <View style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', marginEnd: 12 }}>
                     <MaterialIcons name={action.icon} size={18} color={action.color} />
                   </View>
-                  <Text style={{ flex: 1, fontFamily: 'Cairo', fontWeight: '600', fontSize: 14, color: colors.onSurface }}>{action.label}</Text>
+                  <Text style={{ flex: 1, fontFamily: 'Cairo_600SemiBold', fontSize: 14, color: colors.onSurface }}>{action.label}</Text>
                   <MaterialIcons name="chevron-right" size={20} color={colors.iconDefault} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
                 </AnimatedButton>
               ))}

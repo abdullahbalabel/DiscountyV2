@@ -74,7 +74,7 @@ export default function SavedScreen() {
       }}
     >
       <MaterialIcons name="delete-outline" size={24} color="white" />
-      <Text style={{ color: 'white', fontFamily: 'Cairo', fontSize: 10, fontWeight: '700', marginTop: 4 }}>{t('customer.remove')}</Text>
+      <Text style={{ color: 'white', fontFamily: 'Cairo_700Bold', fontSize: 10, marginTop: 4 }}>{t('customer.remove')}</Text>
     </Pressable>
   );
 
@@ -92,7 +92,7 @@ export default function SavedScreen() {
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
       <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('customer.saved')}</Text>
+          <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('customer.saved')}</Text>
         </View>
         <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
           <MaterialIcons name="search" size={18} color={colors.iconDefault} />

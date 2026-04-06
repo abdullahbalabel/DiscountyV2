@@ -48,7 +48,7 @@ export default function HelpSupportScreen() {
         <TouchableOpacity onPress={() => router.back()} style={{ marginEnd: 12 }}>
           <MaterialIcons name={I18nManager.isRTL ? 'chevron-right' : 'chevron-left'} size={24} color={colors.onSurface} />
         </TouchableOpacity>
-        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>
+        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>
           {t('provider.helpSupport')}
         </Text>
       </View>
@@ -58,7 +58,7 @@ export default function HelpSupportScreen() {
           {/* FAQ Section */}
           <AnimatedEntrance index={0} delay={50}>
             <Text style={{
-              fontFamily: 'Cairo', fontWeight: '700', fontSize: 10,
+              fontFamily: 'Cairo_700Bold', fontSize: 10,
               textTransform: 'uppercase', letterSpacing: 1.5,
               color: colors.onSurfaceVariant, marginBottom: 8, marginStart: 4,
             }}>
@@ -81,7 +81,7 @@ export default function HelpSupportScreen() {
                       }}
                     >
                       <MaterialIcons name="help-outline" size={18} color={colors.primary} style={{ marginEnd: 10 }} />
-                      <Text style={{ flex: 1, fontFamily: 'Cairo', fontWeight: '600', fontSize: 13, color: colors.onSurface }}>
+                      <Text style={{ flex: 1, fontFamily: 'Cairo_600SemiBold', fontSize: 13, color: colors.onSurface }}>
                         {t(`provider.${key}Question`)}
                       </Text>
                       <MaterialIcons
@@ -106,7 +106,7 @@ export default function HelpSupportScreen() {
           {/* Contact Form */}
           <AnimatedEntrance index={1} delay={100}>
             <Text style={{
-              fontFamily: 'Cairo', fontWeight: '700', fontSize: 10,
+              fontFamily: 'Cairo_700Bold', fontSize: 10,
               textTransform: 'uppercase', letterSpacing: 1.5,
               color: colors.onSurfaceVariant, marginBottom: 8, marginStart: 4,
             }}>
@@ -118,7 +118,7 @@ export default function HelpSupportScreen() {
             }}>
               <View>
                 <Text style={{
-                  fontFamily: 'Cairo', fontWeight: '700', fontSize: 12,
+                  fontFamily: 'Cairo_700Bold', fontSize: 12,
                   textTransform: 'uppercase', letterSpacing: 1.2,
                   color: colors.onSurfaceVariant, marginStart: 4, marginBottom: 6,
                 }}>
@@ -139,7 +139,7 @@ export default function HelpSupportScreen() {
               </View>
               <View>
                 <Text style={{
-                  fontFamily: 'Cairo', fontWeight: '700', fontSize: 12,
+                  fontFamily: 'Cairo_700Bold', fontSize: 12,
                   textTransform: 'uppercase', letterSpacing: 1.2,
                   color: colors.onSurfaceVariant, marginStart: 4, marginBottom: 6,
                 }}>
@@ -173,7 +173,7 @@ export default function HelpSupportScreen() {
                 ) : (
                   <>
                     <MaterialIcons name="send" size={16} color={colors.onPrimary} style={{ marginEnd: 8 }} />
-                    <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 14, color: colors.onPrimary }}>
+                    <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 14, color: colors.onPrimary }}>
                       {t('provider.send')}
                     </Text>
                   </>

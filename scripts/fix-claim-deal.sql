@@ -23,6 +23,11 @@ BEGIN
     RETURN json_build_object('success', false, 'error', 'Customer profile not found');
   END IF;
 
+  -- Check if customer is banned
+  IF EXISTS (SELECT 1 FROM public.customer_profiles WHERE id = v_customer_id AND is_banned = true) THEN
+    RETURN json_build_object('success', false, 'error', 'Your account has been suspended');
+  END IF;
+
   SELECT * INTO v_deal FROM public.discounts
   WHERE id = p_deal_id AND status = 'active'
     AND start_time <= now() AND end_time > now();

@@ -16,6 +16,7 @@ import {
   Cairo_600SemiBold,
   Cairo_700Bold,
   Cairo_800ExtraBold,
+  Cairo_900Black,
 } from '@expo-google-fonts/cairo';
 
 // Set default theme to light
@@ -60,11 +61,13 @@ function AppContent() {
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    Cairo: Cairo_700Bold,
+    Cairo: Cairo_400Regular,
     Cairo_400Regular,
     Cairo_500Medium,
     Cairo_600SemiBold,
+    Cairo_700Bold,
     Cairo_800ExtraBold,
+    Cairo_900Black,
   });
 
   useEffect(() => {

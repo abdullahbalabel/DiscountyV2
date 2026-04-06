@@ -68,7 +68,7 @@ export function EmptyState({ icon, title, message, ctaLabel, onCtaPress, primary
 
         {/* Title */}
         <Text style={{
-          fontFamily: 'Cairo', fontWeight: '700', fontSize: 18,
+          fontFamily: 'Cairo_700Bold', fontSize: 18,
           color: colors.onSurface, textAlign: 'center', marginBottom: 8,
         }}>
           {title}
@@ -92,7 +92,7 @@ export function EmptyState({ icon, title, message, ctaLabel, onCtaPress, primary
             }}
             onPress={onCtaPress}
           >
-            <Text style={{ color: '#fff', fontFamily: 'Cairo', fontWeight: '700', fontSize: 14 }}>
+            <Text style={{ color: '#fff', fontFamily: 'Cairo_700Bold', fontSize: 14 }}>
               {ctaLabel}
             </Text>
           </AnimatedButton>

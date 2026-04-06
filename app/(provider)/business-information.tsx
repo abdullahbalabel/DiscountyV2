@@ -116,8 +116,7 @@ export default function BusinessInformationScreen() {
   };
 
   const labelStyle = {
-    fontFamily: 'Cairo',
-    fontWeight: '700' as const,
+    fontFamily: 'Cairo_700Bold',
     fontSize: 12,
     textTransform: 'uppercase' as const,
     letterSpacing: 1.2,
@@ -144,7 +143,7 @@ export default function BusinessInformationScreen() {
         <TouchableOpacity onPress={() => router.back()} style={{ marginEnd: 12 }}>
           <MaterialIcons name={I18nManager.isRTL ? 'chevron-right' : 'chevron-left'} size={24} color={colors.onSurface} />
         </TouchableOpacity>
-        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface, flex: 1 }}>
+        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface, flex: 1 }}>
           {t('provider.editBusinessInfo')}
         </Text>
         <TouchableOpacity
@@ -158,7 +157,7 @@ export default function BusinessInformationScreen() {
           {isSaving ? (
             <ActivityIndicator size="small" color={colors.onPrimary} />
           ) : (
-            <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 13, color: colors.onPrimary }}>{t('provider.saveChanges')}</Text>
+            <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 13, color: colors.onPrimary }}>{t('provider.saveChanges')}</Text>
           )}
         </TouchableOpacity>
       </View>

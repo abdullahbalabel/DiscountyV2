@@ -122,7 +122,12 @@
     "signOut": "تسجيل الخروج",
     "emailPlaceholder": "example@email.com",
     "phonePlaceholder": "5XX XXX XXX",
-    "businessNamePlaceholder": "مثال: ركن القهوة"
+    "businessNamePlaceholder": "مثال: ركن القهوة",
+    "accountSuspended": "تم تعليق الحساب",
+    "accountSuspendedDesc": "تم تعليق حسابك من قبل الإدارة. لم يعد بإمكانك الوصول إلى التطبيق.",
+    "suspendedStatus": "الحساب معلق",
+    "suspendedNotice": "تم تعليق حسابك بسبب انتهاك شروط الخدمة. تم تجميد جميع العروض النشطة.",
+    "contactSupportIfMistake": "إذا كنت تعتقد أن هذا خطأ، يرجى التواصل مع فريق الدعم."
   },
 
   "customer": {

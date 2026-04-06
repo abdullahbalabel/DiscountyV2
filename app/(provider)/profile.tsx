@@ -36,7 +36,7 @@ export default function ProviderProfileScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
       <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
-        <Text style={{ fontFamily: 'Cairo', fontWeight: '700', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('provider.profile')}</Text>
+        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('provider.profile')}</Text>
         <AnimatedButton onPress={() => router.push('/(provider)/settings')} style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
           <MaterialIcons name="settings" size={18} color={colors.iconDefault} />
         </AnimatedButton>
@@ -50,7 +50,7 @@ export default function ProviderProfileScreen() {
                 <MaterialCommunityIcons name="store" size={24} color={colors.primary} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 16, color: colors.onSurface }}>{profile?.business_name || t('provider.yourBusiness')}</Text>
+                <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 16, color: colors.onSurface }}>{profile?.business_name || t('provider.yourBusiness')}</Text>
                 <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', fontSize: 12, marginTop: 2 }}>{profile?.category || t('provider.category')}</Text>
                 {profile?.average_rating ? (
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 }}>
@@ -63,7 +63,7 @@ export default function ProviderProfileScreen() {
           </AnimatedEntrance>
 
           <AnimatedEntrance index={1} delay={150}>
-            <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 14, color: colors.onSurface, marginBottom: 8 }}>{t('provider.settings')}</Text>
+            <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 14, color: colors.onSurface, marginBottom: 8 }}>{t('provider.settings')}</Text>
             <View style={{ backgroundColor: colors.surfaceContainerLowest, borderRadius: Radius.xl, overflow: 'hidden', borderWidth: 1, borderColor: colors.outlineVariant, marginBottom: 20 }}>
               {menuItems.map((item, idx) => (
                 <TouchableOpacity
@@ -74,7 +74,7 @@ export default function ProviderProfileScreen() {
                   <View style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', marginEnd: 12 }}>
                     <MaterialIcons name={item.icon as any} size={16} color={item.color} />
                   </View>
-                  <Text style={{ flex: 1, fontFamily: 'Cairo', fontWeight: '600', fontSize: 14, color: colors.onSurface }}>{item.title}</Text>
+                  <Text style={{ flex: 1, fontFamily: 'Cairo_600SemiBold', fontSize: 14, color: colors.onSurface }}>{item.title}</Text>
                   <MaterialIcons name="chevron-right" size={20} color={colors.iconDefault} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
                 </TouchableOpacity>
               ))}
@@ -87,7 +87,7 @@ export default function ProviderProfileScreen() {
               onPress={() => signOut()}
             >
               <MaterialIcons name="logout" size={16} color={colors.error} />
-              <Text style={{ fontFamily: 'Cairo', fontWeight: '700', fontSize: 14, color: colors.error, marginStart: 8 }}>{t('provider.signOut')}</Text>
+              <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 14, color: colors.error, marginStart: 8 }}>{t('provider.signOut')}</Text>
             </TouchableOpacity>
           </AnimatedEntrance>
         </View>
