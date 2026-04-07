@@ -13,7 +13,9 @@ export type NotificationType =
   | 'new_deal'
   | 'account_activity'
   | 'deal_expiring'
-  | 'review_received';
+  | 'review_received'
+  | 'admin_broadcast'
+  | 'admin_message';
 
 export interface AppNotification {
   id: string;

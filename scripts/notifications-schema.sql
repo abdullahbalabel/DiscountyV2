@@ -22,7 +22,9 @@ CREATE TABLE IF NOT EXISTS public.notifications (
     'new_deal',
     'account_activity',
     'deal_expiring',
-    'review_received'
+    'review_received',
+    'admin_broadcast',
+    'admin_message'
   )),
   title TEXT NOT NULL,
   body TEXT NOT NULL,

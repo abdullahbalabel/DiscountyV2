@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'expo-router';
 import {
   registerForPushNotifications,
@@ -12,6 +12,7 @@ import {
   addNotificationResponseListener,
   type AppNotification,
 } from '../lib/notifications';
+import { supabase } from '../lib/supabase';
 import { useAuth } from './auth';
 
 interface NotificationsState {
@@ -44,7 +45,6 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const refreshIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const refreshNotifications = useCallback(async () => {
     try {
@@ -140,17 +140,43 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
     setup();
     refreshNotifications();
 
-    refreshIntervalRef.current = setInterval(() => {
+    const channel = supabase
+      .channel('notifications-realtime')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'notifications' },
+        (payload) => {
+          if (payload.new.user_id === session.user.id) {
+            refreshNotifications();
+          }
+        },
+      )
+      .on(
+        'postgres_changes',
+        { event: 'UPDATE', schema: 'public', table: 'notifications' },
+        (payload) => {
+          if (payload.new.user_id === session.user.id) {
+            refreshNotifications();
+          }
+        },
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'notifications' },
+        () => { refreshNotifications(); },
+      )
+      .subscribe();
+
+    const backupInterval = setInterval(() => {
       refreshNotifications();
-    }, 30000);
+    }, 60000);
 
     return () => {
       cancelled = true;
       receivedSub?.remove();
       responseSub?.remove();
-      if (refreshIntervalRef.current) {
-        clearInterval(refreshIntervalRef.current);
-      }
+      clearInterval(backupInterval);
+      supabase.removeChannel(channel);
     };
   }, [session, role, refreshNotifications, router]);
 

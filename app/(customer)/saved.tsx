@@ -9,6 +9,7 @@ import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { fetchSavedDeals } from '../../lib/api';
+import { supabase } from '../../lib/supabase';
 import { useSavedDeals } from '../../contexts/savedDeals';
 import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
 import type { Discount } from '../../lib/types';
@@ -39,6 +40,17 @@ export default function SavedScreen() {
   }, []);
 
   useEffect(() => { loadData(); }, [loadData]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('discounts-saved')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'discounts' }, () => {
+        loadData(false);
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [loadData]);
 
   const handleRefresh = () => {
     setIsRefreshing(true);

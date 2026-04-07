@@ -8,6 +8,7 @@ import { DealCard } from '../../components/ui/DealCard';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { useNotifications } from '../../contexts/notifications';
 import { fetchActiveDeals, fetchCategories } from '../../lib/api';
+import { supabase } from '../../lib/supabase';
 import { resolveMaterialIcon } from '../../lib/iconMapping';
 import { useSavedDeals } from '../../contexts/savedDeals';
 import { useThemeColors, Radius, Shadows, Spacing } from '../../hooks/use-theme-colors';
@@ -42,7 +43,11 @@ export default function CustomerFeed() {
     if (showLoader) setIsLoading(true);
     try {
       const [dealsData, catsData] = await Promise.all([
-        fetchActiveDeals({ categoryId: selectedCategory || undefined, search: debouncedQuery || undefined }),
+        fetchActiveDeals({
+          categoryId: selectedCategory || undefined,
+          search: debouncedQuery || undefined,
+          limit: selectedCategory ? undefined : 10,
+        }),
         fetchCategories(),
       ]);
       setDeals(dealsData);
@@ -58,6 +63,17 @@ export default function CustomerFeed() {
   useEffect(() => {
     loadData(isFirstLoad.current);
     isFirstLoad.current = false;
+  }, [loadData]);
+
+  useEffect(() => {
+    const channel = supabase
+      .channel('discounts-feed')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'discounts' }, () => {
+        loadData(false);
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, [loadData]);
 
   const handleRefresh = () => { setIsRefreshing(true); loadData(false); };

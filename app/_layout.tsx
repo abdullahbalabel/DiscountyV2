@@ -1,11 +1,11 @@
 import '../i18n'; // Initialize i18n
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { Appearance, useColorScheme, ActivityIndicator, View } from 'react-native';
+import { useColorScheme, ActivityIndicator, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AuthProvider, useAuth } from '../contexts/auth';
 import { SavedDealsProvider } from '../contexts/savedDeals';
@@ -18,9 +18,6 @@ import {
   Cairo_800ExtraBold,
   Cairo_900Black,
 } from '@expo-google-fonts/cairo';
-
-// Set default theme to light
-Appearance.setColorScheme('light');
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -82,7 +79,7 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <ThemeProvider value={DefaultTheme}>
         <AuthProvider>
           <NotificationsProvider>
             <SavedDealsProvider>

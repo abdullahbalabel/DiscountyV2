@@ -52,7 +52,7 @@
   "feed": {
     "tagline": "Find the <0>Best Deals</0> curated for you.",
     "searchPlaceholder": "Search deals, brands, or categories...",
-    "allDeals": "All Deals",
+    "allDeals": "Top 10 Deals",
     "loading": "Loading...",
     "dealsAvailable": "{{count}} deals available",
     "noDealsFound": "No Deals Found",
