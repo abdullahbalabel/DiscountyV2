@@ -3,7 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "setup": "node ./scripts/setup-android.js",
+    "setup": "node ./scripts/setup.js",
     "start": "npx -y -p node@22 -- node node_modules/expo/bin/cli start",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "npx -y -p node@22 -- node node_modules/expo/bin/cli start --android",
