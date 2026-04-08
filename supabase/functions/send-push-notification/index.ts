@@ -11,6 +11,7 @@ interface PushMessage {
   data?: Record<string, unknown>;
   sound?: string;
   priority?: string;
+  channelId?: string;
 }
 
 async function sendExpoPushNotifications(messages: PushMessage[]): Promise<void> {
@@ -135,6 +136,7 @@ Deno.serve(async (req: Request) => {
       data: data || {},
       sound: 'default',
       priority: 'high',
+      channelId: 'default',
     }));
 
     // Send in batches of 100 (Expo limit)

@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
+import { Logo } from '../../components/ui/Logo';
 import { useAuth } from '../../contexts/auth';
 import { setupRtl } from '../../i18n';
 import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
@@ -170,17 +171,10 @@ export default function PhoneEntryScreen() {
             {/* Branding */}
             <View style={{ marginBottom: 16, alignItems: 'center' }}>
               <View style={{
-                width: 48, height: 48, borderRadius: 14,
-                backgroundColor: colors.primary,
-                alignItems: 'center', justifyContent: 'center',
+                width: 48, height: 48,
                 marginBottom: 12,
-                shadowColor: colors.primary,
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.3,
-                shadowRadius: 8,
-                elevation: 6,
               }}>
-                <MaterialIcons name="local-offer" size={26} color="#fff" />
+                <Logo size={48} />
               </View>
               <Text style={{ fontFamily: 'Cairo_800ExtraBold', fontSize: 28, color: textPrimary, letterSpacing: -0.5 }}>{t('discounty')}</Text>
               <Text style={{ fontFamily: 'Cairo', color: textSecondary, marginTop: 4, fontSize: 13, textAlign: 'center' }}>

@@ -1,0 +1,46 @@
+# Version control
+.git/
+
+# Native build artifacts (EAS regenerates these via prebuild)
+/android
+/ios
+
+# IDE & editor
+.vscode/
+.kilo/
+.tamagui/
+
+# Dependencies (EAS installs them)
+node_modules/
+
+# Documentation & planning
+Docs/
+README.md
+implementation_plan.md
+
+# Supabase edge functions (not needed for mobile build)
+supabase/
+
+# Admin web (separate project)
+admin-web/
+
+# Utility scripts
+scripts/
+
+# Build artifacts & logs
+*.txt
+tsconfig.tsbuildinfo
+metro-error.txt
+tsc-out.txt
+tsc-output.txt
+tsc3.txt
+
+# Local Expo state
+.expo/
+
+# Design system mockups (not needed in build)
+Design System And Theme/
+
+# Unused root files
+logoicon.png
+expo-env.d.ts

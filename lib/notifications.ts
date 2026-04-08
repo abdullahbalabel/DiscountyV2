@@ -68,6 +68,19 @@ async function loadNotificationsModule() {
       }),
     });
 
+    // Create Android notification channel with high importance
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'Default',
+        importance: Notifications.AndroidImportance.MAX,
+        sound: 'default',
+        vibrationPattern: [0, 250, 250, 250],
+        enableVibrate: true,
+        enableLights: true,
+        lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+      });
+    }
+
     moduleLoaded = true;
     console.info('[Notifications] Native module loaded successfully');
     return Notifications;
@@ -270,6 +283,7 @@ export async function sendLocalNotification(
       body,
       data: data || {},
       sound: true,
+      ...(Platform.OS === 'android' && { channelId: 'default' }),
     },
     trigger: null,
   });

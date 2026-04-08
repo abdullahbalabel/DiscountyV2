@@ -10,6 +10,7 @@ import {
   getUnreadNotificationCount,
   addNotificationReceivedListener,
   addNotificationResponseListener,
+  sendLocalNotification,
   type AppNotification,
 } from '../lib/notifications';
 import { supabase } from '../lib/supabase';
@@ -148,6 +149,12 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
         (payload) => {
           if (payload.new.user_id === session.user.id) {
             refreshNotifications();
+            // Show native notification for incoming notifications (e.g., from admin web page)
+            sendLocalNotification(
+              payload.new.title,
+              payload.new.body,
+              payload.new.data || {}
+            );
           }
         },
       )
