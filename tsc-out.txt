@@ -1,1 +1,0 @@
-﻿app/(customer)/_layout.tsx(2,22): error TS2307: Cannot find module 'react-router' or its corresponding type declarations.

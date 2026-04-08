@@ -13,6 +13,8 @@ expo-env.d.ts
 .kotlin/
 *.orig.*
 *.jks
+*.keystore
+!debug.keystore
 *.p8
 *.p12
 *.key
@@ -41,3 +43,36 @@ app-example
 # generated native folders
 /ios
 /android
+
+# TypeScript compiler output
+tsc-out.txt
+tsc-output.txt
+tsc3.txt
+
+# Metro error logs
+metro-error.txt
+
+# Supabase CLI temp files
+supabase/.temp/
+
+# Firebase config (contains API keys — do not commit)
+google-services.json
+
+# Internal design/planning files
+Design System And Theme/
+Docs/
+implementation_plan.md
+
+# Test/demo files
+app/(customer)/tamagui-demo.tsx
+scripts/test-accounts.md
+
+# Default Expo boilerplate (unused)
+app/(tabs)/
+components/external-link.tsx
+components/hello-wave.tsx
+components/parallax-scroll-view.tsx
+assets/images/partial-react-logo.png
+assets/images/react-logo.png
+assets/images/react-logo@2x.png
+assets/images/react-logo@3x.png
