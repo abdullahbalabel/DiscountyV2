@@ -18,7 +18,7 @@ export default function SavedScreen() {
   const router = useRouter();
   const colors = useThemeColors();
   const { toggleSave, savedIds } = useSavedDeals();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const [allDeals, setAllDeals] = useState<Discount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -104,7 +104,7 @@ export default function SavedScreen() {
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
       <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('customer.saved')}</Text>
+          <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface, flexShrink: 1 }}>{t('customer.saved')}</Text>
         </View>
         <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
           <MaterialIcons name="search" size={18} color={colors.iconDefault} />
@@ -138,7 +138,7 @@ export default function SavedScreen() {
                       imageUri={item.image_url || 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800'}
                       discountBadge={formatBadge(item)}
                       description={item.description || undefined}
-                      categoryName={category?.name}
+                      categoryName={i18n.language === 'ar' ? category?.name_ar : category?.name}
                       categoryIcon={category?.icon}
                       rating={provider?.average_rating}
                       reviewCount={provider?.total_reviews}

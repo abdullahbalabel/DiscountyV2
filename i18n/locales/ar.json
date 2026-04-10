@@ -253,7 +253,9 @@
     "anonymous": "مجهول",
     "businessResponse": "رد المتجر",
     "website": "الموقع الإلكتروني",
-    "unknown": "غير معروف"
+    "unknown": "غير معروف",
+    "viewLocation": "عرض الموقع",
+    "openInMaps": "افتح في الخرائط"
   },
 
   "provider": {
@@ -431,6 +433,17 @@
     "saved": "تم الحفظ!",
     "failedToSave": "فشل في الحفظ",
     "failedToUpload": "فشل في رفع الصورة",
+
+    "shopLocation": "موقع المتجر",
+    "useCurrentLocation": "استخدام الموقع الحالي",
+    "locationSet": "تم تحديد الموقع",
+    "locationNotSet": "اضغط لتحديد موقع متجرك",
+    "gettingLocation": "جاري تحديد الموقع...",
+    "locationPermissionNeeded": "يحتاج تحديد الموقع إلى إذن الموقع.",
+    "locationUnavailable": "الموقع غير متاح",
+    "enableLocationServices": "يرجى تفعيل خدمات الموقع والمحاولة مرة أخرى.",
+    "latitude": "خط العرض",
+    "longitude": "خط الطول",
 
     "businessHoursTitle": "ساعات العمل",
     "open": "مفتوح",

@@ -185,10 +185,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         }
 
-        setSession(newSession);
         if (newSession?.user) {
+          setIsLoading(true);
+          setSession(newSession);
           await fetchUserRole(newSession.user.id);
+          setIsLoading(false);
         } else {
+          setSession(newSession);
           setRole(null);
           setIsNewUser(false);
           setApprovalStatus(null);

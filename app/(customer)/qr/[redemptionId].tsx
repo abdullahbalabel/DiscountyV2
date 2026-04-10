@@ -90,7 +90,7 @@ export default function QRDisplayScreen() {
         >
           <MaterialIcons name={I18nManager.isRTL ? "arrow-forward" : "arrow-back"} size={20} color={colors.iconDefault} />
         </AnimatedButton>
-        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('customer.qrCode')}</Text>
+        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface, flexShrink: 1 }}>{t('customer.qrCode')}</Text>
       </View>
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>

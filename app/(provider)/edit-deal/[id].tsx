@@ -29,7 +29,7 @@ import {
 import type { Category, Discount, DiscountType } from '../../../lib/types';
 
 export default function EditDealScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const colorScheme = useColorScheme();
@@ -326,7 +326,7 @@ export default function EditDealScreen() {
             <View>
               <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginStart: 4, marginBottom: 8 }}>{t('provider.description')}</Text>
               <TextInput
-                style={{ width: '100%', paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12, backgroundColor: isDark ? '#322825' : '#ffffff', color: isDark ? '#f1dfda' : '#231917', fontWeight: '500', height: 96, textAlign: 'left', borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }}
+                style={{ width: '100%', paddingHorizontal: 24, paddingVertical: 16, borderRadius: 12, backgroundColor: isDark ? '#322825' : '#ffffff', color: isDark ? '#f1dfda' : '#231917', fontWeight: '500', height: 96, borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)' }}
                 placeholderTextColor="#85736f"
                 placeholder={t('provider.describeDealPlaceholder')}
                 multiline
@@ -362,7 +362,7 @@ export default function EditDealScreen() {
                     />
                     <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 14, color: selectedCategoryId === cat.id ? '#862045' : isDark ? '#d8c2bd' : '#564340'
                       }}>
-                      {cat.name}
+                      {i18n.language === 'ar' ? cat.name_ar : cat.name}
                     </Text>
                   </AnimatedButton>
                 ))}

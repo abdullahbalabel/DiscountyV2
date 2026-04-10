@@ -137,7 +137,7 @@ export default function ProviderReviewsScreen() {
             </Text>
             {tab.count !== undefined && tab.count > 0 && (
               <View style={{
-                marginLeft: 6,
+                marginStart: 6,
                 backgroundColor: filter === tab.key ? 'rgba(255,255,255,0.2)' : colors.surfaceContainerHigh,
                 paddingHorizontal: 6,
                 paddingVertical: 1,

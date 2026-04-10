@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Alert,
+  I18nManager,
   RefreshControl,
   ScrollView,
   Text,
@@ -136,7 +137,7 @@ export default function NotificationsScreen() {
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <TouchableOpacity onPress={() => router.back()}>
-            <MaterialIcons name="arrow-back" size={24} color={colors.onSurface} />
+            <MaterialIcons name={I18nManager.isRTL ? "arrow-forward" : "arrow-back"} size={24} color={colors.onSurface} />
           </TouchableOpacity>
           <Text
             style={{
@@ -145,6 +146,7 @@ export default function NotificationsScreen() {
               letterSpacing: -0.5,
               fontSize: 18,
               color: colors.onSurface,
+              flexShrink: 1,
             }}
           >
             {t('notifications.title')}

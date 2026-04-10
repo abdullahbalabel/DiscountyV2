@@ -93,7 +93,7 @@ function SortPicker({
 }
 
 export default function ProviderDealsScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const colors = useThemeColors();
   const router = useRouter();
 
@@ -149,7 +149,8 @@ export default function ProviderDealsScreen() {
         (d) =>
           d.title.toLowerCase().includes(q) ||
           d.description?.toLowerCase().includes(q) ||
-          d.category?.name.toLowerCase().includes(q)
+          d.category?.name.toLowerCase().includes(q) ||
+          d.category?.name_ar?.toLowerCase().includes(q)
       );
     }
 
@@ -291,7 +292,7 @@ export default function ProviderDealsScreen() {
                 <View style={styles.categoryRow}>
                   <MaterialIcons name={resolveMaterialIcon(item.category.icon)} size={11} color={colors.iconDefault} />
                   <Text style={[styles.categoryText, { color: colors.onSurfaceVariant }]} numberOfLines={1}>
-                    {item.category.name}
+                    {i18n.language === 'ar' ? item.category.name_ar : item.category.name}
                   </Text>
                 </View>
               )}

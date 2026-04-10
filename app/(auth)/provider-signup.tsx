@@ -22,7 +22,7 @@ import { supabase } from '../../lib/supabase';
 import type { Category, SocialLinks } from '../../lib/types';
 
 export default function ProviderSignupScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
   const router = useRouter();
@@ -223,7 +223,7 @@ export default function ProviderSignupScreen() {
                     fontFamily: 'Cairo_600SemiBold', fontSize: 14,
                     color: selectedCategory === cat.id ? '#fff' : onSurface,
                   }}>
-                    {cat.name}
+                    {i18n.language === 'ar' ? cat.name_ar : cat.name}
                   </Text>
                 </Pressable>
               ))}
@@ -341,7 +341,7 @@ export default function ProviderSignupScreen() {
                 {businessName || t('auth.businessName')}
               </Text>
               <Text style={{ color: onSurfaceVariant, fontSize: 14, fontWeight: '500', marginTop: 4 }}>
-                {categories.find((c) => c.id === selectedCategory)?.name || t('provider.category')}
+                {(i18n.language === 'ar' ? categories.find((c) => c.id === selectedCategory)?.name_ar : categories.find((c) => c.id === selectedCategory)?.name) || t('provider.category')}
               </Text>
             </View>
           </View>

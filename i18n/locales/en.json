@@ -253,7 +253,9 @@
     "anonymous": "Anonymous",
     "businessResponse": "Business Response",
     "website": "Website",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "viewLocation": "View Location",
+    "openInMaps": "Open in Maps"
   },
 
   "provider": {
@@ -431,6 +433,17 @@
     "saved": "Saved!",
     "failedToSave": "Failed to save",
     "failedToUpload": "Failed to upload image",
+
+    "shopLocation": "Shop Location",
+    "useCurrentLocation": "Use Current Location",
+    "locationSet": "Location set",
+    "locationNotSet": "Tap to set your shop location",
+    "gettingLocation": "Getting location...",
+    "locationPermissionNeeded": "Location permission is needed to set your shop location.",
+    "locationUnavailable": "Location Unavailable",
+    "enableLocationServices": "Please enable location services and try again.",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
 
     "businessHoursTitle": "Business Hours",
     "open": "Open",

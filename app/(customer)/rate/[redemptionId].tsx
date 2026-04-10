@@ -108,7 +108,7 @@ export default function RateScreen() {
         >
           <MaterialIcons name="arrow-back" size={24} color="#85736f" style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
         </AnimatedButton>
-        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 20, color: onSurface }}>{t('customer.rateExperience')}</Text>
+        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 20, color: onSurface, flexShrink: 1 }}>{t('customer.rateExperience')}</Text>
       </View>
 
       <View style={{ flex: 1, paddingHorizontal: 24 }}>
@@ -164,7 +164,7 @@ export default function RateScreen() {
               onChangeText={setComment}
               maxLength={500}
             />
-            <Text style={{ color: onSurfaceVariant, fontSize: 12, marginTop: 8, textAlign: 'right' }}>{comment.length}/500</Text>
+            <Text style={{ color: onSurfaceVariant, fontSize: 12, marginTop: 8, textAlign: 'auto' }}>{comment.length}/500</Text>
           </View>
         </AnimatedEntrance>
 

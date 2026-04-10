@@ -8,6 +8,7 @@ import {
   Alert,
   I18nManager,
   KeyboardAvoidingView, Platform,
+  Pressable,
   ScrollView,
   Text,
   TextInput,
@@ -28,7 +29,7 @@ try {
 }
 
 export default function CreateDealScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const router = useRouter();
   const colors = useThemeColors();
 
@@ -276,7 +277,7 @@ export default function CreateDealScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={{ paddingBottom: 80, paddingHorizontal: 16 }}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 16 }}>
 
           {/* Progress Stepper */}
           <AnimatedEntrance index={0}>
@@ -394,7 +395,7 @@ export default function CreateDealScreen() {
                         fontFamily: 'Cairo_600SemiBold', fontSize: 12,
                         color: selectedCategoryId === cat.id ? colors.primary : colors.onSurfaceVariant,
                       }}>
-                        {cat.name}
+                        {i18n.language === 'ar' ? cat.name_ar : cat.name}
                       </Text>
                     </AnimatedButton>
                   ))}
@@ -405,7 +406,7 @@ export default function CreateDealScreen() {
               <View style={{ flexDirection: 'row', gap: 16 }}>
                 <View style={{ flex: 1 }}>
                   <Text style={labelStyle}>{t('provider.discount')}</Text>
-                  <View style={{ position: 'relative', flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                     <TextInput
                       style={{ ...inputStyle, flex: 1 }}
                       placeholderTextColor={colors.onSurfaceVariant}
@@ -414,14 +415,19 @@ export default function CreateDealScreen() {
                       value={discountValue}
                       onChangeText={setDiscountValue}
                     />
-                    <AnimatedButton
-                      style={{ position: 'absolute', right: 8, paddingHorizontal: 8, paddingVertical: 4, borderRadius: Radius.sm }}
+                    <Pressable
                       onPress={() => setDiscountType(discountType === 'percentage' ? 'fixed' : 'percentage')}
+                      style={{
+                        paddingHorizontal: 14, paddingVertical: 12, borderRadius: Radius.lg,
+                        backgroundColor: colors.surfaceContainerLowest,
+                        borderColor: colors.outlineVariant, borderWidth: 1,
+                        ...Shadows.xs,
+                      }}
                     >
                       <Text style={{ fontWeight: '700', color: colors.primary, fontSize: 14 }}>
                         {discountType === 'percentage' ? '%' : '$'}
                       </Text>
-                    </AnimatedButton>
+                    </Pressable>
                   </View>
                 </View>
                 <View style={{ flex: 1 }}>
@@ -462,6 +468,32 @@ export default function CreateDealScreen() {
                   onChangeText={setTerms}
                 />
               </View>
+
+              {/* Step 1 Actions */}
+              <View style={{ gap: 12, marginTop: 12 }}>
+                <AnimatedButton
+                  variant="gradient"
+                  style={{ paddingVertical: 16, borderRadius: Radius.lg, alignItems: 'center', justifyContent: 'center', ...Shadows.glow }}
+                  onPress={handleNextStep}
+                >
+                  <Text style={{ fontFamily: 'Cairo_700Bold', color: 'white', fontSize: 15 }}>{t('provider.nextReview')}</Text>
+                </AnimatedButton>
+                <Pressable
+                  onPress={handleSaveDraft}
+                  disabled={submitting}
+                  style={({ pressed }) => ({
+                    paddingVertical: 16, borderRadius: Radius.lg,
+                    borderWidth: 1.5, borderColor: colors.outlineVariant,
+                    backgroundColor: pressed ? colors.surfaceContainerHigh : colors.surfaceContainerLowest,
+                    alignItems: 'center', justifyContent: 'center',
+                    ...Shadows.xs,
+                  })}
+                >
+                  <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 15, color: colors.onSurface }}>
+                    {submitting ? t('provider.saving') : t('provider.saveDraft')}
+                  </Text>
+                </Pressable>
+              </View>
             </AnimatedEntrance>
           ) : (
             /* ── Step 2: Review ───────────────────── */
@@ -489,7 +521,7 @@ export default function CreateDealScreen() {
                     {selectedCategoryId && (
                       <View style={{ backgroundColor: colors.primary, alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 4, borderRadius: Radius.full, marginBottom: 4 }}>
                         <Text style={{ color: 'white', fontFamily: 'Cairo_700Bold', fontSize: 10, textTransform: 'uppercase', letterSpacing: -0.01 }}>
-                          {categories.find(c => c.id === selectedCategoryId)?.name || 'DEAL'}
+                          {i18n.language === 'ar' ? categories.find(c => c.id === selectedCategoryId)?.name_ar : categories.find(c => c.id === selectedCategoryId)?.name || 'DEAL'}
                         </Text>
                       </View>
                     )}
@@ -520,6 +552,37 @@ export default function CreateDealScreen() {
                   </View>
                 ) : null}
               </View>
+
+              {/* Step 2 Actions */}
+              <View style={{ gap: 12, marginTop: 12 }}>
+                <AnimatedButton
+                  variant="gradient"
+                  style={{ paddingVertical: 16, borderRadius: Radius.lg, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, ...Shadows.glow }}
+                  onPress={handlePublish}
+                  disabled={submitting}
+                >
+                  {submitting ? (
+                    <ActivityIndicator color="white" size="small" />
+                  ) : (
+                    <MaterialIcons name="publish" size={18} color="white" />
+                  )}
+                  <Text style={{ fontFamily: 'Cairo_700Bold', color: 'white', fontSize: 15 }}>
+                    {submitting ? t('provider.publishing') : t('provider.publishDeal')}
+                  </Text>
+                </AnimatedButton>
+                <Pressable
+                  onPress={() => setStep(1)}
+                  style={({ pressed }) => ({
+                    paddingVertical: 16, borderRadius: Radius.lg,
+                    borderWidth: 1.5, borderColor: colors.outlineVariant,
+                    backgroundColor: pressed ? colors.surfaceContainerHigh : colors.surfaceContainerLowest,
+                    alignItems: 'center', justifyContent: 'center',
+                    ...Shadows.xs,
+                  })}
+                >
+                  <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 15, color: colors.onSurface }}>{t('provider.edit')}</Text>
+                </Pressable>
+              </View>
             </AnimatedEntrance>
           )}
         </ScrollView>
@@ -528,7 +591,7 @@ export default function CreateDealScreen() {
       {/* Error Banner */}
       {formError ? (
         <View style={{
-          position: 'absolute', bottom: 80, left: 16, right: 16, zIndex: 50,
+          position: 'absolute', bottom: 24, left: 16, right: 16, zIndex: 50,
           backgroundColor: 'rgba(239,68,68,0.9)', borderRadius: Radius.lg, paddingHorizontal: 16, paddingVertical: 10,
           flexDirection: 'row', alignItems: 'center', gap: 8,
         }}>
@@ -539,67 +602,6 @@ export default function CreateDealScreen() {
           </AnimatedButton>
         </View>
       ) : null}
-
-      {/* Bottom Action Bar */}
-      <View style={{
-        position: 'absolute', bottom: 0, width: '100%', zIndex: 50,
-        paddingHorizontal: 16, paddingBottom: 16, paddingTop: 12, flexDirection: 'row', gap: 12,
-        backgroundColor: colors.isDark ? 'rgba(26,17,15,0.9)' : 'rgba(255,248,246,0.9)',
-        borderTopWidth: 1, borderTopColor: colors.outlineVariant,
-      }}>
-        {step === 1 ? (
-          <>
-            <AnimatedButton
-              style={{
-                flex: 1, paddingVertical: 10, borderRadius: Radius.full,
-                borderWidth: 2, borderColor: colors.isDark ? 'rgba(160,141,136,0.2)' : 'rgba(133,115,111,0.2)',
-                alignItems: 'center', justifyContent: 'center',
-              }}
-              onPress={handleSaveDraft}
-              disabled={submitting}
-            >
-              <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 14, color: colors.onSurface }}>
-                {submitting ? t('provider.saving') : t('provider.saveDraft')}
-              </Text>
-            </AnimatedButton>
-            <AnimatedButton
-              variant="gradient"
-              style={{ flex: 2, paddingVertical: 10, borderRadius: Radius.full, alignItems: 'center', justifyContent: 'center' }}
-              onPress={handleNextStep}
-            >
-              <Text style={{ fontFamily: 'Cairo_700Bold', color: 'white', fontSize: 14 }}>{t('provider.nextReview')}</Text>
-            </AnimatedButton>
-          </>
-        ) : (
-          <>
-            <AnimatedButton
-              style={{
-                flex: 1, paddingVertical: 10, borderRadius: Radius.full,
-                borderWidth: 2, borderColor: colors.isDark ? 'rgba(160,141,136,0.2)' : 'rgba(133,115,111,0.2)',
-                alignItems: 'center', justifyContent: 'center',
-              }}
-              onPress={() => setStep(1)}
-            >
-              <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 14, color: colors.onSurface }}>{t('provider.edit')}</Text>
-            </AnimatedButton>
-            <AnimatedButton
-              variant="gradient"
-              style={{ flex: 2, paddingVertical: 10, borderRadius: Radius.full, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 }}
-              onPress={handlePublish}
-              disabled={submitting}
-            >
-              {submitting ? (
-                <ActivityIndicator color="white" size="small" />
-              ) : (
-                <MaterialIcons name="publish" size={16} color="white" />
-              )}
-              <Text style={{ fontFamily: 'Cairo_700Bold', color: 'white', fontSize: 14 }}>
-                {submitting ? t('provider.publishing') : t('provider.publishDeal')}
-              </Text>
-            </AnimatedButton>
-          </>
-        )}
-      </View>
     </View>
   );
 }

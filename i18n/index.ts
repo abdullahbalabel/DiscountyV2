@@ -13,7 +13,7 @@ const resources = {
   ar: { translation: ar },
 };
 
-const defaultLocale = Localization.getLocales()[0]?.languageCode || 'en';
+const defaultLocale = 'ar';
 
 i18n
   .use(initReactI18next)

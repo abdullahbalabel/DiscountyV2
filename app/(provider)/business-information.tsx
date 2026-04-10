@@ -1,5 +1,6 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -24,6 +25,10 @@ export default function BusinessInformationScreen() {
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [coverUrl, setCoverUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<'logo' | 'cover' | null>(null);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [address, setAddress] = useState<string | null>(null);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -36,6 +41,15 @@ export default function BusinessInformationScreen() {
           setWebsite(data.website || '');
           setLogoUrl(data.logo_url);
           setCoverUrl(data.cover_photo_url);
+          setLatitude(data.latitude ?? null);
+          setLongitude(data.longitude ?? null);
+          if (data.latitude != null && data.longitude != null) {
+            const results = await Location.reverseGeocodeAsync({ latitude: data.latitude, longitude: data.longitude });
+            if (results.length > 0) {
+              const r = results[0];
+              setAddress([r.street, r.district, r.city, r.region].filter(Boolean).join(', '));
+            }
+          }
         }
       } catch {
         Alert.alert(t('auth.error'), t('auth.somethingWentWrong'));
@@ -79,6 +93,36 @@ export default function BusinessInformationScreen() {
     }
   };
 
+  const handleGetLocation = async () => {
+    setIsGettingLocation(true);
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(t('provider.locationPermissionNeeded'));
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+      setLatitude(location.coords.latitude);
+      setLongitude(location.coords.longitude);
+
+      const results = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+      if (results.length > 0) {
+        const r = results[0];
+        setAddress([r.street, r.district, r.city, r.region].filter(Boolean).join(', '));
+      }
+    } catch {
+      Alert.alert(t('provider.locationUnavailable'), t('provider.enableLocationServices'));
+    } finally {
+      setIsGettingLocation(false);
+    }
+  };
+
   const handleSave = async () => {
     if (!businessName.trim()) {
       Alert.alert(t('auth.error'), t('provider.dealTitleRequired'));
@@ -94,6 +138,8 @@ export default function BusinessInformationScreen() {
         website: website.trim() || null,
         logo_url: logoUrl,
         cover_photo_url: coverUrl,
+        latitude: latitude,
+        longitude: longitude,
       });
       Alert.alert(t('provider.saved'));
     } catch (err: any) {
@@ -269,6 +315,53 @@ export default function BusinessInformationScreen() {
               keyboardType="url"
               autoCapitalize="none"
             />
+          </AnimatedEntrance>
+
+          <AnimatedEntrance index={6} delay={180}>
+            <Text style={labelStyle}>{t('provider.shopLocation')}</Text>
+            <TouchableOpacity
+              onPress={handleGetLocation}
+              disabled={isGettingLocation}
+              activeOpacity={0.7}
+              style={{
+                paddingHorizontal: 14,
+                paddingVertical: 14,
+                borderRadius: Radius.lg,
+                backgroundColor: colors.surfaceContainerHigh,
+                borderWidth: 1,
+                borderColor: colors.outlineVariant,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 12,
+              }}
+            >
+              {isGettingLocation ? (
+                <ActivityIndicator size="small" color={colors.primary} />
+              ) : (
+                <MaterialIcons
+                  name={latitude != null ? 'location-on' : 'add-location'}
+                  size={20}
+                  color={latitude != null ? colors.primary : colors.iconDefault}
+                />
+              )}
+              <View style={{ flex: 1 }}>
+                {latitude != null && longitude != null ? (
+                  <>
+                    <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 13, color: colors.onSurface }}>
+                      {address || t('provider.locationSet')}
+                    </Text>
+                    <Text style={{ fontSize: 11, color: colors.onSurfaceVariant, marginTop: 2 }}>
+                      {latitude.toFixed(5)}, {longitude.toFixed(5)}
+                    </Text>
+                  </>
+                ) : (
+                  <Text style={{ fontSize: 13, color: colors.onSurfaceVariant }}>
+                    {isGettingLocation ? t('provider.gettingLocation') : t('provider.locationNotSet')}
+                  </Text>
+                )}
+              </View>
+              <MaterialIcons name="my-location" size={18} color={colors.primary} />
+            </TouchableOpacity>
           </AnimatedEntrance>
         </View>
       </ScrollView>

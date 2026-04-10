@@ -234,7 +234,7 @@ export default function PhoneEntryScreen() {
                   <View style={{ gap: 4, borderBottomWidth: 1, borderBottomColor: colors.isDark ? 'rgba(255,255,255,0.15)' : '#E0E0E0', paddingBottom: 8 }}>
                     <Text style={labelStyle}>{t('email')}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <View style={{ paddingRight: 10 }}>
+                      <View style={{ paddingEnd: 10 }}>
                         <MaterialIcons name="email" size={20} color={colors.isDark ? 'rgba(255,255,255,0.5)' : '#9E9E9E'} />
                       </View>
                       <TextInput
@@ -253,7 +253,7 @@ export default function PhoneEntryScreen() {
                   <View style={{ gap: 4, borderBottomWidth: 1, borderBottomColor: colors.isDark ? 'rgba(255,255,255,0.15)' : '#E0E0E0', paddingBottom: 8 }}>
                     <Text style={labelStyle}>{t('password')}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <View style={{ paddingRight: 10 }}>
+                      <View style={{ paddingEnd: 10 }}>
                         <MaterialIcons name="lock" size={20} color={colors.isDark ? 'rgba(255,255,255,0.5)' : '#9E9E9E'} />
                       </View>
                       <TextInput
@@ -284,7 +284,7 @@ export default function PhoneEntryScreen() {
                     </Pressable>
 
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                      <View style={{ paddingRight: 10 }}>
+                      <View style={{ paddingEnd: 10 }}>
                         <MaterialIcons name="phone" size={20} color={colors.isDark ? 'rgba(255,255,255,0.5)' : '#9E9E9E'} />
                       </View>
                       <TextInput

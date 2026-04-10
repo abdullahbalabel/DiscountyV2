@@ -487,6 +487,8 @@ export async function updateProviderProfile(updates: {
   cover_photo_url?: string | null;
   social_links?: SocialLinks | null;
   business_hours?: Record<string, string> | null;
+  latitude?: number | null;
+  longitude?: number | null;
 }): Promise<ProviderProfile> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');

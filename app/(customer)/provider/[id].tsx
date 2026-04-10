@@ -1,9 +1,11 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Linking from 'expo-linking';
+import * as Location from 'expo-location';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, I18nManager, ScrollView, Text, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, I18nManager, Platform, ScrollView, Text, TouchableOpacity, useColorScheme, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
@@ -26,7 +28,7 @@ function timeAgo(date: string, t: (key: string) => string): string {
 }
 
 export default function ProviderProfile() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const colorScheme = useColorScheme();
   const router = useRouter();
@@ -37,6 +39,7 @@ export default function ProviderProfile() {
   const [deals, setDeals] = useState<Discount[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [providerAddress, setProviderAddress] = useState<string | null>(null);
 
   useEffect(() => {
     const loadProvider = async () => {
@@ -48,11 +51,28 @@ export default function ProviderProfile() {
         setProvider(providerData);
         setDeals(dealsData);
         setReviews(reviewsData);
+
+        if (providerData?.latitude != null && providerData?.longitude != null) {
+          const results = await Location.reverseGeocodeAsync({ latitude: providerData.latitude, longitude: providerData.longitude });
+          if (results.length > 0) {
+            const r = results[0];
+            setProviderAddress([r.street, r.district, r.city, r.region].filter(Boolean).join(', '));
+          }
+        }
       } catch (err) { console.error('Error loading provider:', err); }
       finally { setIsLoading(false); }
     };
     loadProvider();
   }, [id]);
+
+  const openInMaps = (lat: number, lng: number) => {
+    const url = Platform.select({
+      ios: `maps:?q=&ll=${lat},${lng}`,
+      android: `geo:${lat},${lng}?q=${lat},${lng}`,
+      default: `https://maps.google.com/?q=${lat},${lng}`,
+    })!;
+    Linking.openURL(url);
+  };
 
   const surfaceBg = isDark ? '#1a110f' : '#fff8f6';
   const surfaceContainerLowest = isDark ? '#322825' : '#ffffff';
@@ -87,7 +107,7 @@ export default function ProviderProfile() {
           <AnimatedButton style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }} onPress={() => router.back()}>
             <MaterialIcons name="arrow-back" size={24} color="#85736f" style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
           </AnimatedButton>
-          <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 20, color: onSurface }}>{t('discounty')}</Text>
+          <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 20, color: onSurface, flexShrink: 1 }}>{t('discounty')}</Text>
         </View>
         <AnimatedButton style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
           <MaterialIcons name="share" size={24} color="#85736f" />
@@ -142,6 +162,22 @@ export default function ProviderProfile() {
                 </View>
               )}
             </View>
+            {provider.latitude != null && provider.longitude != null && (
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => openInMaps(provider.latitude, provider.longitude)}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: surfaceContainer, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 8, marginBottom: 16, alignSelf: 'stretch' }}
+              >
+                <MaterialIcons name="location-on" size={14} color="#862045" />
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 12, fontWeight: '600', color: '#862045' }}>{t('customer.viewLocation')}</Text>
+                  {providerAddress && (
+                    <Text style={{ fontSize: 11, color: onSurfaceVariant, marginTop: 2 }} numberOfLines={1}>{providerAddress}</Text>
+                  )}
+                </View>
+                <MaterialIcons name="open-in-new" size={14} color="#85736f" />
+              </TouchableOpacity>
+            )}
             {socialLinks && Object.keys(socialLinks).length > 0 && (
               <View style={{ flexDirection: 'row', gap: 12 }}>
                 {socialLinks.instagram && <View style={{ width: 40, height: 40, borderRadius: 8, backgroundColor: surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 14 }}>📸</Text></View>}
@@ -175,7 +211,7 @@ export default function ProviderProfile() {
                       id={deal.id} title={deal.title} provider={provider.business_name} providerLogo={provider.logo_url}
                       imageUri={deal.image_url || 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800'}
                       discountBadge={badge} description={deal.description || undefined}
-                      categoryName={category?.name} categoryIcon={category?.icon} endTime={deal.end_time}
+                      categoryName={i18n.language === 'ar' ? category?.name_ar : category?.name} categoryIcon={category?.icon} endTime={deal.end_time}
                       isSaved={savedIds.has(deal.id)}
                       onToggleSave={() => toggleSave(deal.id)}
                       onPress={() => router.push(`/(customer)/deals/${deal.id}`)}

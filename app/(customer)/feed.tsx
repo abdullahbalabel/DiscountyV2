@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { DealCard } from '../../components/ui/DealCard';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { Logo } from '../../components/ui/Logo';
 import { useNotifications } from '../../contexts/notifications';
 import { fetchActiveDeals, fetchCategories } from '../../lib/api';
 import { supabase } from '../../lib/supabase';
@@ -19,7 +20,7 @@ const CATEGORY_PILL_HEIGHT = 36;
 export default function CustomerFeed() {
   const colors = useThemeColors();
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { savedIds, toggleSave } = useSavedDeals();
   const { unreadCount } = useNotifications();
 
@@ -133,7 +134,7 @@ export default function CustomerFeed() {
           }
           renderItem={({ item: cat }) => (
             <CategoryPill
-              label={cat.name}
+              label={i18n.language === 'ar' ? cat.name_ar : cat.name}
               icon={resolveMaterialIcon(cat.icon)}
               isActive={selectedCategory === cat.id}
               colors={colors}
@@ -169,14 +170,8 @@ export default function CustomerFeed() {
         alignItems: 'center',
         backgroundColor: colors.surfaceBg,
       }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.sm }}>
-          <View style={{
-            width: 32, height: 32, borderRadius: Radius.md,
-            backgroundColor: colors.primary,
-            alignItems: 'center', justifyContent: 'center',
-          }}>
-            <Text style={{ color: '#fff', fontFamily: 'Cairo_700Bold', fontSize: 14 }}>D</Text>
-          </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, flexShrink: 1 }}>
+          <Logo size={32} color={colors.primary} />
           <Text style={{
             fontFamily: 'Cairo_700Bold',
             letterSpacing: -0.5, fontSize: 18, color: colors.onSurface,
@@ -253,7 +248,7 @@ export default function CustomerFeed() {
               imageUri={item.image_url || 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800'}
               discountBadge={formatBadge(item)}
               description={item.description || undefined}
-              categoryName={(item.category as any)?.name}
+              categoryName={i18n.language === 'ar' ? (item.category as any)?.name_ar : (item.category as any)?.name}
               categoryIcon={(item.category as any)?.icon}
               rating={(item.provider as any)?.average_rating}
               reviewCount={(item.provider as any)?.total_reviews}

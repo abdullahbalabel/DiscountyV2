@@ -1,9 +1,11 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Linking from 'expo-linking';
+import * as Location from 'expo-location';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, I18nManager, Modal, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, I18nManager, Modal, Platform, ScrollView, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
@@ -32,7 +34,7 @@ function useCountdown(endTime: string, t: (key: string) => string) {
 }
 
 export default function DealDetails() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const colors = useThemeColors();
@@ -45,6 +47,7 @@ export default function DealDetails() {
   const [alreadyClaimed, setAlreadyClaimed] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [redemptionId, setRedemptionId] = useState<string | null>(null);
+  const [providerAddress, setProviderAddress] = useState<string | null>(null);
 
   const isSaved = deal ? savedIds.has(deal.id) : false;
 
@@ -58,11 +61,29 @@ export default function DealDetails() {
         setDeal(dealData);
         setSlotCount(slots);
         setAlreadyClaimed(claimed);
+
+        const p = (dealData as any)?.provider;
+        if (p?.latitude != null && p?.longitude != null) {
+          const results = await Location.reverseGeocodeAsync({ latitude: p.latitude, longitude: p.longitude });
+          if (results.length > 0) {
+            const r = results[0];
+            setProviderAddress([r.street, r.district, r.city, r.region].filter(Boolean).join(', '));
+          }
+        }
       } catch (err) { console.error('Error loading deal:', err); }
       finally { setIsLoading(false); }
     };
     loadDeal();
   }, [id]);
+
+  const openInMaps = (lat: number, lng: number) => {
+    const url = Platform.select({
+      ios: `maps:?q=&ll=${lat},${lng}`,
+      android: `geo:${lat},${lng}?q=${lat},${lng}`,
+      default: `https://maps.google.com/?q=${lat},${lng}`,
+    })!;
+    Linking.openURL(url);
+  };
 
   const handleClaim = async () => {
     if (!deal) return;
@@ -123,7 +144,7 @@ export default function DealDetails() {
           <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' }} onPress={() => router.back()}>
             <MaterialIcons name={I18nManager.isRTL ? "arrow-forward" : "arrow-back"} size={18} color="white" />
           </AnimatedButton>
-          <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('discounty')}</Text>
+          <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface, flexShrink: 1 }}>{t('discounty')}</Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' }}>
@@ -147,7 +168,7 @@ export default function DealDetails() {
             {category && (
               <View style={{ backgroundColor: colors.brown, alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: Radius.sm, marginBottom: 8, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <MaterialIcons name={resolveMaterialIcon(category.icon)} size={10} color="white" />
-                <Text style={{ color: '#fff', fontFamily: 'Cairo', fontSize: 9, textTransform: 'uppercase', letterSpacing: 0.5 }}>{category.name}</Text>
+                <Text style={{ color: '#fff', fontFamily: 'Cairo', fontSize: 9, textTransform: 'uppercase', letterSpacing: 0.5 }}>{i18n.language === 'ar' ? category.name_ar : category.name}</Text>
               </View>
             )}
             <Text style={{ fontFamily: 'Cairo_800ExtraBold', color: '#fff', fontSize: 20, letterSpacing: -0.5 }}>{deal.title}</Text>
@@ -177,6 +198,24 @@ export default function DealDetails() {
                 </View>
               </View>
               <MaterialIcons name="chevron-right" size={20} color={colors.iconDefault} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
+            </AnimatedButton>
+          )}
+
+          {provider?.latitude != null && provider?.longitude != null && (
+            <AnimatedButton
+              style={{ backgroundColor: colors.surfaceContainerLowest, padding: 12, borderRadius: Radius.lg, flexDirection: 'row', alignItems: 'center', marginBottom: 16, ...Shadows.sm }}
+              onPress={() => openInMaps(provider.latitude, provider.longitude)}
+            >
+              <View style={{ width: 40, height: 40, borderRadius: Radius.md, backgroundColor: 'rgba(134,32,69,0.1)', alignItems: 'center', justifyContent: 'center', marginEnd: 12 }}>
+                <MaterialIcons name="location-on" size={20} color={colors.primary} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 14, color: colors.onSurface }}>{t('customer.viewLocation')}</Text>
+                <Text style={{ color: colors.onSurfaceVariant, fontSize: 12, fontWeight: '500', marginTop: 2 }} numberOfLines={1}>
+                  {providerAddress || t('customer.openInMaps')}
+                </Text>
+              </View>
+              <MaterialIcons name="open-in-new" size={18} color={colors.iconDefault} />
             </AnimatedButton>
           )}
 
