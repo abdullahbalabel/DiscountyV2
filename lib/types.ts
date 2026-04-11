@@ -33,6 +33,9 @@ export interface CustomerProfile {
   avatar_url: string | null;
   preferences: string[];
   is_banned: boolean;
+  location_tracking_enabled: boolean;
+  marketing_emails_enabled: boolean;
+  data_sharing_enabled: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -66,6 +69,16 @@ export interface SocialLinks {
   snapchat?: string;
 }
 
+export interface DealCondition {
+  id: string;
+  name: string;
+  name_ar: string;
+  icon: string;
+  category: 'time' | 'quantity' | 'scope' | 'payment' | 'other';
+  is_active: boolean;
+  sort_order: number;
+}
+
 export interface Discount {
   id: string;
   provider_id: string;
@@ -82,6 +95,7 @@ export interface Discount {
   current_redemptions: number;
   view_count: number;
   alphanumeric_code: string | null;
+  conditions?: string[];
   created_at: string;
   updated_at: string;
   // Joined data
@@ -137,4 +151,29 @@ export interface SubmitReviewResult {
   success: boolean;
   error?: string;
   review_id?: string;
+}
+
+export interface CachedRedemption {
+  redemptionId: string;
+  qrCodeHash: string;
+  dealId: string;
+  dealTitle: string;
+  dealImageUrl: string | null;
+  dealDiscountValue: number;
+  dealType: DiscountType;
+  providerName: string;
+  providerLogoUrl: string | null;
+  status: RedemptionStatus;
+  claimedAt: string;
+  expiresAt: string;
+  cachedAt: string;
+}
+
+export interface DataRequest {
+  id: string;
+  user_id: string;
+  request_type: 'export' | 'delete';
+  status: 'pending' | 'processing' | 'completed' | 'rejected';
+  requested_at: string;
+  completed_at: string | null;
 }

@@ -492,13 +492,25 @@
     "faq4Question": "How do I respond to reviews?",
     "faq4Answer": "Go to the Reviews tab. You can reply to any customer review directly from there.",
     "faq5Question": "How do I change my business information?",
-    "faq5Answer": "Go to Profile > Business Information. You can edit your name, description, contact details, and upload photos."
+    "faq5Answer": "Go to Profile > Business Information. You can edit your name, description, contact details, and upload photos.",
+
+    "about": "About",
+    "reviewsTab": "Reviews",
+    "businessHours": "Business Hours",
+    "socialLinks": "Social Links",
+    "call": "Call",
+    "hoursNotSet": "Hours not specified",
+    "noSocialLinks": "No social links",
+    "viewOnMap": "View on Map"
   },
 
   "common": {
     "cancel": "Cancel",
     "ok": "OK",
-    "delete": "Delete"
+    "delete": "Delete",
+    "error": "Error",
+    "tryAgain": "Please try again.",
+    "sending": "Sending..."
   },
 
   "notifications": {
@@ -522,5 +534,99 @@
     "pageTitle": "Page Not Found",
     "description": "The page you're looking for doesn't exist or has been moved.",
     "goHome": "Go to Home Screen"
+  },
+
+  "conditions": {
+    "title": "Deal Conditions",
+    "time": "Time Restrictions",
+    "quantity": "Quantity Limits",
+    "scope": "Scope",
+    "payment": "Payment",
+    "other": "Other",
+    "noConditions": "No conditions specified"
+  },
+
+  "rejection": {
+    "reportButton": "Did the cashier reject this?",
+    "reportTitle": "Report an Issue",
+    "reasonCashierUnaware": "Cashier was unaware of the deal",
+    "reasonDealExpired": "Deal has expired",
+    "reasonTermsChanged": "Terms were different from the app",
+    "reasonTechnicalIssue": "Technical issue scanning QR",
+    "reasonOther": "Other",
+    "detailPlaceholder": "Tell us more (optional)",
+    "submit": "Submit Report",
+    "success": "Report Submitted",
+    "thankYou": "Thank you for your feedback.",
+    "alreadyReported": "Already reported",
+    "dealHidden": "Deal Hidden",
+    "dealHiddenMessage": "This deal has been hidden due to multiple reports.",
+    "close": "Close",
+    "adminNotifTitle": "New Rejection Report",
+    "adminNotifBody": "A customer reported an issue with \"{{deal}}\"."
+  },
+
+  "wallet": {
+    "title": "Wallet",
+    "activeCount": "{{count}} active",
+    "lastSynced": "Last synced: {{time}} ago",
+    "syncing": "Syncing...",
+    "offline": "Offline",
+    "offlineNotice": "Showing cached data. Pull to sync.",
+    "synced": "Synced",
+    "justNow": "just now",
+    "minutesAgo": "{{count}}m ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
+  },
+
+  "geoReminder": {
+    "title": "Nearby Reminder",
+    "toggle": "Remind me when nearby",
+    "subtitle": "Get notified within 1km of {{businessName}}",
+    "permissionTitle": "Location Permission Needed",
+    "permissionDesc": "To remind you about deals when you're nearby, we need access to your location even when the app is closed.",
+    "permissionDenied": "Location permission denied. Enable in Settings to use this feature.",
+    "enabled": "Nearby reminders enabled",
+    "disabled": "Nearby reminders disabled",
+    "notificationTitle": "Deal Nearby!",
+    "notificationBody": "Your {{dealTitle}} discount at {{businessName}} is just around the corner!",
+    "notAvailable": "Provider location not available",
+    "settings": "Open Settings"
+  },
+
+  "privacyData": {
+    "title": "Privacy & Data",
+    "notifications": "Notification Preferences",
+    "locationSettings": "Location Settings",
+    "exactLocation": "Exact Location Tracking",
+    "exactLocationDesc": "Allow the app to use your precise location for nearby deals",
+    "promotionalNotifications": "Promotional Notifications",
+    "dataTransparency": "Data We Collect",
+    "profileInfo": "Profile Information",
+    "profileInfoDesc": "Your name, avatar, and email address",
+    "locationData": "Location Data",
+    "locationDataDesc": "Your approximate city and precise location (when enabled)",
+    "browsingHistory": "Browsing History",
+    "browsingHistoryDesc": "Deals you've viewed and saved",
+    "redemptionHistory": "Redemption History",
+    "redemptionHistoryDesc": "Deals you've claimed and redeemed",
+    "dataSecured": "Your data is encrypted and protected by Row Level Security policies.",
+    "dataManagement": "Data Management",
+    "exportData": "Export My Data",
+    "exportDataDesc": "Download a copy of all your personal data",
+    "deleteAccount": "Delete Account",
+    "deleteAccountDesc": "Permanently delete your account and all associated data",
+    "confirmDelete": "Type DELETE to confirm",
+    "deleteWarning": "This action cannot be undone. All your data will be permanently deleted.",
+    "exportRequested": "Export requested. You'll be notified when it's ready.",
+    "deletionRequested": "Deletion request submitted. An admin will review it.",
+    "pendingRequest": "You have a pending {{type}} request",
+    "export": "export",
+    "deletion": "deletion",
+    "confirmExport": "Request a copy of all your data?",
+    "confirmDeleteTitle": "Delete Account",
+    "processing": "Processing...",
+    "noPendingRequests": "No pending requests"
   }
 }

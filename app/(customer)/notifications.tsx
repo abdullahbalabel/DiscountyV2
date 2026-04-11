@@ -32,6 +32,12 @@ function getNotificationIcon(type: NotificationType): string {
       return 'schedule';
     case 'review_received':
       return 'star';
+    case 'report_reviewed':
+    case 'report_resolved':
+    case 'report_dismissed':
+      return 'report-problem';
+    case 'deal_hidden':
+      return 'visibility-off';
     default:
       return 'notifications';
   }
@@ -49,6 +55,14 @@ function getNotificationColor(type: NotificationType, colors: any): string {
       return colors.warning;
     case 'review_received':
       return colors.warning;
+    case 'report_reviewed':
+      return colors.info;
+    case 'report_resolved':
+      return colors.success;
+    case 'report_dismissed':
+      return colors.iconDefault;
+    case 'deal_hidden':
+      return '#ef4444';
     default:
       return colors.iconDefault;
   }

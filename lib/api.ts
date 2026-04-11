@@ -3,8 +3,9 @@
 // ============================================
 
 import { supabase } from './supabase';
+import i18n from '../i18n';
 import type {
-  Category, CustomerProfile, Discount, DiscountType, DiscountStatus, ProviderProfile, Redemption,
+  Category, CustomerProfile, DealCondition, DataRequest, Discount, DiscountType, DiscountStatus, ProviderProfile, Redemption,
   Review, ClaimDealResult, SubmitReviewResult, RedeemDealResult, SocialLinks,
 } from './types';
 
@@ -366,6 +367,20 @@ export async function fetchRedemptionById(redemptionId: string) {
   return data;
 }
 
+// ── Rejection Reports ───────────────────────────
+
+export async function hasReportedDeal(dealId: string): Promise<boolean> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
+  const { data } = await supabase
+    .from('rejection_reports')
+    .select('id')
+    .eq('deal_id', dealId)
+    .eq('customer_id', user.id)
+    .maybeSingle();
+  return !!data;
+}
+
 // ── Saved Deals ─────────────────────────────────
 // For v1, saved deals use local storage (AsyncStorage)
 // In v2, this can be moved to a `saved_deals` table
@@ -674,6 +689,7 @@ export interface CreateDealInput {
   end_time: string;
   max_redemptions: number;
   status?: DiscountStatus;
+  conditions?: string[];
 }
 
 export async function createDeal(input: CreateDealInput): Promise<Discount> {
@@ -694,6 +710,7 @@ export async function createDeal(input: CreateDealInput): Promise<Discount> {
       end_time: input.end_time,
       max_redemptions: input.max_redemptions,
       status: input.status || 'active',
+      conditions: input.conditions || [],
     })
     .select()
     .single();
@@ -715,6 +732,7 @@ export interface UpdateDealInput {
   end_time?: string;
   max_redemptions?: number;
   status?: DiscountStatus;
+  conditions?: string[];
 }
 
 export async function updateDeal(dealId: string, input: UpdateDealInput): Promise<Discount> {
@@ -919,4 +937,109 @@ export async function fetchDealRedemptionStats(dealId: string): Promise<DealRede
     redeemed: redeemed || 0,
     expired: expired || 0,
   };
+}
+
+// ============================================
+// v1.2.1 — Deal Conditions
+// ============================================
+
+export async function fetchDealConditions(): Promise<DealCondition[]> {
+  const { data, error } = await supabase
+    .from('deal_conditions')
+    .select('*')
+    .eq('is_active', true)
+    .order('sort_order');
+
+  if (error) throw error;
+  return data || [];
+}
+
+// ============================================
+// v1.2.1 — Rejection Reports & Privacy
+// ============================================
+
+export async function submitRejectionReport(
+  dealId: string,
+  redemptionId: string,
+  reasonType: string,
+  reasonDetail?: string
+): Promise<{ success: boolean; autoHidden?: boolean; error?: string }> {
+  const { data, error } = await supabase.rpc('submit_rejection_report', {
+    p_deal_id: dealId,
+    p_redemption_id: redemptionId,
+    p_reason_type: reasonType,
+    p_reason_detail: reasonDetail || null,
+  });
+
+  if (error) {
+    return { success: false, error: error.message };
+  }
+
+  if (data?.success) {
+    // Notify admins with translated text
+    const { data: deal } = await supabase
+      .from('discounts')
+      .select('title')
+      .eq('id', dealId)
+      .single();
+
+    const { data: admins } = await supabase
+      .from('admin_profiles')
+      .select('user_id')
+      .eq('is_active', true);
+
+    if (admins && admins.length > 0) {
+      const title = i18n.t('rejection.adminNotifTitle');
+      const body = i18n.t('rejection.adminNotifBody', { deal: deal?.title || '' });
+
+      await supabase.from('notifications').insert(
+        admins.map((a) => ({
+          user_id: a.user_id,
+          type: 'rejection_report',
+          title,
+          body,
+          data: { report_id: data.report_id, deal_id: dealId, reason_type: reasonType },
+          is_read: false,
+        }))
+      );
+    }
+  }
+
+  return data as { success: boolean; autoHidden?: boolean; error?: string };
+}
+
+export async function updatePrivacySettings(settings: {
+  location_tracking?: boolean;
+  marketing_emails?: boolean;
+  data_sharing?: boolean;
+}): Promise<void> {
+  const { error } = await supabase.rpc('update_privacy_settings', {
+    p_location_tracking: settings.location_tracking ?? null,
+    p_marketing_emails: settings.marketing_emails ?? null,
+    p_data_sharing: settings.data_sharing ?? null,
+  });
+
+  if (error) throw error;
+}
+
+export async function requestDataExport(): Promise<string> {
+  const { data, error } = await supabase.rpc('request_data_export');
+  if (error) throw error;
+  return data as string;
+}
+
+export async function requestAccountDeletion(): Promise<string> {
+  const { data, error } = await supabase.rpc('request_account_deletion');
+  if (error) throw error;
+  return data as string;
+}
+
+export async function fetchDataRequests(): Promise<DataRequest[]> {
+  const { data, error } = await supabase
+    .from('data_requests')
+    .select('*')
+    .order('requested_at', { ascending: false });
+
+  if (error) throw error;
+  return (data || []) as DataRequest[];
 }

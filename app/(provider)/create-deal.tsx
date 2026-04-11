@@ -17,6 +17,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
+import { ConditionPicker } from '../../components/ui/ConditionPicker';
 import { createDeal, fetchCategories, uploadDealImage } from '../../lib/api';
 import { useThemeColors, Radius, Shadows } from '../../hooks/use-theme-colors';
 import type { Category, DiscountType } from '../../lib/types';
@@ -42,6 +43,7 @@ export default function CreateDealScreen() {
   const [maxRedemptions, setMaxRedemptions] = useState('100');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [terms, setTerms] = useState('');
+  const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
 
   // Image state
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -149,6 +151,7 @@ export default function CreateDealScreen() {
         end_time: new Date(endDate.trim() + 'T23:59:59').toISOString(),
         max_redemptions: parseInt(maxRedemptions),
         status: 'active' as const,
+        conditions: selectedConditions.length > 0 ? selectedConditions : undefined,
       };
       console.log('[CreateDeal] Creating deal with input:', JSON.stringify(dealInput, null, 2));
       await createDeal(dealInput);
@@ -191,6 +194,7 @@ export default function CreateDealScreen() {
         end_time: new Date(endDate.trim() + 'T23:59:59').toISOString(),
         max_redemptions: parseInt(maxRedemptions),
         status: 'draft',
+        conditions: selectedConditions.length > 0 ? selectedConditions : undefined,
       });
 
       showAlert(t('provider.saved'), t('provider.dealSavedDraft'), () => router.back());
@@ -245,6 +249,7 @@ export default function CreateDealScreen() {
                 setTitle(''); setDescription(''); setDiscountValue('');
                 setEndDate(''); setTerms(''); setImageUri(null);
                 setSelectedCategoryId(null); setMaxRedemptions('100');
+                setSelectedConditions([]);
                 setStep(1);
               }}
             >
@@ -467,6 +472,20 @@ export default function CreateDealScreen() {
                   value={terms}
                   onChangeText={setTerms}
                 />
+              </View>
+
+              {/* Deal Conditions */}
+              <View>
+                <Text style={labelStyle}>{t('conditions.title')}</Text>
+                <View style={{
+                  backgroundColor: colors.surfaceContainerLowest,
+                  borderRadius: Radius.lg,
+                  padding: 12,
+                  borderWidth: 1,
+                  borderColor: colors.outlineVariant,
+                }}>
+                  <ConditionPicker selectedIds={selectedConditions} onChange={setSelectedConditions} />
+                </View>
               </View>
 
               {/* Step 1 Actions */}

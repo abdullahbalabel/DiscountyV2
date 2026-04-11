@@ -63,6 +63,16 @@
           "color": "#862045",
           "mode": "production"
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Discounty uses your location to notify you about nearby deals when the app is open or in the background.",
+          "locationAlwaysPermission": "Discounty uses your location to notify you about nearby deals even when the app is closed.",
+          "locationWhenInUsePermission": "Discounty uses your location to show you nearby deals.",
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": false
+        }
       ]
     ],
     "experiments": {

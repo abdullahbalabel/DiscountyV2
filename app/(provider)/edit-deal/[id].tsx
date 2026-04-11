@@ -16,6 +16,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
+import { ConditionPicker } from '../../../components/ui/ConditionPicker';
 import type { DealRedemptionStats } from '../../../lib/api';
 import {
   activateDeal,
@@ -49,6 +50,7 @@ export default function EditDealScreen() {
   const [maxRedemptions, setMaxRedemptions] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [terms, setTerms] = useState('');
+  const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [newImageUri, setNewImageUri] = useState<string | null>(null);
   const [newImageFileName, setNewImageFileName] = useState('');
@@ -86,6 +88,7 @@ export default function EditDealScreen() {
       setMaxRedemptions(String(dealData.max_redemptions));
       setSelectedCategoryId(dealData.category_id || null);
       setImageUrl(dealData.image_url || null);
+      setSelectedConditions((dealData as any).conditions || []);
     } catch (err) {
       console.error('Failed to load deal:', err);
       Alert.alert(t('auth.error'), t('provider.failedLoadDeal'));
@@ -142,6 +145,7 @@ export default function EditDealScreen() {
         image_url: uploadedImageUrl || undefined,
         end_time: endDate ? new Date(endDate.trim() + 'T23:59:59').toISOString() : undefined,
         max_redemptions: parseInt(maxRedemptions) || undefined,
+        conditions: selectedConditions,
       });
 
       Alert.alert(t('provider.saved'), t('provider.dealUpdatedSuccess'), [
@@ -408,6 +412,20 @@ export default function EditDealScreen() {
                 onChangeText={setMaxRedemptions}
                 placeholderTextColor="#85736f"
               />
+            </View>
+
+            {/* Deal Conditions */}
+            <View>
+              <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: isDark ? '#d8c2bd' : '#564340', marginStart: 4, marginBottom: 8 }}>{t('conditions.title')}</Text>
+              <View style={{
+                backgroundColor: isDark ? '#322825' : '#ffffff',
+                borderRadius: 12,
+                padding: 12,
+                borderWidth: 1,
+                borderColor: isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)',
+              }}>
+                <ConditionPicker selectedIds={selectedConditions} onChange={setSelectedConditions} />
+              </View>
             </View>
           </AnimatedEntrance>
 

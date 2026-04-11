@@ -5,7 +5,7 @@ import * as Linking from 'expo-linking';
 import * as Location from 'expo-location';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, I18nManager, Modal, Platform, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, I18nManager, Modal, Platform, ScrollView, Share, Switch, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
@@ -13,7 +13,10 @@ import { claimDeal, fetchDealById, getActiveSlotCount, hasClaimedDeal } from '..
 import { useSavedDeals } from '../../../contexts/savedDeals';
 import { resolveMaterialIcon } from '../../../lib/iconMapping';
 import { useThemeColors, Radius, Shadows } from '../../../hooks/use-theme-colors';
-import type { Discount } from '../../../lib/types';
+import { useOfflineWallet } from '../../../hooks/use-offline-wallet';
+import { supabase } from '../../../lib/supabase';
+import type { DealCondition, Discount } from '../../../lib/types';
+import { registerGeofence, unregisterGeofence, isGeofenceRegistered } from '../../../lib/geofence';
 
 function useCountdown(endTime: string, t: (key: string) => string) {
   const [timeLeft, setTimeLeft] = useState('');
@@ -39,6 +42,7 @@ export default function DealDetails() {
   const router = useRouter();
   const colors = useThemeColors();
   const { savedIds, toggleSave } = useSavedDeals();
+  const { cacheRedemption } = useOfflineWallet();
 
   const [deal, setDeal] = useState<Discount | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -48,6 +52,9 @@ export default function DealDetails() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [redemptionId, setRedemptionId] = useState<string | null>(null);
   const [providerAddress, setProviderAddress] = useState<string | null>(null);
+  const [dealConditions, setDealConditions] = useState<DealCondition[]>([]);
+  const [reminderEnabled, setReminderEnabled] = useState(false);
+  const [isTogglingReminder, setIsTogglingReminder] = useState(false);
 
   const isSaved = deal ? savedIds.has(deal.id) : false;
 
@@ -70,11 +77,25 @@ export default function DealDetails() {
             setProviderAddress([r.street, r.district, r.city, r.region].filter(Boolean).join(', '));
           }
         }
+
+        const conditionIds = (dealData as any)?.conditions;
+        if (conditionIds && conditionIds.length > 0) {
+          const { data: condData } = await supabase
+            .from('deal_conditions')
+            .select('*')
+            .in('id', conditionIds);
+          if (condData) setDealConditions(condData as DealCondition[]);
+        }
       } catch (err) { console.error('Error loading deal:', err); }
       finally { setIsLoading(false); }
     };
     loadDeal();
   }, [id]);
+
+  useEffect(() => {
+    if (!deal) return;
+    isGeofenceRegistered(deal.id).then(setReminderEnabled);
+  }, [deal]);
 
   const openInMaps = (lat: number, lng: number) => {
     const url = Platform.select({
@@ -96,6 +117,24 @@ export default function DealDetails() {
       setAlreadyClaimed(true);
       setRedemptionId(result.redemption_id || null);
       setShowSuccess(true);
+
+      if (result.redemption_id && result.qr_code_hash && deal) {
+        await cacheRedemption({
+          redemptionId: result.redemption_id,
+          qrCodeHash: result.qr_code_hash,
+          dealId: deal.id,
+          dealTitle: deal.title,
+          dealImageUrl: deal.image_url || null,
+          dealDiscountValue: deal.discount_value,
+          dealType: deal.type,
+          providerName: provider?.business_name || '',
+          providerLogoUrl: provider?.logo_url || null,
+          status: 'claimed',
+          claimedAt: new Date().toISOString(),
+          expiresAt: deal.end_time,
+          cachedAt: new Date().toISOString(),
+        });
+      }
     } else {
       Alert.alert(t('customer.couldNotClaim'), result.error || t('customer.tryAgain'));
     }
@@ -112,7 +151,49 @@ export default function DealDetails() {
 
   const handleToggleSave = async () => {
     if (!deal) return;
+    const wasSaved = savedIds.has(deal.id);
     await toggleSave(deal.id);
+    if (wasSaved && reminderEnabled) {
+      await unregisterGeofence(deal.id);
+      setReminderEnabled(false);
+    }
+  };
+
+  const handleReminderToggle = async (value: boolean) => {
+    if (!deal || isTogglingReminder) return;
+    if (value) {
+      const provider = deal.provider as any;
+      if (provider?.latitude == null || provider?.longitude == null) return;
+      setIsTogglingReminder(true);
+      const result = await registerGeofence(
+        deal.id,
+        provider.latitude,
+        provider.longitude,
+        deal.title,
+        provider.business_name
+      );
+      if (result.success) {
+        setReminderEnabled(true);
+      }
+      setIsTogglingReminder(false);
+    } else {
+      setIsTogglingReminder(true);
+      await unregisterGeofence(deal.id);
+      setReminderEnabled(false);
+      setIsTogglingReminder(false);
+    }
+  };
+
+  const handleShare = async () => {
+    if (!deal) return;
+    const provider = deal.provider as any;
+    const spotsLeft = deal.max_redemptions - deal.current_redemptions;
+    const message = i18n.language === 'ar'
+      ? `شوف هالعرض على Discounty! 🎉\n\n${deal.title} بخصم ${formattedDiscount} من ${provider?.business_name || ''}!\n${deal.description ? `${deal.description}\n` : ''}\n${spotsLeft > 0 ? `باقي ${spotsLeft} مكان بس` : 'الأماكن خلصت'} ⏰ العرض ينتهي خلال ${timeLeft}\n\nحمّل تطبيق Discounty واحجز العرض! 📲`
+      : `Check this out on Discounty! 🎉\n\n${deal.title} — ${formattedDiscount} off at ${provider?.business_name || ''}!\n${deal.description ? `${deal.description}\n` : ''}\n${spotsLeft > 0 ? `Only ${spotsLeft} spots left` : 'Sold out'} ⏰ Ends in ${timeLeft}\n\nDownload Discounty to grab the deal! 📲`;
+    try {
+      await Share.share({ message });
+    } catch {}
   };
 
   if (isLoading) {
@@ -136,6 +217,7 @@ export default function DealDetails() {
   const category = deal.category as any;
   const formattedDiscount = deal.type === 'percentage' ? `${deal.discount_value}%` : `$${deal.discount_value}`;
   const spotsLeft = deal.max_redemptions - deal.current_redemptions;
+  const isExpired = timeLeft === t('deal.expired');
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
@@ -147,7 +229,7 @@ export default function DealDetails() {
           <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface, flexShrink: 1 }}>{t('discounty')}</Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' }}>
+          <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' }} onPress={handleShare}>
             <MaterialIcons name="share" size={16} color="white" />
           </AnimatedButton>
           <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' }} onPress={handleToggleSave}>
@@ -219,6 +301,31 @@ export default function DealDetails() {
             </AnimatedButton>
           )}
 
+          {provider?.latitude != null && provider?.longitude != null && !isExpired && (
+            <AnimatedEntrance index={0} delay={75}>
+              <View style={{ backgroundColor: colors.surfaceContainerLow, padding: 16, borderRadius: Radius.xl, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, flex: 1 }}>
+                  <View style={{ backgroundColor: 'rgba(134,32,69,0.1)', padding: 8, borderRadius: Radius.md }}>
+                    <MaterialIcons name="notifications-active" size={20} color={colors.primary} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 13, color: colors.onSurface }}>{t('geoReminder.toggle')}</Text>
+                    <Text style={{ color: colors.onSurfaceVariant, fontSize: 11, fontFamily: 'Cairo', marginTop: 1 }}>
+                      {t('geoReminder.subtitle', { businessName: provider.business_name })}
+                    </Text>
+                  </View>
+                </View>
+                <Switch
+                  value={reminderEnabled}
+                  onValueChange={handleReminderToggle}
+                  disabled={isTogglingReminder}
+                  trackColor={{ false: colors.surfaceContainerHigh, true: colors.primary }}
+                  thumbColor="#fff"
+                />
+              </View>
+            </AnimatedEntrance>
+          )}
+
           <AnimatedEntrance index={0} delay={100}>
             <View style={{ backgroundColor: colors.surfaceContainerLow, padding: 16, borderRadius: Radius.xl, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -238,6 +345,47 @@ export default function DealDetails() {
               <View style={{ marginBottom: 20 }}>
                 <Text style={{ fontFamily: 'Cairo', fontSize: 16, color: colors.onSurface, marginBottom: 8, letterSpacing: -0.5 }}>{t('customer.aboutThisDeal')}</Text>
                 <Text style={{ color: colors.onSurfaceVariant, lineHeight: 22, fontSize: 14, fontFamily: 'Cairo' }}>{deal.description}</Text>
+              </View>
+            </AnimatedEntrance>
+          )}
+
+          {dealConditions.length > 0 && (
+            <AnimatedEntrance index={1} delay={175}>
+              <View style={{ marginBottom: 20 }}>
+                <Text style={{ fontFamily: 'Cairo', fontSize: 16, color: colors.onSurface, marginBottom: 10, letterSpacing: -0.5 }}>{t('conditions.title')}</Text>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ gap: 8, flexDirection: I18nManager.isRTL ? 'row-reverse' : 'row' }}
+                >
+                  {dealConditions.map((cond) => (
+                    <View
+                      key={cond.id}
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 6,
+                        paddingHorizontal: 12,
+                        paddingVertical: 8,
+                        borderRadius: Radius.full,
+                        backgroundColor: colors.surfaceContainerHigh,
+                      }}
+                    >
+                      <MaterialIcons
+                        name={(cond.icon || 'check') as any}
+                        size={14}
+                        color={colors.primary}
+                      />
+                      <Text style={{
+                        fontFamily: 'Cairo_600SemiBold',
+                        fontSize: 12,
+                        color: colors.onSurface,
+                      }}>
+                        {i18n.language === 'ar' ? cond.name_ar : cond.name}
+                      </Text>
+                    </View>
+                  ))}
+                </ScrollView>
               </View>
             </AnimatedEntrance>
           )}

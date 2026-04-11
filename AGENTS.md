@@ -8,7 +8,8 @@ Two independent apps sharing a Supabase backend — **not** a monorepo with shar
 /                    Expo SDK 54 mobile app (React Native 0.81)
 /admin-web/          Next.js 16 admin dashboard (separate package.json, .env.local)
 /supabase/           Edge Functions only (no local DB config)
-/scripts/            SQL migrations, seed scripts, setup.js — manual, run in Supabase SQL Editor
+/scripts/            SQL migrations, seed scripts — manual, run in Supabase SQL Editor
+/Docs/               Specs and implementation plans
 ```
 
 Each app has its own `node_modules`, env file, and lint commands. Always work inside the correct directory.
@@ -41,8 +42,9 @@ npx tsc --noEmit       # Typecheck (no npm script for this — run directly)
 
 ## Admin web — framework quirks
 
-- **Next.js 16** with breaking changes. Components use `@base-ui/react` primitives (Input, Button, Dialog, Select), NOT standard HTML elements or Radix. The existing `radix-ui` packages are unused legacy deps — check `@base-ui/react` imports before writing code.
-- **shadcn/ui** installed but wraps base-ui, not Radix. Style is `base-nova` (see `components.json`). Check existing components in `src/components/ui/` before assuming APIs. Uses `cva` variants + `cn()` utility from `@/lib/utils`.
+- **Next.js 16** with breaking changes — read `admin-web/AGENTS.md` and `node_modules/next/dist/docs/` before writing code.
+- Components use `@base-ui/react` primitives (Input, Button, Dialog, Select), NOT standard HTML elements or Radix. The existing `radix-ui` packages are installed but the active UI layer is base-ui. Check `@base-ui/react` imports in existing components before writing new ones.
+- **shadcn/ui** installed wrapping base-ui. Style is `base-nova` (see `components.json`). Uses `cva` variants + `cn()` from `@/lib/utils`. Check existing components in `src/components/ui/` before assuming APIs.
 - **SVGs must use `<img>` not `next/image`** — `next/image` does not render SVGs reliably. Use `/logo.svg` (light) or `/logo-white.svg` (dark backgrounds).
 - **Font:** Cairo via `next/font/google`. CSS variable is `--font-cairo`, aliased as `--font-sans` in `globals.css`.
 - **i18n:** `i18next` + `react-i18next`. Keys in `src/i18n/locales/{en,ar}.json`. All under `admin.*` namespace. Access with `t("admin.keyName")`.
@@ -56,7 +58,7 @@ npx tsc --noEmit       # Typecheck (no npm script for this — run directly)
 
 ## Mobile app — key patterns
 
-- **Expo Router** file-based routing under `app/`. Route groups: `(auth)`, `(customer)`, `(provider)`.
+- **Expo Router** file-based routing under `app/`. Route groups: `(auth)`, `(customer)`, `(provider)`. Hidden tabs use `options={{ href: null }}`.
 - **Supabase client:** `lib/supabase.ts`. `detectSessionInUrl: false`. Uses `expo-secure-store` on native, `localStorage` on web.
 - **Auth flow:** `contexts/auth.tsx` manages session, role, provider approval status, ban state. The `useProtectedRoute` hook redirects based on these states. On auth state change, `isLoading` is set `true` while `fetchUserRole` runs — do not bypass this or role-select will flash.
 - **Deep link scheme:** `discounty://`.
@@ -89,7 +91,7 @@ Both apps connect to project `yzwwzxffexjwxynnwngw.supabase.co`.
 
 ### Tables
 
-`user_roles`, `customer_profiles`, `provider_profiles` (has `latitude`/`longitude` + generated `location` geography column), `discounts`, `redemptions`, `reviews`, `categories`, `notifications`, `push_tokens`, `admin_roles`, `admin_profiles`, `admin_permissions`, `admin_groups`, `admin_group_members`.
+`user_roles`, `customer_profiles`, `provider_profiles` (has `latitude`/`longitude` — no PostGIS `location` column yet), `discounts`, `redemptions`, `reviews`, `categories`, `notifications`, `push_tokens`, `admin_roles`, `admin_profiles`, `admin_permissions`, `admin_groups`, `admin_group_members`.
 
 ### Key RPCs
 
@@ -100,9 +102,10 @@ Both apps connect to project `yzwwzxffexjwxynnwngw.supabase.co`.
 
 ### Edge Functions
 
+Only `send-push-notification` exists locally in `supabase/functions/`. `manage-admin` is deployed but not in the repo.
+
 - `send-push-notification` — Expo push via service role key. Requires auth JWT.
 - `manage-admin` — admin user CRUD (create/delete/toggle-active) using `supabase.auth.admin` APIs. Requires auth JWT + admin role. Actions: `create`, `delete`, `toggle-active`.
-- `generate-qr` — QR code generation.
 
 ### Admin management system
 

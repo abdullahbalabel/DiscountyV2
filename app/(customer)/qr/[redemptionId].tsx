@@ -1,12 +1,14 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState, useRef } from 'react';
-import { ActivityIndicator, Animated as RNAnimated, Easing as RNEasing, I18nManager, Platform, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Animated as RNAnimated, Easing as RNEasing, I18nManager, Platform, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
-import { fetchRedemptionById } from '../../../lib/api';
+import { RejectionReportModal } from '../../../components/ui/RejectionReportModal';
+import { fetchRedemptionById, submitRejectionReport, hasReportedDeal } from '../../../lib/api';
 import { useThemeColors, Radius, Shadows } from '../../../hooks/use-theme-colors';
+import { useOfflineWallet } from '../../../hooks/use-offline-wallet';
 
 let QRCode: any = null;
 try { QRCode = require('react-native-qrcode-svg').default; } catch {}
@@ -16,9 +18,12 @@ export default function QRDisplayScreen() {
   const { redemptionId } = useLocalSearchParams<{ redemptionId: string }>();
   const router = useRouter();
   const colors = useThemeColors();
+  const { cachedRedemptions } = useOfflineWallet();
 
   const [redemption, setRedemption] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [hasReported, setHasReported] = useState(false);
 
   // Pulsing animation for "Ready to Scan" badge
   const pulseAnim = useRef(new RNAnimated.Value(1)).current;
@@ -53,6 +58,11 @@ export default function QRDisplayScreen() {
       .finally(() => setIsLoading(false));
   }, [redemptionId]);
 
+  useEffect(() => {
+    if (!redemption?.discount?.id) return;
+    hasReportedDeal(redemption.discount.id).then(setHasReported);
+  }, [redemption?.discount?.id]);
+
   if (isLoading) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.surfaceBg, alignItems: 'center', justifyContent: 'center' }}>
@@ -78,6 +88,7 @@ export default function QRDisplayScreen() {
   const provider = deal?.provider;
   const isRedeemed = redemption.status === 'redeemed';
   const isClaimed = redemption.status === 'claimed';
+  const isCached = cachedRedemptions.some(c => c.redemptionId === redemptionId);
   const formattedDiscount = deal?.type === 'percentage' ? `${deal?.discount_value}%` : `$${deal?.discount_value}`;
 
   return (
@@ -113,8 +124,21 @@ export default function QRDisplayScreen() {
         <AnimatedEntrance index={1} delay={200}>
           <View style={{
             borderRadius: 24, padding: 32, alignItems: 'center', backgroundColor: '#fff',
-            borderWidth: 1, borderColor: colors.outlineVariant, ...Shadows.lg,
+            borderWidth: 1, borderColor: colors.outlineVariant, ...Shadows.lg, position: 'relative',
           }}>
+            {isCached && (
+              <View style={{
+                position: 'absolute', top: 12, end: 12,
+                flexDirection: 'row', alignItems: 'center', gap: 4,
+                backgroundColor: 'rgba(181, 127, 37, 0.1)', paddingHorizontal: 8, paddingVertical: 4,
+                borderRadius: Radius.sm,
+              }}>
+                <MaterialIcons name="cloud-off" size={14} color="#b57f25" />
+                <Text style={{ fontSize: 10, fontFamily: 'Cairo_700Bold', color: '#b57f25' }}>
+                  {t('wallet.offline')}
+                </Text>
+              </View>
+            )}
             {isClaimed && redemption.qr_code_hash ? (
               <>
                 {QRCode && Platform.OS !== 'web' ? (
@@ -183,6 +207,29 @@ export default function QRDisplayScreen() {
           </View>
         )}
 
+        {/* Report Rejection Button */}
+        <AnimatedEntrance index={2} delay={300}>
+          <TouchableOpacity
+            onPress={() => !hasReported && setShowReportModal(true)}
+            disabled={hasReported}
+            style={{
+              marginTop: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+              gap: 8, paddingVertical: 10, paddingHorizontal: 16, borderRadius: Radius.lg,
+              borderWidth: 1, borderColor: hasReported ? colors.outlineVariant : '#ef4444',
+              opacity: hasReported ? 0.5 : 1,
+            }}
+            activeOpacity={0.7}
+          >
+            <MaterialIcons name="report-problem" size={18} color={hasReported ? colors.onSurfaceVariant : '#ef4444'} />
+            <Text style={{
+              fontFamily: 'Cairo_700Bold', fontSize: 13,
+              color: hasReported ? colors.onSurfaceVariant : '#ef4444',
+            }}>
+              {hasReported ? t('rejection.alreadyReported') : t('rejection.reportButton')}
+            </Text>
+          </TouchableOpacity>
+        </AnimatedEntrance>
+
         {/* Rate Experience Button (redeemed only) */}
         {isRedeemed && (
           <AnimatedEntrance index={3} delay={400}>
@@ -224,6 +271,32 @@ export default function QRDisplayScreen() {
           </AnimatedEntrance>
         )}
       </ScrollView>
+
+      <RejectionReportModal
+        visible={showReportModal}
+        onClose={() => setShowReportModal(false)}
+        onSubmit={handleReportSubmit}
+      />
     </View>
   );
+
+  async function handleReportSubmit(reasonType: string, reasonDetail?: string) {
+    if (!deal) return;
+    try {
+      const result = await submitRejectionReport(deal.id, redemptionId!, reasonType, reasonDetail);
+      if (result.success) {
+        setHasReported(true);
+        setShowReportModal(false);
+        if (result.autoHidden) {
+          Alert.alert(t('rejection.dealHidden'), t('rejection.dealHiddenMessage'));
+        } else {
+          Alert.alert(t('rejection.success'), t('rejection.thankYou'));
+        }
+      } else {
+        Alert.alert(t('common.error'), result.error || t('common.tryAgain'));
+      }
+    } catch {
+      Alert.alert(t('common.error'), t('common.tryAgain'));
+    }
+  }
 }

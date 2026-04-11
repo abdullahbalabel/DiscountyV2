@@ -1,6 +1,7 @@
 import { useRouter, useSegments } from 'expo-router';
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import { unregisterAllGeofences } from '../lib/geofence';
 import type { Session } from '@supabase/supabase-js';
 import type { UserRole } from '../lib/types';
 
@@ -105,7 +106,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isBanned, setIsBanned] = useState(false);
 
   // Fetch user role from database
-  const fetchUserRole = useCallback(async (userId: string) => {
+  const fetchUserRole = useCallback(async (userId: string, sessionCreatedAt?: string) => {
     const { data, error } = await supabase
       .from('user_roles')
       .select('role')
@@ -113,6 +114,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .single();
 
     if (error || !data) {
+      // Distinguish new user from deleted user: if auth account is older
+      // than 5 minutes but has no role data, the user was deleted — sign out.
+      if (sessionCreatedAt) {
+        const accountAge = Date.now() - new Date(sessionCreatedAt).getTime();
+        if (accountAge > 5 * 60 * 1000) {
+          await supabase.auth.signOut();
+          setSession(null);
+          setRole(null);
+          setIsNewUser(false);
+          setApprovalStatus(null);
+          setIsBanned(false);
+          return;
+        }
+      }
       setIsNewUser(true);
       setRole(null);
       setIsBanned(false);
@@ -155,7 +170,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSession(currentSession);
 
         if (currentSession?.user) {
-          await fetchUserRole(currentSession.user.id);
+          await fetchUserRole(currentSession.user.id, currentSession.user.created_at);
         }
       } catch (err: any) {
         // Refresh token is invalid or expired — clear stale session and send user to login
@@ -188,7 +203,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (newSession?.user) {
           setIsLoading(true);
           setSession(newSession);
-          await fetchUserRole(newSession.user.id);
+          await fetchUserRole(newSession.user.id, newSession.user.created_at);
           setIsLoading(false);
         } else {
           setSession(newSession);
@@ -267,6 +282,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Sign out
   const handleSignOut = useCallback(async () => {
+    await unregisterAllGeofences();
     await supabase.auth.signOut();
     setSession(null);
     setRole(null);

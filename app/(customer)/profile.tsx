@@ -131,6 +131,13 @@ export default function ProfileScreen() {
 
   const preferencesItems = [
     {
+      id: 'privacy',
+      title: t('privacyData.title') || 'Privacy & Data',
+      icon: 'shield',
+      color: colors.success,
+      onPress: () => router.push('/(customer)/privacy-data' as any),
+    },
+    {
       id: 'theme',
       title: colors.isDark ? t('customer.lightMode') : t('customer.darkMode'),
       icon: colors.isDark ? 'light-mode' : 'dark-mode',

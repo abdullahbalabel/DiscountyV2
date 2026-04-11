@@ -492,13 +492,25 @@
     "faq4Question": "كيف أرد على التقييمات؟",
     "faq4Answer": "اذهب إلى تبويب التقييمات. يمكنك الرد على أي تقييم من العملاء مباشرة من هناك.",
     "faq5Question": "كيف أغير معلومات نشاطي التجاري؟",
-    "faq5Answer": "اذهب إلى الملف الشخصي > معلومات النشاط. يمكنك تعديل الاسم والوصف وتفاصيل الاتصال ورفع الصور."
+    "faq5Answer": "اذهب إلى الملف الشخصي > معلومات النشاط. يمكنك تعديل الاسم والوصف وتفاصيل الاتصال ورفع الصور.",
+
+    "about": "عن المزود",
+    "reviewsTab": "التقييمات",
+    "businessHours": "ساعات العمل",
+    "socialLinks": "الروابط الاجتماعية",
+    "call": "اتصال",
+    "hoursNotSet": "لم يتم تحديد ساعات العمل",
+    "noSocialLinks": "لا توجد روابط اجتماعية",
+    "viewOnMap": "عرض على الخريطة"
   },
 
   "common": {
     "cancel": "إلغاء",
     "ok": "حسناً",
-    "delete": "حذف"
+    "delete": "حذف",
+    "error": "خطأ",
+    "tryAgain": "يرجى المحاولة مرة أخرى.",
+    "sending": "جارٍ الإرسال..."
   },
 
   "notifications": {
@@ -522,5 +534,99 @@
     "pageTitle": "الصفحة غير موجودة",
     "description": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
     "goHome": "الذهاب للصفحة الرئيسية"
+  },
+
+  "conditions": {
+    "title": "شروط العرض",
+    "time": "قيود الوقت",
+    "quantity": "الكمية",
+    "scope": "النطاق",
+    "payment": "الدفع",
+    "other": "أخرى",
+    "noConditions": "لم يتم تحديد شروط"
+  },
+
+  "rejection": {
+    "reportButton": "هل رفض الموظف هذا العرض؟",
+    "reportTitle": "الإبلاغ عن مشكلة",
+    "reasonCashierUnaware": "الموظف لم يكن على علم بالعرض",
+    "reasonDealExpired": "العرض منتهي الصلاحية",
+    "reasonTermsChanged": "الشروط مختلفة عن التطبيق",
+    "reasonTechnicalIssue": "مشكلة تقنية في مسح QR",
+    "reasonOther": "أخرى",
+    "detailPlaceholder": "أخبرنا المزيد (اختياري)",
+    "submit": "إرسال البلاغ",
+    "success": "تم إرسال البلاغ",
+    "thankYou": "شكراً لملاحظاتك.",
+    "alreadyReported": "تم الإبلاغ مسبقاً",
+    "dealHidden": "تم إخفاء العرض",
+    "dealHiddenMessage": "تم إخفاء هذا العرض بسبب تعدد البلاغات.",
+    "close": "إغلاق",
+    "adminNotifTitle": "بلاغ جديد",
+    "adminNotifBody": "أبلغ عميل عن مشكلة في \"{{deal}}\"."
+  },
+
+  "wallet": {
+    "title": "المحفظة",
+    "activeCount": "{{count}} نشط",
+    "lastSynced": "آخر مزامنة: منذ {{time}}",
+    "syncing": "جارٍ المزامنة...",
+    "offline": "غير متصل",
+    "offlineNotice": "عرض بيانات مخزنة. اسحب للمزامنة.",
+    "synced": "تمت المزامنة",
+    "justNow": "الآن",
+    "minutesAgo": "منذ {{count}} د",
+    "hoursAgo": "منذ {{count}} س",
+    "daysAgo": "منذ {{count}} ي"
+  },
+
+  "geoReminder": {
+    "title": "تذكير قريب",
+    "toggle": "ذكّرني عندما أكون قريباً",
+    "subtitle": "إشعار عند الاقتراب من {{businessName}}",
+    "permissionTitle": "إذن الموقع مطلوب",
+    "permissionDesc": "لتذكيرك بالعروض القريبة، نحتاج إلى الوصول إلى موقعك حتى عندما يكون التطبيق مغلقاً.",
+    "permissionDenied": "تم رفض إذن الموقع. فعّل في الإعدادات لاستخدام هذه الميزة.",
+    "enabled": "تم تفعيل التذكير القريب",
+    "disabled": "تم إلغاء التذكير القريب",
+    "notificationTitle": "عرض قريب!",
+    "notificationBody": "خصم {{dealTitle}} من {{businessName}} قريب منك!",
+    "notAvailable": "موقع المزود غير متاح",
+    "settings": "فتح الإعدادات"
+  },
+
+  "privacyData": {
+    "title": "الخصوصية والبيانات",
+    "notifications": "تفضيلات الإشعارات",
+    "locationSettings": "إعدادات الموقع",
+    "exactLocation": "تتبع الموقع الدقيق",
+    "exactLocationDesc": "اسمح للتطبيق باستخدام موقعك الدقيق للعروض القريبة",
+    "promotionalNotifications": "الإشعارات الترويجية",
+    "dataTransparency": "البيانات التي نجمعها",
+    "profileInfo": "معلومات الملف الشخصي",
+    "profileInfoDesc": "اسمك وصورتك وبريدك الإلكتروني",
+    "locationData": "بيانات الموقع",
+    "locationDataDesc": "مدينتك التقريبية وموقعك الدقيق (عند التفعيل)",
+    "browsingHistory": "سجل التصفح",
+    "browsingHistoryDesc": "العروض التي شاهدتها وحفظتها",
+    "redemptionHistory": "سجل الاستخدام",
+    "redemptionHistoryDesc": "العروض التي حجزتها واستخدمتها",
+    "dataSecured": "بياناتك مشفرة ومحمية بسياسات أمان على مستوى الصفوف.",
+    "dataManagement": "إدارة البيانات",
+    "exportData": "تصدير بياناتي",
+    "exportDataDesc": "تحميل نسخة من جميع بياناتك الشخصية",
+    "deleteAccount": "حذف الحساب",
+    "deleteAccountDesc": "احذف حسابك وجميع بياناتك نهائياً",
+    "confirmDelete": "اكتب DELETE للتأكيد",
+    "deleteWarning": "لا يمكن التراجع عن هذا الإجراء. سيتم حذف جميع بياناتك نهائياً.",
+    "exportRequested": "تم طلب التصدير. سيتم إخطارك عندما يكون جاهزاً.",
+    "deletionRequested": "تم تقديم طلب الحذف. سيراجعه مسؤول.",
+    "pendingRequest": "لديك طلب {{type}} معلق",
+    "export": "تصدير",
+    "deletion": "حذف",
+    "confirmExport": "طلب نسخة من جميع بياناتك؟",
+    "confirmDeleteTitle": "حذف الحساب",
+    "processing": "جارٍ المعالجة...",
+    "noPendingRequests": "لا توجد طلبات معلقة"
   }
 }

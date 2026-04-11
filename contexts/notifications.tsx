@@ -126,7 +126,12 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
             router.push('/(provider)/dashboard' as any);
           }
         } else {
-          if (data?.type === 'new_deal' && data?.deal_id) {
+          if (data?.type === 'geofence_reminder' && data?.dealId) {
+            router.push({
+              pathname: '/(customer)/deals/[id]',
+              params: { id: data.dealId as string },
+            } as any);
+          } else if (data?.type === 'new_deal' && data?.deal_id) {
             router.push({
               pathname: '/(customer)/deals/[id]',
               params: { id: data.deal_id as string },

@@ -11,6 +11,7 @@ import { EmptyState } from '../../components/ui/EmptyState';
 import { useNotifications } from '../../contexts/notifications';
 import { fetchCustomerStats, fetchMyRedemptions, getActiveSlotCount } from '../../lib/api';
 import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
+import { useOfflineWallet } from '../../hooks/use-offline-wallet';
 import type { Redemption } from '../../lib/types';
 
 export default function DashboardScreen() {
@@ -18,6 +19,7 @@ export default function DashboardScreen() {
   const router = useRouter();
   const { t } = useTranslation();
   const { unreadCount } = useNotifications();
+  const { cachedRedemptions, lastSyncedAt, syncWithServer } = useOfflineWallet();
 
   const timeAgo = useCallback((date: string): string => {
     const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
@@ -54,7 +56,7 @@ export default function DashboardScreen() {
   }, []);
 
   useEffect(() => { loadData(); }, [loadData]);
-  const handleRefresh = () => { setIsRefreshing(true); loadData(false); };
+  const handleRefresh = () => { setIsRefreshing(true); loadData(false); syncWithServer(); };
 
   const activeRedemptions = redemptions.filter(r => {
     if (r.status === 'claimed') return true;
@@ -78,6 +80,31 @@ export default function DashboardScreen() {
               </View>
             )}
           </AnimatedButton>
+        </View>
+      </View>
+
+      {/* Wallet Badge */}
+      <View style={{ paddingHorizontal: 16, paddingBottom: 4 }}>
+        <View style={{
+          backgroundColor: colors.surfaceContainerLowest,
+          paddingHorizontal: 14,
+          paddingVertical: 8,
+          borderRadius: Radius.full,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderWidth: 1,
+          borderColor: colors.outlineVariant,
+        }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <MaterialIcons name="account-balance-wallet" size={16} color={colors.primary} />
+            <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 12, color: colors.onSurface }}>
+              {t('wallet.title')}: {cachedRedemptions.filter(r => r.status === 'claimed').length} {t('wallet.activeCount', { count: cachedRedemptions.filter(r => r.status === 'claimed').length }).replace(/\d+ /, '')}
+            </Text>
+          </View>
+          <Text style={{ fontSize: 10, color: colors.onSurfaceVariant }}>
+            {t('wallet.synced')}
+          </Text>
         </View>
       </View>
 
@@ -187,7 +214,14 @@ export default function DashboardScreen() {
                       </View>
                       <View style={{ flex: 1 }}>
                         <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 14, color: colors.onSurface }} numberOfLines={1}>{discount?.title || t('customer.deal')}</Text>
-                        <Text style={{ color: colors.onSurfaceVariant, fontSize: 10, fontWeight: '500', marginTop: 2 }}>{provider?.business_name || t('customer.provider')} • {timeAgo(redemption.claimed_at)}</Text>
+                        <Text style={{ color: colors.onSurfaceVariant, fontSize: 10, fontWeight: '500', marginTop: 2 }}>{provider?.business_name || t('customer.provider')} • {timeAgo(redemption.claimed_at)}
+                        {cachedRedemptions.some(c => c.redemptionId === redemption.id) && (
+                          <Text> </Text>
+                        )}
+                        {cachedRedemptions.some(c => c.redemptionId === redemption.id) && (
+                          <MaterialIcons name="cloud-off" size={10} color={colors.onSurfaceVariant} />
+                        )}
+                      </Text>
                       </View>
                       {isActive ? (
                         <CircularProgress size={44} strokeWidth={3} progress={progress} daysLeft={daysLeft} isDark={colors.isDark} />
@@ -205,6 +239,15 @@ export default function DashboardScreen() {
               </View>
             )}
           </AnimatedEntrance>
+
+          {/* Last synced footer */}
+          {lastSyncedAt && (
+            <View style={{ alignItems: 'center', paddingVertical: 12 }}>
+              <Text style={{ fontSize: 11, color: colors.onSurfaceVariant, fontFamily: 'Cairo' }}>
+                {t('wallet.lastSynced', { time: timeAgo(lastSyncedAt) })}
+              </Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </View>

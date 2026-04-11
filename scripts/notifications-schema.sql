@@ -75,6 +75,14 @@ CREATE POLICY "Service can insert notifications"
   ON public.notifications FOR INSERT
   WITH CHECK (true);
 
+-- Admins can insert notifications
+CREATE POLICY "Admins can insert notifications"
+  ON public.notifications FOR INSERT
+  WITH CHECK (EXISTS (
+    SELECT 1 FROM user_roles
+    WHERE user_id = auth.uid() AND role = 'admin'
+  ));
+
 -- Users can delete their own notifications
 CREATE POLICY "Users can delete own notifications"
   ON public.notifications FOR DELETE
@@ -83,4 +91,5 @@ CREATE POLICY "Users can delete own notifications"
 -- Grant access
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.push_tokens TO authenticated;
 GRANT SELECT, UPDATE, DELETE ON public.notifications TO authenticated;
+GRANT INSERT ON public.notifications TO authenticated;
 GRANT INSERT ON public.notifications TO service_role;
