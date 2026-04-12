@@ -7,7 +7,7 @@ import { KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, TextInput,
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { Logo } from '../../components/ui/Logo';
 import { useAuth } from '../../contexts/auth';
-import { setupRtl } from '../../i18n';
+import { setupRtl, saveLanguage } from '../../i18n';
 import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
 
 const COUNTRY_CODES = [
@@ -41,9 +41,10 @@ export default function PhoneEntryScreen() {
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
 
-  const toggleLanguage = () => {
+  const toggleLanguage = async () => {
     const newLang = i18n.language?.startsWith('ar') ? 'en' : 'ar';
-    i18n.changeLanguage(newLang);
+    await i18n.changeLanguage(newLang);
+    await saveLanguage(newLang);
     setupRtl();
   };
 

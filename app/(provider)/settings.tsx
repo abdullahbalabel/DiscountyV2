@@ -3,7 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Appearance, I18nManager, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
-import { setupRtl, reloadForRtl } from '../../i18n';
+import { setupRtl, reloadForRtl, saveLanguage } from '../../i18n';
 import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
 import { useRouter } from 'expo-router';
 
@@ -17,7 +17,9 @@ export default function SettingsScreen() {
   };
 
   const toggleLanguage = async () => {
-    await i18n.changeLanguage(i18n.language?.startsWith('ar') ? 'en' : 'ar');
+    const newLang = i18n.language?.startsWith('ar') ? 'en' : 'ar';
+    await i18n.changeLanguage(newLang);
+    await saveLanguage(newLang);
     const needsReload = setupRtl();
     if (needsReload) {
       await reloadForRtl();

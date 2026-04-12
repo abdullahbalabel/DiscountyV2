@@ -19,7 +19,7 @@ export default function DashboardScreen() {
   const router = useRouter();
   const { t } = useTranslation();
   const { unreadCount } = useNotifications();
-  const { cachedRedemptions, lastSyncedAt, syncWithServer } = useOfflineWallet();
+  const { cachedRedemptions, lastSyncedAt, isOffline, syncWithServer } = useOfflineWallet();
 
   const timeAgo = useCallback((date: string): string => {
     const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
@@ -215,10 +215,10 @@ export default function DashboardScreen() {
                       <View style={{ flex: 1 }}>
                         <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 14, color: colors.onSurface }} numberOfLines={1}>{discount?.title || t('customer.deal')}</Text>
                         <Text style={{ color: colors.onSurfaceVariant, fontSize: 10, fontWeight: '500', marginTop: 2 }}>{provider?.business_name || t('customer.provider')} • {timeAgo(redemption.claimed_at)}
-                        {cachedRedemptions.some(c => c.redemptionId === redemption.id) && (
+                        {cachedRedemptions.some(c => c.redemptionId === redemption.id) && isOffline && (
                           <Text> </Text>
                         )}
-                        {cachedRedemptions.some(c => c.redemptionId === redemption.id) && (
+                        {cachedRedemptions.some(c => c.redemptionId === redemption.id) && isOffline && (
                           <MaterialIcons name="cloud-off" size={10} color={colors.onSurfaceVariant} />
                         )}
                       </Text>

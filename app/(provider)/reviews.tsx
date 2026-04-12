@@ -330,7 +330,8 @@ export default function ProviderReviewsScreen() {
                         </AnimatedButton>
                       </View>
                       <AnimatedButton
-                        style={{ alignSelf: 'flex-start', marginTop: 8, paddingHorizontal: 12, paddingVertical: 4 }}
+                        variant="outline"
+                        style={{ alignSelf: 'flex-start', marginTop: 8, paddingHorizontal: 12, paddingVertical: 4, borderColor: 'transparent' }}
                         onPress={() => { setReplyingTo(null); setReplyText(''); }}
                       >
                         <Text style={{ fontSize: 12, color: colors.onSurfaceVariant, fontFamily: 'Cairo' }}>{t('common.cancel')}</Text>

@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
 import { claimDeal, fetchDealById, getActiveSlotCount, hasClaimedDeal } from '../../../lib/api';
+import { getBusinessHoursStatus } from '../../../lib/business-hours';
 import { useSavedDeals } from '../../../contexts/savedDeals';
 import { resolveMaterialIcon } from '../../../lib/iconMapping';
 import { useThemeColors, Radius, Shadows } from '../../../hooks/use-theme-colors';
@@ -218,6 +219,7 @@ export default function DealDetails() {
   const formattedDiscount = deal.type === 'percentage' ? `${deal.discount_value}%` : `$${deal.discount_value}`;
   const spotsLeft = deal.max_redemptions - deal.current_redemptions;
   const isExpired = timeLeft === t('deal.expired');
+  const businessStatus = getBusinessHoursStatus(provider?.business_hours, t);
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
@@ -278,6 +280,26 @@ export default function DealDetails() {
                      {provider.average_rating?.toFixed(1) || '—'} ({provider.total_reviews || 0} {t('customer.reviews')})
                   </Text>
                 </View>
+                {businessStatus && (
+                  <View style={{
+                    flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4,
+                    backgroundColor: businessStatus.isOpen ? colors.successBg : colors.errorBgDark,
+                    paddingHorizontal: 6, paddingVertical: 2, borderRadius: Radius.sm, alignSelf: 'flex-start',
+                  }}>
+                    <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: businessStatus.isOpen ? colors.success : colors.error }} />
+                    <Text style={{
+                      fontFamily: 'Cairo_700Bold', fontSize: 9,
+                      color: businessStatus.isOpen ? colors.successText : colors.error,
+                    }}>
+                      {businessStatus.isOpen ? t('provider.open') : t('provider.closed')}
+                    </Text>
+                    {businessStatus.nextChange ? (
+                      <Text style={{ color: colors.onSurfaceVariant, fontSize: 8, fontFamily: 'Cairo' }}>
+                        · {businessStatus.nextChange}
+                      </Text>
+                    ) : null}
+                  </View>
+                )}
               </View>
               <MaterialIcons name="chevron-right" size={20} color={colors.iconDefault} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
             </AnimatedButton>

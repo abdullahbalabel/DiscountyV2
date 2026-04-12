@@ -240,12 +240,13 @@ export default function CustomerFeed() {
         ListHeaderComponent={listHeader}
         renderItem={({ item }) => (
           <View style={{ paddingHorizontal: Spacing.lg, marginBottom: Spacing.xs }}>
-            <DealCard
-              id={item.id}
-              title={item.title}
-              provider={(item.provider as any)?.business_name || t('customer.unknown')}
-              providerLogo={(item.provider as any)?.logo_url}
-              imageUri={item.image_url || 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800'}
+              <DealCard
+                id={item.id}
+                title={item.title}
+                provider={(item.provider as any)?.business_name || t('customer.unknown')}
+                providerLogo={(item.provider as any)?.logo_url}
+                businessHours={(item.provider as any)?.business_hours}
+                imageUri={item.image_url || 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800'}
               discountBadge={formatBadge(item)}
               description={item.description || undefined}
               categoryName={i18n.language === 'ar' ? (item.category as any)?.name_ar : (item.category as any)?.name}

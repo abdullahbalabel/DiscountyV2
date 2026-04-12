@@ -458,6 +458,8 @@
     "friday": "Friday",
     "saturday": "Saturday",
     "sunday": "Sunday",
+    "opensAt": "Opens at",
+    "closesAt": "Closes at",
 
     "socialMediaTitle": "Social Media Links",
     "instagram": "Instagram",
@@ -493,6 +495,13 @@
     "faq4Answer": "Go to the Reviews tab. You can reply to any customer review directly from there.",
     "faq5Question": "How do I change my business information?",
     "faq5Answer": "Go to Profile > Business Information. You can edit your name, description, contact details, and upload photos.",
+    "ticketHistory": "Ticket History",
+    "adminReply": "Admin Reply",
+    "ticketStatus.open": "Open",
+    "ticketStatus.replied": "Replied",
+    "ticketStatus.closed": "Closed",
+    "you": "You",
+    "typeReply": "Type your reply...",
 
     "about": "About",
     "reviewsTab": "Reviews",

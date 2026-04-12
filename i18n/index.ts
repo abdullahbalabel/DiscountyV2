@@ -1,8 +1,8 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import * as Localization from 'expo-localization';
-import { DevSettings, I18nManager } from 'react-native';
+import { I18nManager } from 'react-native';
 import * as Updates from 'expo-updates';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Translation strings
 import en from './locales/en.json';
@@ -13,33 +13,46 @@ const resources = {
   ar: { translation: ar },
 };
 
-const defaultLocale = 'ar';
+const LANG_KEY = '@discounty_language';
 
-i18n
-  .use(initReactI18next)
-  .init({
-    compatibilityJSON: 'v4',
-    resources,
-    lng: defaultLocale,
-    fallbackLng: 'en',
-    interpolation: {
-      escapeValue: false, // react already safes from xss
-    },
-  });
+const init = async () => {
+  let savedLang: string | null = null;
+  try {
+    savedLang = await AsyncStorage.getItem(LANG_KEY);
+  } catch { /* silent */ }
 
-// Handle RTL — returns true if a reload is needed
+  await i18n
+    .use(initReactI18next)
+    .init({
+      compatibilityJSON: 'v4',
+      resources,
+      lng: savedLang || 'ar',
+      fallbackLng: 'en',
+      interpolation: {
+        escapeValue: false,
+      },
+    });
+};
+
+init().then(() => setupRtl());
+
+// Handle RTL/LTR — returns true if a reload is needed
 export const setupRtl = (): boolean => {
   const isRTL = i18n.language?.startsWith('ar');
   if (I18nManager.isRTL !== isRTL) {
     I18nManager.allowRTL(isRTL);
     I18nManager.forceRTL(isRTL);
-    return true; // layout direction changed, reload required
+    return true;
   }
   return false;
 };
 
-// Call on startup
-setupRtl();
+// Persist language to AsyncStorage
+export const saveLanguage = async (lang: string) => {
+  try {
+    await AsyncStorage.setItem(LANG_KEY, lang);
+  } catch { /* silent */ }
+};
 
 // Reload the app to apply RTL changes natively
 export const reloadForRtl = async () => {
@@ -52,6 +65,7 @@ export const reloadForRtl = async () => {
     // Updates.reloadAsync failed, fall through to DevSettings
   }
   // Fallback for Expo Go / dev mode
+  const { DevSettings } = require('react-native');
   DevSettings?.reload?.();
 };
 

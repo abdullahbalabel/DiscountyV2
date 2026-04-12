@@ -18,7 +18,7 @@ export default function QRDisplayScreen() {
   const { redemptionId } = useLocalSearchParams<{ redemptionId: string }>();
   const router = useRouter();
   const colors = useThemeColors();
-  const { cachedRedemptions } = useOfflineWallet();
+  const { cachedRedemptions, isOffline } = useOfflineWallet();
 
   const [redemption, setRedemption] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -126,7 +126,7 @@ export default function QRDisplayScreen() {
             borderRadius: 24, padding: 32, alignItems: 'center', backgroundColor: '#fff',
             borderWidth: 1, borderColor: colors.outlineVariant, ...Shadows.lg, position: 'relative',
           }}>
-            {isCached && (
+            {isCached && isOffline && (
               <View style={{
                 position: 'absolute', top: 12, end: 12,
                 flexDirection: 'row', alignItems: 'center', gap: 4,

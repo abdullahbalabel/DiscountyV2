@@ -5,7 +5,7 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Appearance, Alert, I18nManager, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { setupRtl, reloadForRtl } from '../../i18n';
+import { setupRtl, reloadForRtl, saveLanguage } from '../../i18n';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { useAuth } from '../../contexts/auth';
 import { useNotifications } from '../../contexts/notifications';
@@ -103,7 +103,9 @@ export default function ProfileScreen() {
   };
 
   const toggleLanguage = async () => {
-    await i18n.changeLanguage(i18n.language?.startsWith('ar') ? 'en' : 'ar');
+    const newLang = i18n.language?.startsWith('ar') ? 'en' : 'ar';
+    await i18n.changeLanguage(newLang);
+    await saveLanguage(newLang);
     const needsReload = setupRtl();
     if (needsReload) {
       await reloadForRtl();

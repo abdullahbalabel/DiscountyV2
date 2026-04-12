@@ -6,7 +6,7 @@ import { supabase } from './supabase';
 import i18n from '../i18n';
 import type {
   Category, CustomerProfile, DealCondition, DataRequest, Discount, DiscountType, DiscountStatus, ProviderProfile, Redemption,
-  Review, ClaimDealResult, SubmitReviewResult, RedeemDealResult, SocialLinks,
+  Review, ClaimDealResult, SubmitReviewResult, RedeemDealResult, SocialLinks, SupportTicket, TicketMessage,
 } from './types';
 
 // ── Categories ──────────────────────────────────
@@ -35,7 +35,7 @@ export async function fetchActiveDeals(options?: {
     .select(`
       *,
       provider:provider_profiles!provider_id (
-        id, business_name, logo_url, average_rating, total_reviews, latitude, longitude
+        id, business_name, logo_url, average_rating, total_reviews, latitude, longitude, business_hours
       ),
       category:categories!category_id (
         id, name, name_ar, icon
@@ -75,7 +75,7 @@ export async function fetchDealById(dealId: string): Promise<Discount | null> {
       provider:provider_profiles!provider_id (
         id, user_id, business_name, logo_url, description, category,
         average_rating, total_reviews, latitude, longitude,
-        phone, website, social_links
+        phone, website, social_links, business_hours
       ),
       category:categories!category_id (
         id, name, name_ar, icon
@@ -419,7 +419,7 @@ export async function fetchSavedDeals(): Promise<Discount[]> {
     .select(`
       *,
       provider:provider_profiles!provider_id (
-        id, business_name, logo_url, average_rating, total_reviews
+        id, business_name, logo_url, average_rating, total_reviews, business_hours
       ),
       category:categories!category_id (
         id, name, name_ar, icon
@@ -1042,4 +1042,74 @@ export async function fetchDataRequests(): Promise<DataRequest[]> {
 
   if (error) throw error;
   return (data || []) as DataRequest[];
+}
+
+// ── Support Tickets ─────────────────────────────
+
+export async function submitSupportTicket(subject: string, message: string): Promise<SupportTicket> {
+  const { data: profile } = await supabase
+    .from('provider_profiles')
+    .select('id')
+    .eq('user_id', (await supabase.auth.getUser()).data.user!.id)
+    .single();
+
+  if (!profile) throw new Error('Provider profile not found');
+
+  const { data, error } = await supabase
+    .from('support_tickets')
+    .insert({ provider_id: profile.id, subject, message })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as SupportTicket;
+}
+
+export async function fetchProviderSupportTickets(): Promise<SupportTicket[]> {
+  const { data: profile } = await supabase
+    .from('provider_profiles')
+    .select('id')
+    .eq('user_id', (await supabase.auth.getUser()).data.user!.id)
+    .single();
+
+  if (!profile) return [];
+
+  const { data, error } = await supabase
+    .from('support_tickets')
+    .select('*')
+    .eq('provider_id', profile.id)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return (data || []) as SupportTicket[];
+}
+
+export async function fetchTicketMessages(ticketId: string): Promise<TicketMessage[]> {
+  const { data, error } = await supabase
+    .from('ticket_messages')
+    .select('*')
+    .eq('ticket_id', ticketId)
+    .order('created_at', { ascending: true });
+
+  if (error) throw error;
+  return (data || []) as TicketMessage[];
+}
+
+export async function sendTicketMessage(ticketId: string, message: string): Promise<TicketMessage> {
+  const userId = (await supabase.auth.getUser()).data.user!.id;
+
+  const { data, error } = await supabase
+    .from('ticket_messages')
+    .insert({ ticket_id: ticketId, sender_id: userId, sender_role: 'provider', message })
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  await supabase
+    .from('support_tickets')
+    .update({ status: 'open' })
+    .eq('id', ticketId);
+
+  return data as TicketMessage;
 }

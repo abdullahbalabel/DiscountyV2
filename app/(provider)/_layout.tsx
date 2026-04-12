@@ -1,30 +1,15 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useThemeColors, Shadows } from '../../hooks/use-theme-colors';
 import { fetchUnrepliedReviewCount } from '../../lib/api';
-import i18n, { setupRtl, reloadForRtl } from '../../i18n';
 
 export default function ProviderLayout() {
   const colors = useThemeColors();
   const { t } = useTranslation();
   const [unrepliedCount, setUnrepliedCount] = useState(0);
-
-  // Set default language to English for provider screens
-  useEffect(() => {
-    const setDefaultLanguage = async () => {
-      if (i18n.language?.startsWith('ar')) {
-        await i18n.changeLanguage('en');
-        const needsReload = setupRtl();
-        if (needsReload) {
-          await reloadForRtl();
-        }
-      }
-    };
-    setDefaultLanguage();
-  }, []);
 
   useEffect(() => {
     let mounted = true;

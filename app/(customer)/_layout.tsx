@@ -1,28 +1,13 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useThemeColors, Shadows } from '../../hooks/use-theme-colors';
-import i18n, { setupRtl, reloadForRtl } from '../../i18n';
 
 export default function CustomerLayout() {
   const colors = useThemeColors();
   const { t } = useTranslation();
-
-  // Set default language to Arabic for customer screens
-  useEffect(() => {
-    const setDefaultLanguage = async () => {
-      if (!i18n.language?.startsWith('ar')) {
-        await i18n.changeLanguage('ar');
-        const needsReload = setupRtl();
-        if (needsReload) {
-          await reloadForRtl();
-        }
-      }
-    };
-    setDefaultLanguage();
-  }, []);
 
   return (
     <Tabs

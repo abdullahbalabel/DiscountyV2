@@ -6,6 +6,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from './AnimatedButton';
 import { resolveMaterialIcon } from '../../lib/iconMapping';
+import { getBusinessHoursStatus } from '../../lib/business-hours';
 import { useThemeColors, Radius, Shadows } from '../../hooks/use-theme-colors';
 
 interface DealCardProps {
@@ -13,6 +14,7 @@ interface DealCardProps {
   title: string;
   provider: string;
   providerLogo?: string | null;
+  businessHours?: Record<string, unknown> | null;
   imageUri: string;
   discountBadge: string;
   description?: string;
@@ -43,6 +45,7 @@ export function DealCard({
   title,
   provider,
   providerLogo,
+  businessHours,
   imageUri,
   discountBadge,
   description,
@@ -59,6 +62,7 @@ export function DealCard({
 }: DealCardProps) {
   const colors = useThemeColors();
   const { t } = useTranslation();
+  const status = getBusinessHoursStatus(businessHours, t);
 
   return (
     <AnimatedButton
@@ -164,6 +168,26 @@ export function DealCard({
             }}>
               {provider}
             </Text>
+            {status && (
+              <View style={{
+                flexDirection: 'row', alignItems: 'center', gap: 3,
+                backgroundColor: status.isOpen ? colors.successBg : colors.errorBgDark,
+                paddingHorizontal: 6, paddingVertical: 1, borderRadius: Radius.sm,
+              }}>
+                <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: status.isOpen ? colors.success : colors.error }} />
+                <Text style={{
+                  fontFamily: 'Cairo_700Bold', fontSize: 8,
+                  color: status.isOpen ? colors.successText : colors.error,
+                }}>
+                  {status.isOpen ? t('provider.open') : t('provider.closed')}
+                </Text>
+              </View>
+            )}
+            {status?.nextChange ? (
+              <Text style={{ color: colors.onSurfaceVariant, fontSize: 8, fontFamily: 'Cairo' }}>
+                · {status.nextChange}
+              </Text>
+            ) : null}
             {rating != null && rating > 0 && (
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2, marginStart: 'auto' }}>
                 <MaterialIcons name="star" size={10} color={colors.warning} />

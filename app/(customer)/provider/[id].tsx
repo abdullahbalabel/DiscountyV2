@@ -14,6 +14,7 @@ import { BusinessHoursDisplay } from '../../../components/ui/BusinessHoursDispla
 import { DealCard } from '../../../components/ui/DealCard';
 import { SocialLinksBar } from '../../../components/ui/SocialLinksBar';
 import { fetchProviderById, fetchProviderDeals, fetchProviderReviews } from '../../../lib/api';
+import { getBusinessHoursStatus } from '../../../lib/business-hours';
 import { useSavedDeals } from '../../../contexts/savedDeals';
 import { useThemeColors } from '../../../hooks/use-theme-colors';
 import type { Discount, ProviderProfile as ProviderProfileType, Review } from '../../../lib/types';
@@ -51,7 +52,7 @@ interface AboutSceneProps {
 
 function AboutScene({ provider, providerAddress, t, colors }: AboutSceneProps) {
   const socialLinks = provider.social_links as Record<string, string> | null;
-  const businessHours = provider.business_hours as Record<string, { open: string; close: string; closed: boolean }> | null;
+  const businessHours = provider.business_hours as Record<string, unknown> | null;
 
   return (
     <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 20, paddingBottom: 32 }}>
@@ -203,6 +204,7 @@ function DealsScene({ deals, provider, savedIds, toggleSave, router, i18nLang, t
             <AnimatedEntrance key={deal.id} index={index} delay={100}>
               <DealCard
                 id={deal.id} title={deal.title} provider={provider.business_name} providerLogo={provider.logo_url}
+                businessHours={provider.business_hours as Record<string, unknown> | null}
                 imageUri={deal.image_url || 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800'}
                 discountBadge={badge} description={deal.description || undefined}
                 categoryName={i18nLang === 'ar' ? category?.name_ar : category?.name} categoryIcon={category?.icon} endTime={deal.end_time}
@@ -348,15 +350,23 @@ export default function ProviderProfile() {
     try { await Share.share({ message }); } catch {}
   };
 
-  const renderTabBar = (props: any) => (
+  const renderTabBar = (tabBarProps: any) => (
     <TabBar
-      {...props}
-      indicatorStyle={{ backgroundColor: colors.primary, height: 3, borderRadius: 2 }}
+      {...tabBarProps}
       style={{ backgroundColor: colors.surfaceBg, elevation: 0, shadowOpacity: 0, borderBottomWidth: 1, borderBottomColor: colors.outlineVariant }}
-      labelStyle={{ fontFamily: 'Cairo_700Bold', fontSize: 14, textTransform: 'none' }}
-      activeColor={colors.primary}
-      inactiveColor={colors.tabBarInactive}
       pressColor="rgba(134,32,69,0.1)"
+      renderIndicator={() => null}
+      options={Object.fromEntries(
+        routes.map((route) => [route.key, {
+          label: ({ focused }: { focused: boolean }) => (
+            <View style={focused ? { borderBottomWidth: 2, borderBottomColor: colors.primary, paddingBottom: 4 } : { borderBottomWidth: 2, borderBottomColor: 'transparent', paddingBottom: 4 }}>
+              <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 14, color: focused ? colors.primary : colors.tabBarInactive }}>
+                {route.title}
+              </Text>
+            </View>
+          ),
+        }])
+      )}
     />
   );
 
@@ -389,6 +399,8 @@ export default function ProviderProfile() {
       </View>
     );
   }
+
+  const businessStatus = getBusinessHoursStatus(provider.business_hours as Record<string, unknown> | null, t);
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
@@ -423,6 +435,26 @@ export default function ProviderProfile() {
           </View>
         )}
         <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 16, letterSpacing: -0.5, color: colors.onSurface, marginBottom: 4, textAlign: 'center' }}>{provider.business_name}</Text>
+        {businessStatus && (
+          <View style={{
+            flexDirection: 'row', alignItems: 'center', gap: 6,
+            backgroundColor: businessStatus.isOpen ? colors.successBg : colors.errorBgDark,
+            paddingHorizontal: 10, paddingVertical: 3, borderRadius: 8, marginBottom: 6,
+          }}>
+            <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: businessStatus.isOpen ? colors.success : colors.error }} />
+            <Text style={{
+              fontFamily: 'Cairo_700Bold', fontSize: 11,
+              color: businessStatus.isOpen ? colors.successText : colors.error,
+            }}>
+              {businessStatus.isOpen ? t('provider.open') : t('provider.closed')}
+            </Text>
+            {businessStatus.nextChange ? (
+              <Text style={{ color: colors.onSurfaceVariant, fontSize: 10, fontFamily: 'Cairo' }}>
+                · {businessStatus.nextChange}
+              </Text>
+            ) : null}
+          </View>
+        )}
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
             <MaterialIcons name="star" size={14} color={colors.primary} />

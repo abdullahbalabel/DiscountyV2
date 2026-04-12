@@ -17,6 +17,14 @@ for (let h = 0; h < 24; h++) {
 }
 TIME_OPTIONS.push('24:00');
 
+function to12h(time24: string): string {
+  if (!time24) return '';
+  const [h, m] = time24.split(':').map(Number);
+  const period = h >= 12 ? 'PM' : 'AM';
+  const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return `${h12}:${String(m).padStart(2, '0')} ${period}`;
+}
+
 type DayHours = { open: string; close: string; closed: boolean };
 
 function parseDayHours(value: string | undefined): DayHours {
@@ -185,7 +193,7 @@ export default function BusinessHoursScreen() {
                             borderColor: activePicker?.day === day && activePicker.field === 'open' ? colors.primary : colors.outlineVariant,
                           }}
                         >
-                          <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 14, color: colors.onSurface }}>{dayHours.open}</Text>
+                          <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 14, color: colors.onSurface }}>{to12h(dayHours.open)}</Text>
                           <MaterialIcons name="access-time" size={16} color={colors.iconDefault} />
                         </TouchableOpacity>
                       </View>
@@ -202,7 +210,7 @@ export default function BusinessHoursScreen() {
                             borderColor: activePicker?.day === day && activePicker.field === 'close' ? colors.primary : colors.outlineVariant,
                           }}
                         >
-                          <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 14, color: colors.onSurface }}>{dayHours.close}</Text>
+                          <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 14, color: colors.onSurface }}>{to12h(dayHours.close)}</Text>
                           <MaterialIcons name="access-time" size={16} color={colors.iconDefault} />
                         </TouchableOpacity>
                       </View>
@@ -228,7 +236,7 @@ export default function BusinessHoursScreen() {
                               fontFamily: 'Cairo_600SemiBold', fontSize: 12,
                               color: dayHours[activePicker.field] === time ? colors.onPrimary : colors.onSurface,
                             }}>
-                              {time}
+                              {to12h(time)}
                             </Text>
                           </TouchableOpacity>
                         ))}

@@ -3,7 +3,25 @@ import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../../hooks/use-theme-colors';
 
 interface BusinessHoursDisplayProps {
-  businessHours: Record<string, { open: string; close: string; closed: boolean }> | null;
+  businessHours: Record<string, unknown> | null;
+}
+
+type DayHours = { open: string; close: string; closed: boolean };
+
+function parseDayHours(value: unknown): DayHours {
+  if (!value || typeof value !== 'string' || value === 'closed') {
+    return { open: '', close: '', closed: true };
+  }
+  const [open, close] = value.split('-');
+  return { open: open || '', close: close || '', closed: false };
+}
+
+function to12h(time24: string): string {
+  if (!time24) return '';
+  const [h, m] = time24.split(':').map(Number);
+  const period = h >= 12 ? 'PM' : 'AM';
+  const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return `${h12}:${String(m).padStart(2, '0')} ${period}`;
 }
 
 const DAYS_EN = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -28,7 +46,7 @@ export function BusinessHoursDisplay({ businessHours }: BusinessHoursDisplayProp
   return (
     <View style={{ gap: 2 }}>
       {DAYS_KEYS.map((dayKey, index) => {
-        const dayData = businessHours[dayKey];
+        const dayData = parseDayHours(businessHours[dayKey]);
         const isToday = index === todayIndex;
         const dayName = isRTL ? DAYS_AR[index] : DAYS_EN[index];
 
@@ -63,11 +81,9 @@ export function BusinessHoursDisplay({ businessHours }: BusinessHoursDisplayProp
                 fontFamily: 'Cairo',
               }}
             >
-              {dayData?.closed
+              {dayData.closed
                 ? t('provider.closed')
-                : dayData
-                  ? `${dayData.open} - ${dayData.close}`
-                  : '—'}
+                : `${to12h(dayData.open)} - ${to12h(dayData.close)}`}
             </Text>
           </View>
         );

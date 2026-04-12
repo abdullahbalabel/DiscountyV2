@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo';
 import { supabase } from '../lib/supabase';
 import type { CachedRedemption } from '../lib/types';
 
@@ -10,6 +11,14 @@ export function useOfflineWallet() {
   const [cachedRedemptions, setCachedRedemptions] = useState<CachedRedemption[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [lastSyncedAt, setLastSyncedAt] = useState<string | null>(null);
+  const [isOffline, setIsOffline] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsOffline(state.isConnected !== true);
+    });
+    return unsubscribe;
+  }, []);
 
   const loadCache = useCallback(async () => {
     try {
@@ -104,6 +113,7 @@ export function useOfflineWallet() {
   return {
     cachedRedemptions,
     isLoading,
+    isOffline,
     lastSyncedAt,
     cacheRedemption,
     syncWithServer,
