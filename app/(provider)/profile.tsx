@@ -5,17 +5,20 @@ import { I18nManager, ScrollView, Text, TouchableOpacity, View } from 'react-nat
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
+import { GlassHeader } from '../../components/ui/GlassHeader';
 import { useAuth } from '../../contexts/auth';
 import { supabase } from '../../lib/supabase';
+import { fetchProviderSubscription } from '../../lib/api';
 import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
-import type { ProviderProfile } from '../../lib/types';
+import type { ProviderProfile, ProviderSubscription } from '../../lib/types';
 
 export default function ProviderProfileScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { signOut, session } = useAuth();
   const colors = useThemeColors();
   const router = useRouter();
   const [profile, setProfile] = useState<ProviderProfile | null>(null);
+  const [subscription, setSubscription] = useState<ProviderSubscription | null>(null);
 
   useEffect(() => {
     if (!session?.user) return;
@@ -23,7 +26,14 @@ export default function ProviderProfileScreen() {
       const { data } = await supabase.from('provider_profiles').select('*').eq('user_id', session.user.id).single();
       if (data) setProfile(data as ProviderProfile);
     };
+    const fetchSub = async () => {
+      try {
+        const sub = await fetchProviderSubscription();
+        setSubscription(sub);
+      } catch {}
+    };
     fetchProfile();
+    fetchSub();
   }, [session]);
 
   const menuItems = [
@@ -31,16 +41,18 @@ export default function ProviderProfileScreen() {
     { id: '2', title: t('provider.businessHours'), icon: 'schedule', color: colors.success, route: '/(provider)/business-hours' as const },
     { id: '3', title: t('provider.socialMediaLinks'), icon: 'share', color: colors.purple, route: '/(provider)/social-media-links' as const },
     { id: '4', title: t('provider.helpSupport'), icon: 'help-outline', color: colors.iconDefault, route: '/(provider)/help-support' as const },
+    { id: '5', title: t('provider.subscriptionPlan'), icon: 'card-outline', color: colors.primary, route: '/(provider)/subscription' as const },
+    { id: '6', title: t('provider.sendPush'), icon: 'campaign', color: colors.warning, route: '/(provider)/broadcast-push' as const },
   ];
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
+      <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('provider.profile')}</Text>
         <AnimatedButton onPress={() => router.push('/(provider)/settings')} style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
           <MaterialIcons name="settings" size={18} color={colors.iconDefault} />
         </AnimatedButton>
-      </View>
+      </GlassHeader>
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 12 }}>
         <View style={{ paddingHorizontal: 16, gap: 16, paddingTop: 8 }}>
@@ -75,6 +87,13 @@ export default function ProviderProfileScreen() {
                     <MaterialIcons name={item.icon as any} size={16} color={item.color} />
                   </View>
                   <Text style={{ flex: 1, fontFamily: 'Cairo_600SemiBold', fontSize: 14, color: colors.onSurface }}>{item.title}</Text>
+                  {item.id === '5' && subscription?.plan?.profile_badge && (
+                    <View style={{ backgroundColor: colors.surfaceContainerHigh, paddingHorizontal: 8, paddingVertical: 1, borderRadius: Radius.full, marginEnd: 6 }}>
+                      <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 10, color: colors.primary }}>
+                        {i18n.language === 'ar' ? subscription.plan.profile_badge_ar : subscription.plan.profile_badge}
+                      </Text>
+                    </View>
+                  )}
                   <MaterialIcons name="chevron-right" size={20} color={colors.iconDefault} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
                 </TouchableOpacity>
               ))}

@@ -95,17 +95,40 @@ Deno.serve(async (req: Request) => {
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
     const body = await req.json();
-    const { user_id, title, body: notifBody, data } = body;
+    const { user_id, user_ids, title, body: notifBody, data, provider_id, skip_limit } = body;
 
-    if (!user_id || !title || !notifBody) {
-      return jsonResponse({ error: 'Missing required fields: user_id, title, body' }, 400);
+    // Support single user_id or batch user_ids
+    const targetUserIds: string[] = user_ids || (user_id ? [user_id] : []);
+
+    if (targetUserIds.length === 0 || !title || !notifBody) {
+      return jsonResponse({ error: 'Missing required fields: user_id/user_ids, title, body' }, 400);
     }
 
-    // Fetch push tokens for the target user
+    // Provider broadcast: enforce push notification limits (1 broadcast = 1 count)
+    // Skip limit check when skip_limit is true (for system-initiated new deal notifications)
+    if (provider_id && !skip_limit) {
+      const { data: limitCheck, error: limitError } = await supabase
+        .rpc('check_provider_push_limit', { p_provider_id: provider_id });
+
+      if (limitError) {
+        console.error('Error checking push limit:', limitError);
+        return jsonResponse({ error: 'Failed to check push limit' }, 500);
+      }
+
+      if (limitCheck && !limitCheck.allowed) {
+        return jsonResponse({
+          error: 'Push notification limit reached',
+          sent_count: limitCheck.sent_count,
+          max_allowed: limitCheck.max_allowed,
+        }, 429);
+      }
+    }
+
+    // Fetch push tokens for all target users
     const { data: tokens, error: tokensError } = await supabase
       .from('push_tokens')
       .select('token')
-      .eq('user_id', user_id);
+      .in('user_id', targetUserIds);
 
     if (tokensError) {
       console.error('Error fetching push tokens:', tokensError);
@@ -113,7 +136,10 @@ Deno.serve(async (req: Request) => {
     }
 
     if (!tokens || tokens.length === 0) {
-      console.log(`No push tokens found for user ${user_id}`);
+      console.log(`No push tokens found for users: ${targetUserIds.join(', ')}`);
+      if (provider_id && !skip_limit) {
+        await supabase.rpc('increment_provider_push_count', { p_provider_id: provider_id });
+      }
       return jsonResponse({ success: true, sent: 0 }, 200);
     }
 
@@ -133,6 +159,11 @@ Deno.serve(async (req: Request) => {
     for (let i = 0; i < messages.length; i += batchSize) {
       const batch = messages.slice(i, i + batchSize);
       await sendExpoPushNotifications(batch);
+    }
+
+    // Increment provider push counter after successful send (skip for system-initiated)
+    if (provider_id && !skip_limit) {
+      await supabase.rpc('increment_provider_push_count', { p_provider_id: provider_id });
     }
 
     return jsonResponse({ success: true, sent: messages.length }, 200);

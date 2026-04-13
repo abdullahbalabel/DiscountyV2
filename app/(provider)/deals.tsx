@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import {
   Alert,
   FlatList,
+  Pressable,
   RefreshControl,
   StyleSheet,
   Text,
@@ -16,14 +17,17 @@ import {
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { GlassHeader } from '../../components/ui/GlassHeader';
 import {
   activateDeal,
   deleteDeal,
   fetchProviderDealsList,
   pauseDeal,
+  checkProviderDealLimit,
+  fetchOwnProviderProfile,
 } from '../../lib/api';
 import { resolveMaterialIcon } from '../../lib/iconMapping';
-import type { Discount } from '../../lib/types';
+import type { Discount, DealLimitCheck } from '../../lib/types';
 import { useThemeColors, Radius, Shadows } from '../../hooks/use-theme-colors';
 
 type FilterTab = 'all' | 'active' | 'paused' | 'draft' | 'expired';
@@ -106,12 +110,20 @@ export default function ProviderDealsScreen() {
   const [showSearch, setShowSearch] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [showSortPicker, setShowSortPicker] = useState(false);
+  const [dealLimit, setDealLimit] = useState<DealLimitCheck | null>(null);
 
   const loadDeals = useCallback(async () => {
     try {
       setError(null);
-      const data = await fetchProviderDealsList();
+      const [data, profile] = await Promise.all([
+        fetchProviderDealsList(),
+        fetchOwnProviderProfile(),
+      ]);
       setDeals(data);
+      if (profile) {
+        const limit = await checkProviderDealLimit(profile.id);
+        setDealLimit(limit);
+      }
     } catch (err: any) {
       setError(err.message || 'Failed to load deals');
     } finally {
@@ -194,6 +206,12 @@ export default function ProviderDealsScreen() {
       deleted: t('provider.deleteDeal'),
     };
 
+    // Check deal limit before reactivating
+    if (newStatus === 'active' && dealLimit && !dealLimit.allowed) {
+      Alert.alert(t('provider.dealLimitReached'), t('provider.reactivateLimitReached'));
+      return;
+    }
+
     Alert.alert(
       `${actionLabels[newStatus]} ${t('provider.deal')}`,
       t('provider.confirmAction', { action: actionLabels[newStatus].toLowerCase(), title: deal.title }),
@@ -221,6 +239,9 @@ export default function ProviderDealsScreen() {
     const expired = isExpired(deal);
     if (expired && deal.status === 'active') {
       return { label: t('provider.expired'), bg: colors.errorBg, textColor: colors.error };
+    }
+    if (deal.status === 'paused' && (deal as any).paused_by_plan_change) {
+      return { label: t('provider.pausedByPlanChange'), bg: colors.warningBg, textColor: colors.warningText };
     }
     switch (deal.status) {
       case 'active': return { label: t('provider.active'), bg: colors.successBg, textColor: colors.successText };
@@ -266,12 +287,23 @@ export default function ProviderDealsScreen() {
                     {item.type === 'percentage' ? `-${item.discount_value}%` : `$${item.discount_value}`}
                   </Text>
                 </View>
+                {item.is_featured && (
+                  <View style={{ position: 'absolute', bottom: 4, end: 4, backgroundColor: 'rgba(255,215,0,0.9)', borderRadius: Radius.sm, paddingHorizontal: 4, paddingVertical: 2, flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+                    <MaterialIcons name="star" size={10} color="#862045" />
+                    <Text style={{ fontSize: 8, fontWeight: '700', color: '#862045' }}>{t('provider.featuredToggle')}</Text>
+                  </View>
+                )}
               </View>
             ) : (
               <View style={[styles.cardThumb, { backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }]}>
                 <Text style={[styles.noImageDiscount, { color: colors.primary }]}>
                   {item.type === 'percentage' ? `-${item.discount_value}%` : `$${item.discount_value}`}
                 </Text>
+                {item.is_featured && (
+                  <View style={{ position: 'absolute', bottom: 4, end: 4, backgroundColor: 'rgba(255,215,0,0.9)', borderRadius: Radius.sm, paddingHorizontal: 4, paddingVertical: 2, flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+                    <MaterialIcons name="star" size={10} color="#862045" />
+                  </View>
+                )}
               </View>
             )}
 
@@ -382,7 +414,7 @@ export default function ProviderDealsScreen() {
   return (
     <View style={[styles.container, { backgroundColor: colors.surfaceBg }]}>
       {/* Header */}
-      <View style={[styles.header, { backgroundColor: colors.surfaceBg }]}>
+      <GlassHeader style={styles.header}>
         <View style={styles.headerTop}>
           <Text style={[styles.headerTitle, { color: colors.onSurface }]}>
             {t('provider.myDeals')}
@@ -401,10 +433,16 @@ export default function ProviderDealsScreen() {
               <MaterialIcons name="sort" size={18} color={showSortPicker ? 'white' : colors.onSurfaceVariant} />
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.iconButton, { backgroundColor: colors.primary, borderColor: 'transparent' }]}
-              onPress={() => router.push('/(provider)/create-deal')}
+              style={[styles.iconButton, { backgroundColor: (dealLimit && !dealLimit.allowed) ? colors.surfaceContainerHigh : colors.primary, borderColor: 'transparent' }]}
+              onPress={() => {
+                if (dealLimit && !dealLimit.allowed) {
+                  router.push('/(provider)/subscription');
+                } else {
+                  router.push('/(provider)/create-deal');
+                }
+              }}
             >
-              <MaterialIcons name="add" size={18} color="white" />
+              <MaterialIcons name="add" size={18} color={(dealLimit && !dealLimit.allowed) ? colors.onSurfaceVariant : 'white'} />
             </TouchableOpacity>
           </View>
         </View>
@@ -486,7 +524,32 @@ export default function ProviderDealsScreen() {
             </TouchableOpacity>
           )}
         />
-      </View>
+
+        {/* Deal Usage Indicator */}
+        {dealLimit && (
+          <View style={{ paddingHorizontal: 16, paddingTop: 6, paddingBottom: 4 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+              <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', fontSize: 11 }}>
+                {t('provider.dealsUsed', { current: dealLimit.current_count, max: dealLimit.max_allowed })}
+              </Text>
+              {!dealLimit.allowed && (
+                <Pressable onPress={() => router.push('/(provider)/subscription')}>
+                  <Text style={{ color: colors.primary, fontFamily: 'Cairo_700Bold', fontSize: 11 }}>
+                    {t('provider.upgradePlan')}
+                  </Text>
+                </Pressable>
+              )}
+            </View>
+            <View style={{ height: 3, backgroundColor: colors.surfaceContainerHigh, borderRadius: 1.5, overflow: 'hidden' }}>
+              <View style={{
+                height: '100%', borderRadius: 1.5,
+                backgroundColor: dealLimit.current_count >= dealLimit.max_allowed ? colors.warning : colors.primary,
+                width: `${dealLimit.max_allowed > 0 ? Math.min((dealLimit.current_count / dealLimit.max_allowed) * 100, 100) : 0}%`,
+              }} />
+            </View>
+          </View>
+        )}
+      </GlassHeader>
 
       {/* Content */}
       {loading ? (

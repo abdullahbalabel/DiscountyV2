@@ -1,14 +1,17 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, FlatList, RefreshControl, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, FlatList, RefreshControl, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import Carousel from 'react-native-reanimated-carousel';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { DealCard } from '../../components/ui/DealCard';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { FeaturedDealCard } from '../../components/ui/FeaturedDealCard';
+import { GlassHeader } from '../../components/ui/GlassHeader';
 import { Logo } from '../../components/ui/Logo';
 import { useNotifications } from '../../contexts/notifications';
-import { fetchActiveDeals, fetchCategories } from '../../lib/api';
+import { fetchActiveDeals, fetchCategories, fetchFeaturedDeals } from '../../lib/api';
 import { supabase } from '../../lib/supabase';
 import { resolveMaterialIcon } from '../../lib/iconMapping';
 import { useSavedDeals } from '../../contexts/savedDeals';
@@ -20,17 +23,20 @@ const CATEGORY_PILL_HEIGHT = 36;
 export default function CustomerFeed() {
   const colors = useThemeColors();
   const router = useRouter();
+  const { width: screenWidth } = useWindowDimensions();
   const { t, i18n } = useTranslation();
   const { savedIds, toggleSave } = useSavedDeals();
   const { unreadCount } = useNotifications();
 
   const [deals, setDeals] = useState<Discount[]>([]);
+  const [featuredDeals, setFeaturedDeals] = useState<Discount[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [carouselIndex, setCarouselIndex] = useState(0);
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstLoad = useRef(true);
 
@@ -43,16 +49,24 @@ export default function CustomerFeed() {
   const loadData = useCallback(async (showLoader = true) => {
     if (showLoader) setIsLoading(true);
     try {
-      const [dealsData, catsData] = await Promise.all([
+      const [dealsData, catsData, featuredData] = await Promise.all([
         fetchActiveDeals({
           categoryId: selectedCategory || undefined,
           search: debouncedQuery || undefined,
           limit: selectedCategory ? undefined : 10,
         }),
         fetchCategories(),
+        fetchFeaturedDeals().catch(err => { console.error('[Feed] fetchFeaturedDeals error:', err); return []; }),
       ]);
-      setDeals(dealsData);
+      const featured = featuredData.length > 0
+        ? featuredData
+        : dealsData.filter(d => d.is_featured).slice(0, 5);
+      // For testing: if no featured deals exist at all, use top 5 regular deals
+      const finalFeatured = featured.length > 0 ? featured : dealsData.slice(0, 5);
+      const featuredIds = new Set(finalFeatured.map(d => d.id));
+      setDeals(dealsData.filter(d => !featuredIds.has(d.id)));
       setCategories(catsData);
+      setFeaturedDeals(finalFeatured);
     } catch (error) {
       console.error('Error loading feed:', error);
     } finally {
@@ -144,6 +158,72 @@ export default function CustomerFeed() {
         />
       </View>
 
+      {/* Featured Deals Section */}
+      {!isLoading && featuredDeals.length > 0 && !selectedCategory && !debouncedQuery && screenWidth > 0 && (
+        <View style={{ marginBottom: Spacing.lg }}>
+          <Text style={{
+            fontFamily: 'Cairo_700Bold', fontSize: 14, color: colors.onSurface,
+            paddingHorizontal: Spacing.xl, paddingBottom: Spacing.md,
+          }}>
+            {t('provider.featuredDeals')}
+          </Text>
+          <View style={{ alignItems: 'center' }}>
+          <Carousel
+            loop={featuredDeals.length > 1}
+            width={screenWidth * 0.99}
+            height={300}
+            data={featuredDeals}
+            scrollAnimationDuration={400}
+            onSnapToItem={setCarouselIndex}
+            mode="parallax"
+            modeConfig={{
+              parallaxScrollingScale: 0.92,
+              parallaxScrollingOffset: 50,
+            }}
+            renderItem={({ item }) => (
+              <View style={{ flex: 1, paddingHorizontal: Spacing.xs }}>
+                <FeaturedDealCard
+                  id={item.id}
+                  title={item.title}
+                  provider={(item.provider as any)?.business_name || t('customer.unknown')}
+                  providerLogo={(item.provider as any)?.logo_url}
+                  providerBadge={(item.provider as any)?.profile_badge}
+                  providerBadgeAr={(item.provider as any)?.profile_badge_ar}
+                  imageUri={item.image_url || 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800'}
+                  discountBadge={formatBadge(item)}
+                  description={item.description || undefined}
+                  categoryName={i18n.language === 'ar' ? (item.category as any)?.name_ar : (item.category as any)?.name}
+                  endTime={item.end_time}
+                  isSaved={savedIds.has(item.id)}
+                  onToggleSave={() => toggleSave(item.id)}
+                  onPress={() => handleDealPress(item.id)}
+                />
+              </View>
+            )}
+          />
+          {/* Pagination dots */}
+          {featuredDeals.length > 1 && (
+            <View style={{
+              flexDirection: 'row', justifyContent: 'center',
+              gap: 6, marginTop: Spacing.md,
+            }}>
+              {featuredDeals.map((_, i) => (
+                <View
+                  key={i}
+                  style={{
+                    width: i === carouselIndex ? 20 : 6,
+                    height: 6,
+                    borderRadius: 3,
+                    backgroundColor: i === carouselIndex ? colors.primary : colors.surfaceContainerHigh,
+                  }}
+                />
+              ))}
+            </View>
+          )}
+          </View>
+        </View>
+      )}
+
       {/* Deals counter */}
       <Text style={{
         fontFamily: 'Cairo_700Bold', fontSize: 10, color: colors.onSurfaceVariant,
@@ -161,15 +241,16 @@ export default function CustomerFeed() {
       {/* ── Fixed header + search (outside FlatList so keyboard stays open) ── */}
 
       {/* Brand bar */}
-      <View style={{
-        paddingHorizontal: Spacing.lg,
-        paddingTop: 48,
-        paddingBottom: Spacing.sm,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        backgroundColor: colors.surfaceBg,
-      }}>
+      <GlassHeader
+        style={{
+          paddingHorizontal: Spacing.lg,
+          paddingTop: 48,
+          paddingBottom: Spacing.sm,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, flexShrink: 1 }}>
           <Logo size={32} color={colors.primary} />
           <Text style={{
@@ -190,7 +271,7 @@ export default function CustomerFeed() {
             </View>
           )}
         </AnimatedButton>
-      </View>
+      </GlassHeader>
 
       {/* Tagline + Search */}
       <View style={{ paddingHorizontal: Spacing.lg, paddingTop: Spacing.lg, paddingBottom: Spacing.xs }}>
@@ -245,19 +326,22 @@ export default function CustomerFeed() {
                 title={item.title}
                 provider={(item.provider as any)?.business_name || t('customer.unknown')}
                 providerLogo={(item.provider as any)?.logo_url}
+                providerBadge={(item.provider as any)?.profile_badge}
+                providerBadgeAr={(item.provider as any)?.profile_badge_ar}
                 businessHours={(item.provider as any)?.business_hours}
                 imageUri={item.image_url || 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800'}
-              discountBadge={formatBadge(item)}
-              description={item.description || undefined}
-              categoryName={i18n.language === 'ar' ? (item.category as any)?.name_ar : (item.category as any)?.name}
-              categoryIcon={(item.category as any)?.icon}
-              rating={(item.provider as any)?.average_rating}
-              reviewCount={(item.provider as any)?.total_reviews}
-              endTime={item.end_time}
-              isSaved={savedIds.has(item.id)}
-              onToggleSave={() => toggleSave(item.id)}
-              onPress={() => handleDealPress(item.id)}
-            />
+                discountBadge={formatBadge(item)}
+                description={item.description || undefined}
+                categoryName={i18n.language === 'ar' ? (item.category as any)?.name_ar : (item.category as any)?.name}
+                categoryIcon={(item.category as any)?.icon}
+                rating={(item.provider as any)?.average_rating}
+                reviewCount={(item.provider as any)?.total_reviews}
+                endTime={item.end_time}
+                isFeatured={item.is_featured}
+                isSaved={savedIds.has(item.id)}
+                onToggleSave={() => toggleSave(item.id)}
+                onPress={() => handleDealPress(item.id)}
+              />
           </View>
         )}
         ListEmptyComponent={renderEmpty}

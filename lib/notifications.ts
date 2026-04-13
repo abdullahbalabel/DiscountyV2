@@ -15,6 +15,7 @@ export type NotificationType =
   | 'deal_expiring'
   | 'review_received'
   | 'admin_broadcast'
+  | 'provider_broadcast'
   | 'admin_message'
   | 'report_reviewed'
   | 'report_resolved'
@@ -390,23 +391,6 @@ export async function notifyDealRedeemed(
     'Deal Redeemed!',
     `Your deal "${dealTitle}" from ${providerName} has been successfully redeemed.`,
     { type: 'deal_redeemed' }
-  );
-}
-
-// ── Send New Deal Notification ─────────────────
-
-export async function notifyNewDeal(
-  customerUserId: string,
-  dealTitle: string,
-  providerName: string,
-  dealId: string
-): Promise<void> {
-  await createNotification(
-    customerUserId,
-    'new_deal',
-    'New Deal Available!',
-    `${providerName} just posted "${dealTitle}". Check it out!`,
-    { type: 'new_deal', deal_id: dealId }
   );
 }
 

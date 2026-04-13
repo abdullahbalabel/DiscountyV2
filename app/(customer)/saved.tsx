@@ -8,6 +8,7 @@ import { DealCard } from '../../components/ui/DealCard';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { GlassHeader } from '../../components/ui/GlassHeader';
 import { fetchSavedDeals } from '../../lib/api';
 import { supabase } from '../../lib/supabase';
 import { useSavedDeals } from '../../contexts/savedDeals';
@@ -117,7 +118,7 @@ export default function SavedScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
+      <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface, flexShrink: 1 }}>{t('customer.saved')}</Text>
         </View>
@@ -136,7 +137,7 @@ export default function SavedScreen() {
         >
           <MaterialIcons name={showSearch ? 'close' : 'search'} size={18} color={colors.iconDefault} />
         </AnimatedButton>
-      </View>
+      </GlassHeader>
 
       {showSearch && (
         <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
@@ -196,6 +197,8 @@ export default function SavedScreen() {
                       title={item.title}
                       provider={provider?.business_name || t('customer.unknown')}
                       providerLogo={provider?.logo_url}
+                      providerBadge={provider?.profile_badge}
+                      providerBadgeAr={provider?.profile_badge_ar}
                       businessHours={provider?.business_hours}
                       imageUri={item.image_url || 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800'}
                       discountBadge={formatBadge(item)}
@@ -205,6 +208,7 @@ export default function SavedScreen() {
                       rating={provider?.average_rating}
                       reviewCount={provider?.total_reviews}
                       endTime={item.end_time}
+                      isFeatured={item.is_featured}
                       isSaved={true}
                       onToggleSave={() => {
                         swipeableRefs.current.get(item.id)?.close();

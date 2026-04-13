@@ -17,10 +17,11 @@ import {
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
+import { GlassHeader } from '../../components/ui/GlassHeader';
 import { ConditionPicker } from '../../components/ui/ConditionPicker';
-import { createDeal, fetchCategories, uploadDealImage } from '../../lib/api';
+import { createDeal, fetchCategories, uploadDealImage, checkProviderDealLimit, fetchOwnProviderProfile, getProviderPlanFeatures } from '../../lib/api';
 import { useThemeColors, Radius, Shadows } from '../../hooks/use-theme-colors';
-import type { Category, DiscountType } from '../../lib/types';
+import type { Category, DiscountType, DealLimitCheck, PlanFeatures } from '../../lib/types';
 
 let LinearGradient: any;
 try {
@@ -55,6 +56,9 @@ export default function CreateDealScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [step, setStep] = useState(1); // 1=Details, 2=Review, 3=Done
   const [formError, setFormError] = useState('');
+  const [dealLimit, setDealLimit] = useState<DealLimitCheck | null>(null);
+  const [planFeatures, setPlanFeatures] = useState<PlanFeatures | null>(null);
+  const [isFeatured, setIsFeatured] = useState(false);
 
   // Cross-platform alert helper
   const showAlert = (title: string, message: string, onOk?: () => void) => {
@@ -67,15 +71,28 @@ export default function CreateDealScreen() {
   };
 
   useEffect(() => {
-    const loadCategories = async () => {
+    const loadData = async () => {
       try {
         const cats = await fetchCategories();
         setCategories(cats);
       } catch (err) {
         console.error('Failed to load categories:', err);
       }
+      try {
+        const profile = await fetchOwnProviderProfile();
+        if (profile) {
+          const [limit, features] = await Promise.all([
+            checkProviderDealLimit(profile.id),
+            getProviderPlanFeatures(),
+          ]);
+          setDealLimit(limit);
+          setPlanFeatures(features);
+        }
+      } catch (err) {
+        console.error('Failed to check deal limit:', err);
+      }
     };
-    loadCategories();
+    loadData();
   }, []);
 
   const pickImage = async () => {
@@ -152,6 +169,7 @@ export default function CreateDealScreen() {
         max_redemptions: parseInt(maxRedemptions),
         status: 'active' as const,
         conditions: selectedConditions.length > 0 ? selectedConditions : undefined,
+        is_featured: isFeatured || undefined,
       };
       console.log('[CreateDeal] Creating deal with input:', JSON.stringify(dealInput, null, 2));
       await createDeal(dealInput);
@@ -195,6 +213,7 @@ export default function CreateDealScreen() {
         max_redemptions: parseInt(maxRedemptions),
         status: 'draft',
         conditions: selectedConditions.length > 0 ? selectedConditions : undefined,
+        is_featured: isFeatured || undefined,
       });
 
       showAlert(t('provider.saved'), t('provider.dealSavedDraft'), () => router.back());
@@ -250,6 +269,7 @@ export default function CreateDealScreen() {
                 setEndDate(''); setTerms(''); setImageUri(null);
                 setSelectedCategoryId(null); setMaxRedemptions('100');
                 setSelectedConditions([]);
+                setIsFeatured(false);
                 setStep(1);
               }}
             >
@@ -264,7 +284,7 @@ export default function CreateDealScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
       {/* Header */}
-      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
+      <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <AnimatedButton
             style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', padding: 0 }}
@@ -276,7 +296,7 @@ export default function CreateDealScreen() {
             {step === 1 ? t('provider.createDeal') : t('provider.reviewAndPublish')}
           </Text>
         </View>
-      </View>
+      </GlassHeader>
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -317,6 +337,42 @@ export default function CreateDealScreen() {
           {step === 1 ? (
             /* ── Step 1: Details Form ──────────────── */
             <AnimatedEntrance index={1} style={{ gap: 16 }}>
+              {/* Deal Limit Banner */}
+              {dealLimit && !dealLimit.allowed && (
+                <View style={{
+                  backgroundColor: colors.errorBgDark, borderWidth: 1, borderColor: colors.error,
+                  padding: 12, borderRadius: Radius.lg, flexDirection: 'row', alignItems: 'center', gap: 10,
+                }}>
+                  <MaterialIcons name="block" size={20} color={colors.error} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ color: colors.error, fontFamily: 'Cairo_700Bold', fontSize: 13 }}>
+                      {t('provider.dealLimitReached')}
+                    </Text>
+                    <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', fontSize: 11, marginTop: 2 }}>
+                      {t('provider.dealsUsed', { current: dealLimit.current_count, max: dealLimit.max_allowed })}
+                    </Text>
+                    <AnimatedButton
+                      onPress={() => router.push('/(provider)/subscription')}
+                      style={{ marginTop: 6, alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 4, backgroundColor: colors.primary, borderRadius: Radius.full }}
+                    >
+                      <Text style={{ color: 'white', fontFamily: 'Cairo_700Bold', fontSize: 11 }}>
+                        {t('provider.upgradePlan')}
+                      </Text>
+                    </AnimatedButton>
+                  </View>
+                </View>
+              )}
+              {dealLimit && dealLimit.allowed && dealLimit.current_count >= dealLimit.max_allowed - 1 && dealLimit.max_allowed > 0 && (
+                <View style={{
+                  backgroundColor: colors.warningBg, borderWidth: 1, borderColor: colors.warning,
+                  padding: 10, borderRadius: Radius.lg, flexDirection: 'row', alignItems: 'center', gap: 8,
+                }}>
+                  <MaterialIcons name="info-outline" size={16} color={colors.warning} />
+                  <Text style={{ color: colors.warningText, fontFamily: 'Cairo_600SemiBold', fontSize: 12, flex: 1 }}>
+                    {t('provider.dealsUsed', { current: dealLimit.current_count, max: dealLimit.max_allowed })}
+                  </Text>
+                </View>
+              )}
               {/* Image Upload */}
               <View>
                 <Text style={{ ...labelStyle, fontFamily: 'Cairo', fontSize: 14, color: colors.onSurface, textTransform: 'none', letterSpacing: 0 }}>{t('provider.coverImage')}</Text>
@@ -488,24 +544,70 @@ export default function CreateDealScreen() {
                 </View>
               </View>
 
+              {/* Featured Toggle */}
+              {planFeatures && planFeatures.max_featured_deals > 0 && (
+                <View style={{
+                  backgroundColor: colors.surfaceContainerLowest,
+                  borderRadius: Radius.lg,
+                  padding: 16,
+                  borderWidth: 1,
+                  borderColor: isFeatured ? colors.primary : colors.outlineVariant,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 12,
+                }}>
+                  <View style={{
+                    width: 40, height: 40, borderRadius: Radius.md,
+                    backgroundColor: isFeatured ? colors.primary + '18' : colors.surfaceContainerHigh,
+                    alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <MaterialIcons name="star" size={20} color={isFeatured ? colors.primary : colors.iconDefault} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 14, color: colors.onSurface }}>
+                      {t('provider.featuredToggle')}
+                    </Text>
+                    <Text style={{ fontFamily: 'Cairo', fontSize: 11, color: colors.onSurfaceVariant, marginTop: 2 }}>
+                      {t('provider.featuredToggleDesc')}
+                    </Text>
+                  </View>
+                  <Pressable
+                    onPress={() => setIsFeatured(!isFeatured)}
+                    style={{
+                      width: 48, height: 28, borderRadius: 14,
+                      backgroundColor: isFeatured ? colors.primary : colors.surfaceContainerHigh,
+                      justifyContent: 'center', paddingHorizontal: 2,
+                    }}
+                  >
+                    <View style={{
+                      width: 24, height: 24, borderRadius: 12,
+                      backgroundColor: 'white',
+                      alignSelf: isFeatured ? 'flex-end' : 'flex-start',
+                    }} />
+                  </Pressable>
+                </View>
+              )}
+
               {/* Step 1 Actions */}
               <View style={{ gap: 12, marginTop: 12 }}>
                 <AnimatedButton
                   variant="gradient"
-                  style={{ paddingVertical: 16, borderRadius: Radius.lg, alignItems: 'center', justifyContent: 'center', ...Shadows.glow }}
+                  style={{ paddingVertical: 16, borderRadius: Radius.lg, alignItems: 'center', justifyContent: 'center', opacity: dealLimit && !dealLimit.allowed ? 0.5 : 1, ...Shadows.glow }}
                   onPress={handleNextStep}
+                  disabled={dealLimit !== null && !dealLimit.allowed}
                 >
                   <Text style={{ fontFamily: 'Cairo_700Bold', color: 'white', fontSize: 15 }}>{t('provider.nextReview')}</Text>
                 </AnimatedButton>
                 <Pressable
                   onPress={handleSaveDraft}
-                  disabled={submitting}
+                  disabled={submitting || (dealLimit !== null && !dealLimit.allowed)}
                   style={({ pressed }) => ({
                     paddingVertical: 16, borderRadius: Radius.lg,
                     borderWidth: 1.5, borderColor: colors.outlineVariant,
                     backgroundColor: pressed ? colors.surfaceContainerHigh : colors.surfaceContainerLowest,
                     alignItems: 'center', justifyContent: 'center',
                     ...Shadows.xs,
+                    opacity: dealLimit && !dealLimit.allowed ? 0.5 : 1,
                   })}
                 >
                   <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 15, color: colors.onSurface }}>
@@ -576,9 +678,9 @@ export default function CreateDealScreen() {
               <View style={{ gap: 12, marginTop: 12 }}>
                 <AnimatedButton
                   variant="gradient"
-                  style={{ paddingVertical: 16, borderRadius: Radius.lg, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, ...Shadows.glow }}
+                  style={{ paddingVertical: 16, borderRadius: Radius.lg, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, opacity: dealLimit && !dealLimit.allowed ? 0.5 : 1, ...Shadows.glow }}
                   onPress={handlePublish}
-                  disabled={submitting}
+                  disabled={submitting || (dealLimit !== null && !dealLimit.allowed)}
                 >
                   {submitting ? (
                     <ActivityIndicator color="white" size="small" />

@@ -46,7 +46,8 @@
     "daysLeft": "{{count}} يوم متبقي",
     "hoursLeft": "{{count}} ساعة متبقية",
     "minsLeft": "{{count}} دقيقة متبقية",
-    "defaultDescription": "عرض حصري. مخزون محدود للعملاء المميزين."
+    "defaultDescription": "عرض حصري. مخزون محدود للعملاء المميزين.",
+    "viewDeal": "عرض التفاصيل"
   },
 
   "feed": {
@@ -510,7 +511,47 @@
     "call": "اتصال",
     "hoursNotSet": "لم يتم تحديد ساعات العمل",
     "noSocialLinks": "لا توجد روابط اجتماعية",
-    "viewOnMap": "عرض على الخريطة"
+    "viewOnMap": "عرض على الخريطة",
+
+    "subscriptionPlan": "خطة الاشتراك",
+    "currentPlan": "الخطة الحالية",
+    "upgradePlan": "ترقية الخطة",
+    "downgradePlan": "تخفيض الخطة",
+    "changePlan": "تغيير الخطة",
+    "dealsUsed": "{{current}} من {{max}} عروض مستخدمة",
+    "dealLimitReached": "لقد وصلت إلى الحد الأقصى. قم بالترقية لإنشاء المزيد.",
+    "upgradeToUnlock": "قم بالترقية لفتح هذه الميزة",
+    "monthly": "شهري",
+    "yearly": "سنوي",
+    "sar": "ر.س",
+    "perMonth": "/شهر",
+    "perYear": "/سنة",
+    "freePlan": "مجاني",
+    "activeUntil": "نشط حتى {{date}}",
+    "pendingDowngrade": "سيتم تغيير خطة إلى {{plan}} في {{date}}",
+    "cancelDowngrade": "إلغاء التخفيض",
+    "featuredDeals": "العروض المميزة",
+    "maxFeaturedReached": "تم الوصول إلى الحد الأقصى للعروض المميزة",
+    "prioritySupport": "دعم ذو أولوية",
+    "advancedAnalytics": "تحليلات متقدمة",
+    "pushNotifications": "إشعارات ترويجية",
+    "pushNotificationsUsed": "{{used}} من {{max}} أُرسلت هذا الشهر",
+    "profileBadge": "شارة الخطة",
+    "homepagePlacement": "عرض في الصفحة الرئيسية",
+    "checkoutSuccess": "تم تحديث اشتراكك بنجاح!",
+    "checkoutFailed": "فشل في معالجة الدفع. يرجى المحاولة مرة أخرى.",
+    "processing": "جارٍ المعالجة...",
+    "featuredToggle": "عرض مميز",
+    "featuredToggleDesc": "عرض هذا العرض في قسم العروض المميزة",
+    "pausedByPlanChange": "متوقف بسبب تغيير الخطة",
+    "reactivate": "إعادة تفعيل",
+    "reactivateLimitReached": "تم الوصول للحد الأقصى. قم بالترقية لإعادة التفعيل.",
+    "prioritySupportBadge": "دعم ذو أولوية",
+    "prioritySupportHint": "تذاكرك تحصل على معالجة ذات أولوية",
+    "pushLimitReached": "تم الوصول لحد الإشعارات",
+    "pushLocked": "قم بالترقية لفتح الإشعارات الترويجية",
+    "sendPush": "إرسال إشعار",
+    "pushCounter": "{{used}} من {{max}} أُرسلت هذا الشهر"
   },
 
   "common": {

@@ -21,6 +21,7 @@
 - [Project Structure](#project-structure)
 - [Internationalization](#internationalization)
 - [Admin Panel](#admin-panel)
+- [Stripe Integration](#stripe-integration)
 - [Building for Production](#building-for-production)
 - [Contributing](#contributing)
 - [License](#license)
@@ -66,6 +67,18 @@ The app supports English and Arabic (RTL) with full internationalization, dark/l
 - Account suspension/ban management
 - Secure token storage (Expo SecureStore on native, localStorage on web)
 
+### Monetization / Subscriptions
+- Tiered subscription plans for providers (Free, Basic, and future tiers)
+- Monthly and yearly billing cycles via Stripe Checkout
+- Each plan defines limits: active deals, featured deals, push notifications, analytics, priority support, homepage placement
+- Upgrades take effect immediately through Stripe Checkout
+- Downgrades are scheduled to take effect at the end of the current billing period (no Stripe checkout needed)
+- Subscription lifecycle managed via Stripe webhooks (checkout.session.completed, invoice.paid, invoice.payment_failed, customer.subscription.updated, customer.subscription.deleted)
+- Admin manual subscription assignment from the admin web panel (bypasses Stripe)
+- Automatic deal pausing when a plan change reduces the deal limit
+- Pending downgrade banner with cancel option for providers
+- SAR (Saudi Riyal) currency for all prices
+
 ---
 
 ## Architecture
@@ -78,7 +91,13 @@ The app supports English and Arabic (RTL) with full internationalization, dark/l
                            │
                     ┌──────┴──────┐
                     │ Edge Functions│
-                    │ (Push Notif) │
+                    │ (Push Notif, │
+                    │  Stripe)     │
+                    └──────┬──────┘
+                           │
+                    ┌──────▼──────┐
+                    │   Stripe    │
+                    │   (Payments)│
                     └─────────────┘
 ┌─────────────┐
 │ Admin Panel  │  (Next.js web app)
@@ -392,6 +411,7 @@ The QR code contains a unique hash string generated server-side when the deal is
 | `claim_deal` | `p_deal_id` | Customer | Creates redemption with QR hash, validates max 3 slots |
 | `redeem_deal` | `p_qr_code_hash` | Provider | Validates QR, marks redemption as "redeemed" |
 | `submit_review` | `p_redemption_id`, `p_rating`, `p_comment` | Customer | Creates review, updates provider rating, frees slot |
+| `process_subscription_downgrades` | (none) | Scheduled (pg_cron) | Activates pending downgrades at period end, pauses excess deals |
 
 ---
 
@@ -408,6 +428,10 @@ The QR code contains a unique hash string generated server-side when the deal is
 | `categories` | Deal categories (name, icon, sort order) |
 | `notifications` | In-app notification records |
 | `push_tokens` | Expo push notification device tokens |
+| `subscription_plans` | Plan definitions with pricing, Stripe IDs, feature limits |
+| `provider_subscriptions` | Active/historical subscriptions with Stripe customer/subscription IDs, pending downgrade state |
+| `admin_profiles` | Admin user profiles |
+| `admin_roles` | Admin role assignments (super_admin, admin, moderator) |
 
 ---
 
@@ -426,6 +450,7 @@ The QR code contains a unique hash string generated server-side when the deal is
 | Fonts | Cairo (Google Fonts) |
 | QR Codes | expo-camera (scanner), react-native-qrcode-svg (generator) |
 | Notifications | expo-notifications + Supabase Edge Functions |
+| Payments | [Stripe](https://stripe.com/) (Checkout Sessions, Subscriptions, Webhooks) |
 | Build System | EAS Build |
 | Admin Panel | Next.js 16 + shadcn/ui + Tailwind CSS |
 | Language | TypeScript 5.9 |
@@ -643,6 +668,7 @@ DiscountyV2/
 │       ├── business-hours.tsx
 │       ├── social-media-links.tsx
 │       ├── settings.tsx
+│       ├── subscription.tsx
 │       ├── notifications.tsx
 │       └── help-support.tsx
 ├── lib/                          # Core libraries
@@ -650,6 +676,7 @@ DiscountyV2/
 │   ├── api.ts                    # API service layer
 │   ├── types.ts                  # TypeScript type definitions
 │   ├── notifications.ts          # Push notification helpers
+│   ├── stripe.ts                 # Stripe checkout helpers
 │   └── iconMapping.ts            # Category icon mapping
 ├── contexts/                     # React Context providers
 │   ├── auth.tsx                  # Authentication state
@@ -666,7 +693,10 @@ DiscountyV2/
 │   └── ui/                       # UI primitives
 ├── supabase/
 │   └── functions/                # Supabase Edge Functions
-│       └── send-push-notification/
+│       ├── send-push-notification/
+│       ├── create-checkout-session/
+│       ├── stripe-webhook/
+│       └── stripe-settings/
 ├── admin-web/                    # Admin panel (Next.js)
 ├── assets/                       # Images, fonts, icons
 ├── app.json                      # Expo config
@@ -694,6 +724,107 @@ Translation files are in `i18n/locales/`. The app uses `i18next` with `react-i18
 The admin web dashboard is a **Next.js 16** app located in `admin-web/`. It uses shadcn/ui, Tailwind CSS, and Recharts for data visualization.
 
 See [admin-web/README.md](admin-web/README.md) for setup instructions.
+
+---
+
+## Stripe Integration
+
+Discounty uses Stripe for provider subscription payments. All transactions are in **SAR (Saudi Riyal)**.
+
+### Architecture
+
+```
+┌─────────────────┐     ┌──────────────────────┐     ┌──────────────┐
+│  Mobile App      │────▶│  create-checkout-    │────▶│  Stripe API  │
+│  (Provider taps  │     │  session Edge Fn     │     │              │
+│   "Upgrade")     │     └──────────────────────┘     └──────┬───────┘
+└─────────────────┘                                          │
+                                                             ▼
+┌─────────────────┐     ┌──────────────────────┐     ┌──────────────┐
+│  Supabase DB     │◀────│  stripe-webhook      │◀────│  Stripe      │
+│  (subscriptions  │     │  Edge Function       │     │  Webhooks    │
+│   updated)       │     └──────────────────────┘     └──────────────┘
+└─────────────────┘
+```
+
+### Edge Functions
+
+| Function | Purpose |
+|----------|---------|
+| `create-checkout-session` | Creates a Stripe Checkout Session for subscription purchases/upgrades |
+| `stripe-webhook` | Handles Stripe webhook events (checkout completed, invoice paid/failed, subscription updated/deleted) |
+| `stripe-settings` | Admin-only: syncs Stripe products/prices, maps plans to Stripe price IDs |
+
+### Webhook Events Handled
+
+| Event | Action |
+|-------|--------|
+| `checkout.session.completed` | Cancels old subscription, creates new `provider_subscriptions` row |
+| `invoice.paid` | Updates `current_period_end`, resets `past_due` to `active` |
+| `invoice.payment_failed` | Sets subscription status to `past_due`, sends notification |
+| `customer.subscription.updated` | Syncs plan/pricing changes from Stripe |
+| `customer.subscription.deleted` | Expires subscription, activates pending downgrade or reverts to Free plan |
+
+### Upgrade vs Downgrade Flow
+
+**Upgrades** go through Stripe Checkout immediately:
+1. Provider taps "Upgrade Plan" → `create-checkout-session` Edge Function
+2. Stripe Checkout hosted page → payment
+3. Webhook `checkout.session.completed` → old sub cancelled, new sub created
+
+**Downgrades** are scheduled (no Stripe checkout):
+1. Provider taps "Downgrade" → sets `pending_plan_id` and `pending_cycle` on the subscription
+2. "Pending Downgrade" banner appears with cancel option
+3. At period end, `process_subscription_downgrades()` SQL function activates the new plan and pauses excess deals
+
+### Stripe Setup Steps (for new environments)
+
+1. **Create a Stripe account** at [dashboard.stripe.com](https://dashboard.stripe.com)
+
+2. **Get API keys** from Developers → API keys:
+   - Copy the **Secret key** → set as `STRIPE_SECRET_KEY` in Supabase Edge Function secrets
+   - Copy the **Publishable key** (not used directly in this app, but useful for reference)
+
+3. **Create Products and Prices** in Stripe Dashboard or via API:
+   - Create one product per subscription plan (e.g., "Free", "Basic")
+   - For each product, create two prices: monthly and yearly (both in **SAR** currency)
+   - Free plan: create a recurring price with `unit_amount: 0` in SAR
+   - **Important:** All prices for a single customer must use the same currency
+
+4. **Configure webhook endpoint:**
+   - Go to Developers → Webhooks → Add endpoint
+   - URL: `https://<your-supabase-project>.supabase.co/functions/v1/stripe-webhook`
+   - Events to subscribe to:
+     - `checkout.session.completed`
+     - `invoice.paid`
+     - `invoice.payment_failed`
+     - `customer.subscription.updated`
+     - `customer.subscription.deleted`
+   - Copy the **Webhook signing secret** → set as `STRIPE_WEBHOOK_SECRET` in Supabase Edge Function secrets
+
+5. **Set Supabase Edge Function secrets:**
+   ```bash
+   supabase secrets set STRIPE_SECRET_KEY=sk_test_...
+   supabase secrets set STRIPE_WEBHOOK_SECRET=whsec_...
+   ```
+
+6. **Deploy Edge Functions:**
+   ```bash
+   supabase functions deploy create-checkout-session
+   supabase functions deploy stripe-webhook
+   supabase functions deploy stripe-settings
+   ```
+
+7. **Sync prices to database:**
+   - Open Admin Panel → Stripe Settings
+   - Click "Test Connection" to verify Stripe integration
+   - Click "Sync Products & Prices" to pull Stripe products into `subscription_plans`
+   - Map each plan to its monthly and yearly Stripe price IDs
+
+8. **Verify:**
+   - As a provider, tap "Upgrade Plan" on the subscription screen
+   - Complete a test payment using Stripe test card `4242 4242 4242 4242`
+   - Confirm the subscription is created in Supabase and the provider sees the new plan
 
 ---
 

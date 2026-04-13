@@ -14,6 +14,8 @@ interface DealCardProps {
   title: string;
   provider: string;
   providerLogo?: string | null;
+  providerBadge?: string | null;
+  providerBadgeAr?: string | null;
   businessHours?: Record<string, unknown> | null;
   imageUri: string;
   discountBadge: string;
@@ -25,6 +27,7 @@ interface DealCardProps {
   rating?: number;
   reviewCount?: number;
   endTime?: string;
+  isFeatured?: boolean;
   isSaved?: boolean;
   onToggleSave?: () => void;
   onPress: () => void;
@@ -45,6 +48,8 @@ export function DealCard({
   title,
   provider,
   providerLogo,
+  providerBadge,
+  providerBadgeAr,
   businessHours,
   imageUri,
   discountBadge,
@@ -56,12 +61,13 @@ export function DealCard({
   rating,
   reviewCount,
   endTime,
+  isFeatured,
   isSaved,
   onToggleSave,
   onPress,
 }: DealCardProps) {
   const colors = useThemeColors();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const status = getBusinessHoursStatus(businessHours, t);
 
   return (
@@ -149,6 +155,21 @@ export function DealCard({
               </Text>
             </View>
           )}
+
+          {/* Featured Badge */}
+          {isFeatured && (
+            <View style={{
+              position: 'absolute', bottom: categoryName ? 42 : 10, start: 10,
+              backgroundColor: 'rgba(255,215,0,0.9)', borderRadius: Radius.sm,
+              paddingHorizontal: 6, paddingVertical: 3,
+              flexDirection: 'row', alignItems: 'center', gap: 3,
+            }}>
+              <MaterialIcons name="star" size={10} color="#862045" />
+              <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 8, color: '#862045' }}>
+                {t('provider.featuredToggle')}
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* Content Section */}
@@ -168,6 +189,16 @@ export function DealCard({
             }}>
               {provider}
             </Text>
+            {providerBadge && (
+              <View style={{
+                backgroundColor: colors.primary, paddingHorizontal: 5, paddingVertical: 1,
+                borderRadius: Radius.sm,
+              }}>
+                <Text style={{ color: 'white', fontFamily: 'Cairo_700Bold', fontSize: 7 }}>
+                  {i18n.language === 'ar' ? (providerBadgeAr || providerBadge) : providerBadge}
+                </Text>
+              </View>
+            )}
             {status && (
               <View style={{
                 flexDirection: 'row', alignItems: 'center', gap: 3,

@@ -9,6 +9,7 @@ import { ActivityIndicator, Alert, I18nManager, Modal, Platform, ScrollView, Sha
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
+import { GlassHeader } from '../../../components/ui/GlassHeader';
 import { claimDeal, fetchDealById, getActiveSlotCount, hasClaimedDeal } from '../../../lib/api';
 import { getBusinessHoursStatus } from '../../../lib/business-hours';
 import { useSavedDeals } from '../../../contexts/savedDeals';
@@ -223,7 +224,7 @@ export default function DealDetails() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
+      <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' }} onPress={() => router.back()}>
             <MaterialIcons name={I18nManager.isRTL ? "arrow-forward" : "arrow-back"} size={18} color="white" />
@@ -238,7 +239,7 @@ export default function DealDetails() {
             <MaterialIcons name={isSaved ? 'bookmark' : 'bookmark-border'} size={16} color={isSaved ? colors.warning : 'white'} />
           </AnimatedButton>
         </View>
-      </View>
+      </GlassHeader>
 
       <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
         <View style={{ position: 'relative', width: '100%', aspectRatio: 16/10, backgroundColor: colors.surfaceContainerHigh }}>
@@ -249,6 +250,12 @@ export default function DealDetails() {
             <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 8, color: '#fff', textTransform: 'uppercase', letterSpacing: 0.5,  }}>{t('customer.discount')}</Text>
           </View>
           <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16 }}>
+            {deal.is_featured && (
+              <View style={{ backgroundColor: 'rgba(255,215,0,0.9)', alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 3, borderRadius: Radius.sm, marginBottom: 8, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                <MaterialIcons name="star" size={12} color="#862045" />
+                <Text style={{ color: '#862045', fontFamily: 'Cairo_700Bold', fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}>{t('provider.featuredToggle')}</Text>
+              </View>
+            )}
             {category && (
               <View style={{ backgroundColor: colors.brown, alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: Radius.sm, marginBottom: 8, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <MaterialIcons name={resolveMaterialIcon(category.icon)} size={10} color="white" />

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { GlassHeader } from '../../components/ui/GlassHeader';
 import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
 import { fetchProviderOwnReviews, replyToReview } from '../../lib/api';
 import type { Review } from '../../lib/types';
@@ -102,14 +103,14 @@ export default function ProviderReviewsScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
+      <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('provider.reviews')}</Text>
         {unrepliedCount > 0 && (
           <View style={{ backgroundColor: colors.primary, paddingHorizontal: 8, paddingVertical: 2, borderRadius: Radius.full }}>
             <Text style={{ color: '#fff', fontSize: 11, fontFamily: 'Cairo_700Bold' }}>{t('provider.unrepliedReviews', { count: unrepliedCount })}</Text>
           </View>
         )}
-      </View>
+      </GlassHeader>
 
       <View style={{ flexDirection: 'row', paddingHorizontal: 16, paddingVertical: 8, gap: 8 }}>
         {filterTabs.map(tab => (

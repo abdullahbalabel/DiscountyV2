@@ -16,7 +16,7 @@ import { SocialLinksBar } from '../../../components/ui/SocialLinksBar';
 import { fetchProviderById, fetchProviderDeals, fetchProviderReviews } from '../../../lib/api';
 import { getBusinessHoursStatus } from '../../../lib/business-hours';
 import { useSavedDeals } from '../../../contexts/savedDeals';
-import { useThemeColors } from '../../../hooks/use-theme-colors';
+import { useThemeColors, Radius } from '../../../hooks/use-theme-colors';
 import type { Discount, ProviderProfile as ProviderProfileType, Review } from '../../../lib/types';
 
 function timeAgo(date: string, t: (key: string) => string): string {
@@ -204,10 +204,12 @@ function DealsScene({ deals, provider, savedIds, toggleSave, router, i18nLang, t
             <AnimatedEntrance key={deal.id} index={index} delay={100}>
               <DealCard
                 id={deal.id} title={deal.title} provider={provider.business_name} providerLogo={provider.logo_url}
+                providerBadge={provider.profile_badge || undefined} providerBadgeAr={provider.profile_badge_ar || undefined}
                 businessHours={provider.business_hours as Record<string, unknown> | null}
                 imageUri={deal.image_url || 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800'}
                 discountBadge={badge} description={deal.description || undefined}
                 categoryName={i18nLang === 'ar' ? category?.name_ar : category?.name} categoryIcon={category?.icon} endTime={deal.end_time}
+                isFeatured={deal.is_featured}
                 isSaved={savedIds.has(deal.id)}
                 onToggleSave={() => toggleSave(deal.id)}
                 onPress={() => router.push(`/(customer)/deals/${deal.id}`)}
@@ -435,6 +437,13 @@ export default function ProviderProfile() {
           </View>
         )}
         <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 16, letterSpacing: -0.5, color: colors.onSurface, marginBottom: 4, textAlign: 'center' }}>{provider.business_name}</Text>
+        {provider.profile_badge && (
+          <View style={{ backgroundColor: colors.primary, paddingHorizontal: 12, paddingVertical: 2, borderRadius: Radius?.full || 20, marginBottom: 6 }}>
+            <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 10, color: 'white' }}>
+              {i18n.language === 'ar' ? (provider.profile_badge_ar || provider.profile_badge) : provider.profile_badge}
+            </Text>
+          </View>
+        )}
         {businessStatus && (
           <View style={{
             flexDirection: 'row', alignItems: 'center', gap: 6,

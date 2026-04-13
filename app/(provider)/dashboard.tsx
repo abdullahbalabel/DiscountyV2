@@ -5,12 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, I18nManager, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
+import { GlassHeader } from '../../components/ui/GlassHeader';
 import { useAuth } from '../../contexts/auth';
 import { useNotifications } from '../../contexts/notifications';
 import type { ProviderStats } from '../../lib/api';
-import { fetchOwnProviderProfile, fetchProviderStats } from '../../lib/api';
+import { fetchOwnProviderProfile, fetchProviderStats, getProviderPlanFeatures } from '../../lib/api';
 import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
-import type { ProviderProfile } from '../../lib/types';
+import type { ProviderProfile, PlanFeatures } from '../../lib/types';
 
 export default function ProviderDashboard() {
   const { t } = useTranslation();
@@ -21,14 +22,16 @@ export default function ProviderDashboard() {
 
   const [stats, setStats] = useState<ProviderStats | null>(null);
   const [profile, setProfile] = useState<ProviderProfile | null>(null);
+  const [planFeatures, setPlanFeatures] = useState<PlanFeatures | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
-      const [statsData, profileData] = await Promise.all([fetchProviderStats(), fetchOwnProviderProfile()]);
+      const [statsData, profileData, featuresData] = await Promise.all([fetchProviderStats(), fetchOwnProviderProfile(), getProviderPlanFeatures()]);
       setStats(statsData);
       setProfile(profileData);
+      setPlanFeatures(featuresData);
     } catch (err) { console.error('Dashboard load error:', err); }
     finally { setLoading(false); setRefreshing(false); }
   }, []);
@@ -53,7 +56,7 @@ export default function ProviderDashboard() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
+      <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <View>
           <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('provider.dashboard')}</Text>
           {profile && <Text style={{ color: colors.onSurfaceVariant, fontSize: 10, fontFamily: 'Cairo', marginTop: 2 }}>{profile.business_name}</Text>}
@@ -71,7 +74,7 @@ export default function ProviderDashboard() {
             <MaterialIcons name="logout" size={18} color={colors.iconDefault} />
           </AnimatedButton>
         </View>
-      </View>
+      </GlassHeader>
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 12 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
@@ -134,7 +137,36 @@ export default function ProviderDashboard() {
             </AnimatedEntrance>
           </View>
 
-          {stats?.recentRedemptions && stats.recentRedemptions.length > 0 && (
+          {/* Analytics Section - Gated */}
+          {planFeatures && !planFeatures.has_analytics ? (
+            <AnimatedEntrance index={5} delay={350}>
+              <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 16, color: colors.onSurface, marginBottom: 12 }}>{t('provider.recentActivity')}</Text>
+              <View style={{
+                backgroundColor: colors.surfaceContainerLowest, borderRadius: Radius.md, overflow: 'hidden',
+                borderWidth: 1, borderColor: colors.outlineVariant, marginBottom: 20,
+                alignItems: 'center', paddingVertical: 32, paddingHorizontal: 24,
+              }}>
+                <View style={{ width: 48, height: 48, borderRadius: Radius.full, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+                  <MaterialIcons name="analytics" size={24} color={colors.iconDefault} />
+                </View>
+                <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 15, color: colors.onSurface, textAlign: 'center', marginBottom: 6 }}>
+                  {t('provider.advancedAnalytics')}
+                </Text>
+                <Text style={{ fontFamily: 'Cairo', fontSize: 12, color: colors.onSurfaceVariant, textAlign: 'center', marginBottom: 16, lineHeight: 18 }}>
+                  {t('provider.upgradeToUnlock')}
+                </Text>
+                <AnimatedButton
+                  variant="gradient"
+                  style={{ paddingHorizontal: 24, paddingVertical: 10, borderRadius: Radius.full }}
+                  onPress={() => router.push('/(provider)/subscription')}
+                >
+                  <Text style={{ color: 'white', fontFamily: 'Cairo_700Bold', fontSize: 13 }}>
+                    {t('provider.upgradePlan')}
+                  </Text>
+                </AnimatedButton>
+              </View>
+            </AnimatedEntrance>
+          ) : stats?.recentRedemptions && stats.recentRedemptions.length > 0 ? (
             <AnimatedEntrance index={5} delay={350}>
               <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 16, color: colors.onSurface, marginBottom: 12 }}>{t('provider.recentActivity')}</Text>
               <View style={{ backgroundColor: colors.surfaceContainerLowest, borderRadius: Radius.md, overflow: 'hidden', borderWidth: 1, borderColor: colors.outlineVariant, marginBottom: 20 }}>
@@ -156,7 +188,7 @@ export default function ProviderDashboard() {
                 ))}
               </View>
             </AnimatedEntrance>
-          )}
+          ) : null}
 
           <AnimatedEntrance index={6} delay={400}>
             <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 16, color: colors.onSurface, marginBottom: 12 }}>{t('provider.quickActions')}</Text>

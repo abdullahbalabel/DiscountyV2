@@ -57,6 +57,8 @@ export interface ProviderProfile {
   business_hours: Record<string, unknown> | null;
   average_rating: number;
   total_reviews: number;
+  profile_badge?: string | null;
+  profile_badge_ar?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -96,6 +98,8 @@ export interface Discount {
   view_count: number;
   alphanumeric_code: string | null;
   conditions?: string[];
+  is_featured: boolean;
+  featured_until: string | null;
   created_at: string;
   updated_at: string;
   // Joined data
@@ -187,6 +191,7 @@ export interface SupportTicket {
   admin_reply: string | null;
   replied_by: string | null;
   replied_at: string | null;
+  is_priority: boolean;
   created_at: string;
   updated_at: string;
   provider?: { business_name: string };
@@ -199,4 +204,68 @@ export interface TicketMessage {
   sender_role: 'provider' | 'admin';
   message: string;
   created_at: string;
+}
+
+// ============================================
+// Subscription System Types
+// ============================================
+
+export interface SubscriptionPlan {
+  id: string;
+  name: string;
+  name_ar: string;
+  description: string | null;
+  description_ar: string | null;
+  max_active_deals: number;
+  max_featured_deals: number;
+  has_analytics: boolean;
+  max_push_notifications: number;
+  has_priority_support: boolean;
+  profile_badge: string | null;
+  profile_badge_ar: string | null;
+  has_homepage_placement: boolean;
+  monthly_price_sar: number | null;
+  yearly_price_sar: number | null;
+  is_active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProviderSubscription {
+  id: string;
+  provider_id: string;
+  plan_id: string;
+  billing_cycle: 'monthly' | 'yearly';
+  amount_sar: number;
+  stripe_subscription_id: string | null;
+  stripe_customer_id: string | null;
+  status: 'active' | 'past_due' | 'cancelled' | 'expired';
+  starts_at: string;
+  current_period_end: string;
+  cancelled_at: string | null;
+  pending_plan_id: string | null;
+  pending_cycle: 'monthly' | 'yearly' | null;
+  plan?: SubscriptionPlan;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DealLimitCheck {
+  allowed: boolean;
+  current_count: number;
+  max_allowed: number;
+  plan_name: string;
+  plan_name_ar: string;
+}
+
+export interface PlanFeatures {
+  max_active_deals: number;
+  max_featured_deals: number;
+  has_analytics: boolean;
+  max_push_notifications: number;
+  has_priority_support: boolean;
+  profile_badge: string | null;
+  profile_badge_ar: string | null;
+  has_homepage_placement: boolean;
 }

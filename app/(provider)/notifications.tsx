@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { GlassHeader } from '../../components/ui/GlassHeader';
 import { useAuth } from '../../contexts/auth';
 import { useNotifications } from '../../contexts/notifications';
 import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
@@ -104,7 +105,7 @@ export default function ProviderNotificationsScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
       {/* Header */}
-      <View
+      <GlassHeader
         style={{
           width: '100%',
           paddingHorizontal: 16,
@@ -113,7 +114,6 @@ export default function ProviderNotificationsScreen() {
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
-          backgroundColor: colors.surfaceBg,
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -210,7 +210,7 @@ export default function ProviderNotificationsScreen() {
             </Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </GlassHeader>
 
       {/* Notifications List */}
       <ScrollView

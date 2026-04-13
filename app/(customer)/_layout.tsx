@@ -4,6 +4,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useThemeColors, Shadows } from '../../hooks/use-theme-colors';
+import { GlassTabBar } from '../../components/ui/GlassTabBar';
 
 export default function CustomerLayout() {
   const colors = useThemeColors();
@@ -15,15 +16,13 @@ export default function CustomerLayout() {
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.tabBarInactive,
+        tabBarBackground: () => <GlassTabBar />,
         tabBarStyle: {
-          backgroundColor: colors.tabBarBg,
+          backgroundColor: 'transparent',
           borderTopWidth: 0,
-          ...Shadows.md,
           height: 104,
           paddingBottom: 12,
           paddingTop: 12,
-          borderTopLeftRadius: 0,
-          borderTopRightRadius: 0,
         },
         tabBarLabelStyle: {
           fontFamily: 'Cairo',

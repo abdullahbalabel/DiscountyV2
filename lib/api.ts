@@ -2,11 +2,12 @@
 // Discounty Supabase API Service Layer
 // ============================================
 
-import { supabase } from './supabase';
+import { supabase, supabaseUrl } from './supabase';
 import i18n from '../i18n';
 import type {
   Category, CustomerProfile, DealCondition, DataRequest, Discount, DiscountType, DiscountStatus, ProviderProfile, Redemption,
   Review, ClaimDealResult, SubmitReviewResult, RedeemDealResult, SocialLinks, SupportTicket, TicketMessage,
+  SubscriptionPlan, ProviderSubscription, DealLimitCheck, PlanFeatures,
 } from './types';
 
 // ── Categories ──────────────────────────────────
@@ -64,7 +65,37 @@ export async function fetchActiveDeals(options?: {
 
   const { data, error } = await query;
   if (error) throw error;
-  return (data || []) as Discount[];
+  const deals = (data || []) as Discount[];
+
+  if (!options?.categoryId && !options?.search && deals.length > 0) {
+    const { data: eligiblePlans } = await supabase
+      .from('subscription_plans')
+      .select('id')
+      .eq('has_homepage_placement', true);
+
+    if (eligiblePlans && eligiblePlans.length > 0) {
+      const eligiblePlanIds = eligiblePlans.map(p => p.id);
+
+      const { data: boostedProviders } = await supabase
+        .from('provider_subscriptions')
+        .select('provider_id')
+        .eq('status', 'active')
+        .in('plan_id', eligiblePlanIds);
+
+      if (boostedProviders && boostedProviders.length > 0) {
+        const boostedProviderIds = new Set(boostedProviders.map(p => p.provider_id));
+        const BOOST_MS = 7 * 24 * 60 * 60 * 1000;
+
+        deals.sort((a, b) => {
+          const aTime = new Date(a.created_at).getTime() + (boostedProviderIds.has(a.provider_id) ? BOOST_MS : 0);
+          const bTime = new Date(b.created_at).getTime() + (boostedProviderIds.has(b.provider_id) ? BOOST_MS : 0);
+          return bTime - aTime;
+        });
+      }
+    }
+  }
+
+  return deals;
 }
 
 export async function fetchDealById(dealId: string): Promise<Discount | null> {
@@ -690,11 +721,37 @@ export interface CreateDealInput {
   max_redemptions: number;
   status?: DiscountStatus;
   conditions?: string[];
+  is_featured?: boolean;
 }
 
 export async function createDeal(input: CreateDealInput): Promise<Discount> {
   const profile = await fetchOwnProviderProfile();
   if (!profile) throw new Error('Provider profile not found');
+
+  // Server-side deal limit enforcement
+  const limitCheck = await checkProviderDealLimit(profile.id);
+  if (!limitCheck.allowed) {
+    throw new Error(`Deal limit reached (${limitCheck.current_count}/${limitCheck.max_allowed}). Upgrade your plan.`);
+  }
+
+  // Server-side featured deal limit check
+  let isFeatured = false;
+  if (input.is_featured) {
+    const features = await getProviderPlanFeatures();
+    if (features && features.max_featured_deals > 0) {
+      const { count } = await supabase
+        .from('discounts')
+        .select('id', { count: 'exact', head: true })
+        .eq('provider_id', profile.id)
+        .eq('is_featured', true)
+        .neq('status', 'deleted')
+        .gt('end_time', new Date().toISOString());
+
+      if ((count || 0) < features.max_featured_deals) {
+        isFeatured = true;
+      }
+    }
+  }
 
   const { data, error } = await supabase
     .from('discounts')
@@ -711,12 +768,21 @@ export async function createDeal(input: CreateDealInput): Promise<Discount> {
       max_redemptions: input.max_redemptions,
       status: input.status || 'active',
       conditions: input.conditions || [],
+      is_featured: isFeatured,
+      featured_until: isFeatured ? input.end_time : null,
     })
     .select()
     .single();
 
   if (error) throw error;
-  return data as Discount;
+  const newDeal = data as Discount;
+
+  if (newDeal.status === 'active') {
+    notifyPastRedeemersOfNewDeal(profile.id, profile.business_name, newDeal.title, newDeal.id)
+      .catch(err => console.error('Failed to notify past redeemers:', err));
+  }
+
+  return newDeal;
 }
 
 // ── Update Deal ─────────────────────────────────
@@ -733,18 +799,46 @@ export interface UpdateDealInput {
   max_redemptions?: number;
   status?: DiscountStatus;
   conditions?: string[];
+  is_featured?: boolean;
 }
 
 export async function updateDeal(dealId: string, input: UpdateDealInput): Promise<Discount> {
   const profile = await fetchOwnProviderProfile();
   if (!profile) throw new Error('Provider profile not found');
 
+  const updateData: Record<string, unknown> = {
+    ...input,
+    updated_at: new Date().toISOString(),
+  };
+
+  // Server-side featured deal limit check when toggling on
+  if (input.is_featured === true) {
+    const features = await getProviderPlanFeatures();
+    if (!features || features.max_featured_deals === 0) {
+      delete updateData.is_featured;
+    } else {
+      const { count } = await supabase
+        .from('discounts')
+        .select('id', { count: 'exact', head: true })
+        .eq('provider_id', profile.id)
+        .eq('is_featured', true)
+        .neq('status', 'deleted')
+        .gt('end_time', new Date().toISOString())
+        .neq('id', dealId);
+
+      if ((count || 0) >= features.max_featured_deals) {
+        delete updateData.is_featured;
+      } else {
+        updateData.featured_until = input.end_time || undefined;
+      }
+    }
+  } else if (input.is_featured === false) {
+    updateData.featured_until = null;
+  }
+
   const { data, error } = await supabase
     .from('discounts')
-    .update({
-      ...input,
-      updated_at: new Date().toISOString(),
-    })
+    .update(updateData)
     .eq('id', dealId)
     .eq('provider_id', profile.id)
     .select()
@@ -1112,4 +1206,315 @@ export async function sendTicketMessage(ticketId: string, message: string): Prom
     .eq('id', ticketId);
 
   return data as TicketMessage;
+}
+
+// ============================================
+// Subscription System API
+// ============================================
+
+export async function fetchSubscriptionPlans(): Promise<SubscriptionPlan[]> {
+  const { data, error } = await supabase
+    .from('subscription_plans')
+    .select('*')
+    .eq('is_active', true)
+    .order('sort_order');
+
+  if (error) throw error;
+  return (data || []) as SubscriptionPlan[];
+}
+
+export async function fetchProviderSubscription(): Promise<ProviderSubscription | null> {
+  const profile = await fetchOwnProviderProfile();
+  if (!profile) return null;
+
+  const { data, error } = await supabase
+    .from('provider_subscriptions')
+    .select(`
+      *,
+      plan:subscription_plans!plan_id (*)
+    `)
+    .eq('provider_id', profile.id)
+    .eq('status', 'active')
+    .maybeSingle();
+
+  if (error) throw error;
+  return data as ProviderSubscription | null;
+}
+
+export async function checkProviderDealLimit(providerId: string): Promise<DealLimitCheck> {
+  const { data, error } = await supabase.rpc('check_provider_deal_limit', {
+    p_provider_id: providerId,
+  });
+
+  if (error) throw error;
+  return data as DealLimitCheck;
+}
+
+export async function getProviderPlanFeatures(): Promise<PlanFeatures | null> {
+  const profile = await fetchOwnProviderProfile();
+  if (!profile) return null;
+
+  const { data, error } = await supabase.rpc('get_provider_plan_features', {
+    p_provider_id: profile.id,
+  });
+
+  if (error) throw error;
+  return data as PlanFeatures | null;
+}
+
+export async function cancelSubscriptionDowngrade(subscriptionId: string): Promise<void> {
+  const { error } = await supabase
+    .from('provider_subscriptions')
+    .update({
+      pending_plan_id: null,
+      pending_cycle: null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', subscriptionId);
+
+  if (error) throw error;
+}
+
+export async function scheduleSubscriptionDowngrade(
+  subscriptionId: string,
+  planId: string,
+  billingCycle: 'monthly' | 'yearly',
+): Promise<void> {
+  const { error } = await supabase
+    .from('provider_subscriptions')
+    .update({
+      pending_plan_id: planId,
+      pending_cycle: billingCycle,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', subscriptionId);
+
+  if (error) throw error;
+}
+
+// ── Push Notification Limits ───────────────────
+
+export interface PushLimitCheck {
+  allowed: boolean;
+  sent_count: number;
+  max_allowed: number;
+  month_start: string;
+}
+
+export async function checkProviderPushLimit(): Promise<PushLimitCheck | null> {
+  const profile = await fetchOwnProviderProfile();
+  if (!profile) return null;
+
+  const { data, error } = await supabase.rpc('check_provider_push_limit', {
+    p_provider_id: profile.id,
+  });
+
+  if (error) throw error;
+  return data as PushLimitCheck | null;
+}
+
+// ── Featured Deals (Customer Feed) ─────────────
+
+export async function fetchFeaturedDeals(): Promise<Discount[]> {
+  const { data: eligibleProviders, error: eligibleError } = await supabase
+    .from('provider_subscriptions')
+    .select('provider_id')
+    .eq('status', 'active');
+
+  if (eligibleError || !eligibleProviders || eligibleProviders.length === 0) {
+    return [];
+  }
+
+  const providerIds = eligibleProviders.map(p => p.provider_id);
+
+  const { data: eligiblePlans, error: plansError } = await supabase
+    .from('subscription_plans')
+    .select('id')
+    .eq('has_homepage_placement', true);
+
+  if (plansError || !eligiblePlans || eligiblePlans.length === 0) {
+    return [];
+  }
+
+  const eligiblePlanIds = eligiblePlans.map(p => p.id);
+
+  const { data: qualifyingProviders } = await supabase
+    .from('provider_subscriptions')
+    .select('provider_id')
+    .eq('status', 'active')
+    .in('plan_id', eligiblePlanIds);
+
+  if (!qualifyingProviders || qualifyingProviders.length === 0) {
+    return [];
+  }
+
+  const qualifyingProviderIds = qualifyingProviders.map(p => p.provider_id);
+
+  const { data, error } = await supabase
+    .from('discounts')
+    .select(`
+      *,
+      provider:provider_profiles!provider_id (
+        id, business_name, logo_url, average_rating, total_reviews, latitude, longitude, business_hours
+      ),
+      category:categories!category_id (
+        id, name, name_ar, icon
+      )
+    `)
+    .eq('status', 'active')
+    .eq('is_featured', true)
+    .in('provider_id', qualifyingProviderIds)
+    .gte('end_time', new Date().toISOString())
+    .lte('start_time', new Date().toISOString())
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  if (error) throw error;
+  return (data || []) as Discount[];
+}
+
+// ── Support Ticket with Priority ───────────────
+
+export async function submitSupportTicketWithPriority(subject: string, message: string): Promise<SupportTicket> {
+  const profile = await fetchOwnProviderProfile();
+  if (!profile) throw new Error('Provider profile not found');
+
+  // Check if provider has priority support
+  const features = await getProviderPlanFeatures();
+  const isPriority = features?.has_priority_support ?? false;
+
+  const { data, error } = await supabase
+    .from('support_tickets')
+    .insert({
+      provider_id: profile.id,
+      subject,
+      message,
+      status: 'open',
+      is_priority: isPriority,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data as SupportTicket;
+}
+
+// ── Provider Broadcast Push ────────────────────
+
+export async function broadcastPushToCustomers(
+  title: string,
+  body: string,
+): Promise<{ success: boolean; sent: number }> {
+  const profile = await fetchOwnProviderProfile();
+  if (!profile) throw new Error('Provider profile not found');
+
+  // Check push limit before sending
+  const limitCheck = await checkProviderPushLimit();
+  if (limitCheck && !limitCheck.allowed) {
+    throw new Error(
+      `Push limit reached (${limitCheck.sent_count}/${limitCheck.max_allowed}). Upgrade your plan.`
+    );
+  }
+
+  // Fetch user IDs of customers who redeemed this provider's deals (via SECURITY DEFINER RPC to bypass RLS)
+  const { data: redeemerRows, error: redeemerError } = await supabase
+    .rpc('get_redeemer_user_ids', { p_provider_id: profile.id });
+
+  if (redeemerError) throw redeemerError;
+
+  const userIds = (redeemerRows || []).map(r => r.user_id);
+  if (userIds.length === 0) {
+    return { success: true, sent: 0 };
+  }
+
+  // Send via edge function with provider_id for limit tracking
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error('Not authenticated');
+
+  const response = await fetch(
+    `${supabaseUrl}/functions/v1/send-push-notification`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        user_ids: userIds,
+        title,
+        body,
+        provider_id: profile.id,
+        data: { type: 'provider_broadcast', provider_id: profile.id },
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.error || `Push failed (${response.status})`);
+  }
+
+  const result = await response.json();
+
+  await supabase.from('notifications').insert(
+    userIds.map(userId => ({
+      user_id: userId,
+      type: 'provider_broadcast' as const,
+      title,
+      body,
+      data: { type: 'provider_broadcast', provider_id: profile.id },
+      is_read: false,
+    }))
+  );
+
+  return { success: true, sent: result.sent || 0 };
+}
+
+// ── Notify Past Redeemers of New Deal ──────────
+
+async function notifyPastRedeemersOfNewDeal(
+  providerId: string,
+  providerName: string,
+  dealTitle: string,
+  dealId: string
+): Promise<void> {
+  // Use SECURITY DEFINER RPC to bypass RLS on customer_profiles
+  const { data: redeemerRows } = await supabase
+    .rpc('get_redeemer_user_ids', { p_provider_id: providerId });
+
+  const userIds = (redeemerRows || []).map(r => r.user_id);
+  if (userIds.length === 0) return;
+
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return;
+
+  await fetch(
+    `${supabaseUrl}/functions/v1/send-push-notification`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        user_ids: userIds,
+        title: 'New Deal Available!',
+        body: `${providerName} just posted "${dealTitle}". Check it out!`,
+        provider_id: providerId,
+        skip_limit: true,
+        data: { type: 'new_deal', deal_id: dealId, provider_id: providerId },
+      }),
+    }
+  );
+
+  await supabase.from('notifications').insert(
+    userIds.map(userId => ({
+      user_id: userId,
+      type: 'new_deal',
+      title: 'New Deal Available!',
+      body: `${providerName} just posted "${dealTitle}". Check it out!`,
+      data: { type: 'new_deal', deal_id: dealId, provider_id: providerId },
+      is_read: false,
+    }))
+  );
 }

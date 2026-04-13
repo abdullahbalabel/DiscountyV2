@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { GlassHeader } from '../../components/ui/GlassHeader';
 import { useNotifications } from '../../contexts/notifications';
 import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
 import { createNotification, sendLocalNotification } from '../../lib/notifications';
@@ -137,7 +138,7 @@ export default function NotificationsScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
       {/* Header */}
-      <View
+      <GlassHeader
         style={{
           width: '100%',
           paddingHorizontal: 16,
@@ -146,7 +147,6 @@ export default function NotificationsScreen() {
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
-          backgroundColor: colors.surfaceBg,
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -246,9 +246,7 @@ export default function NotificationsScreen() {
             </TouchableOpacity>
           )}
         </View>
-      </View>
-
-      {/* Notifications List */}
+      </GlassHeader>
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: 24 }}

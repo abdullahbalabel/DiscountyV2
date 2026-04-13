@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Appearance, Alert, I18nManager, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { setupRtl, reloadForRtl, saveLanguage } from '../../i18n';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
+import { GlassHeader } from '../../components/ui/GlassHeader';
 import { useAuth } from '../../contexts/auth';
 import { useNotifications } from '../../contexts/notifications';
 import { useThemeColors, Radius, Shadows } from '../../hooks/use-theme-colors';
@@ -195,7 +196,7 @@ export default function ProfileScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
+      <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface, flexShrink: 1 }}>{t('customer.profile')}</Text>
         <TouchableOpacity style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', position: 'relative' }} onPress={() => router.push('/(customer)/notifications' as any)}>
           <MaterialIcons name="notifications" size={18} color={colors.onSurfaceVariant} />
@@ -205,7 +206,7 @@ export default function ProfileScreen() {
             </View>
           )}
         </TouchableOpacity>
-      </View>
+      </GlassHeader>
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 100 }}>
         <View style={{ paddingHorizontal: 16, gap: 16, paddingTop: 8 }}>

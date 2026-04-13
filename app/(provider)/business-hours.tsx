@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, I18nManager, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
+import { GlassHeader } from '../../components/ui/GlassHeader';
 import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
 import { fetchOwnProviderProfile, updateProviderProfile } from '../../lib/api';
 import { useRouter } from 'expo-router';
@@ -111,10 +112,12 @@ export default function BusinessHoursScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
       {/* Header */}
-      <View style={{
-        width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8,
-        flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surfaceBg,
-      }}>
+      <GlassHeader
+        style={{
+          width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8,
+          flexDirection: 'row', alignItems: 'center',
+        }}
+      >
         <TouchableOpacity onPress={() => router.back()} style={{ marginEnd: 12 }}>
           <MaterialIcons name={I18nManager.isRTL ? 'chevron-right' : 'chevron-left'} size={24} color={colors.onSurface} />
         </TouchableOpacity>
@@ -132,7 +135,7 @@ export default function BusinessHoursScreen() {
             <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 13, color: colors.onPrimary }}>{t('provider.saveChanges')}</Text>
           )}
         </TouchableOpacity>
-      </View>
+      </GlassHeader>
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 40 }}>
         <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>

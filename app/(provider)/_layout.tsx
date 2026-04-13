@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useThemeColors, Shadows } from '../../hooks/use-theme-colors';
+import { GlassTabBar } from '../../components/ui/GlassTabBar';
 import { fetchUnrepliedReviewCount } from '../../lib/api';
 
 export default function ProviderLayout() {
@@ -30,15 +31,13 @@ export default function ProviderLayout() {
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.tabBarInactive,
+        tabBarBackground: () => <GlassTabBar />,
         tabBarStyle: {
-          backgroundColor: colors.tabBarBg,
+          backgroundColor: 'transparent',
           borderTopWidth: 0,
-          ...Shadows.md,
           height: 104,
           paddingBottom: 12,
           paddingTop: 12,
-          borderTopLeftRadius: 0,
-          borderTopRightRadius: 0,
         },
         tabBarLabelStyle: {
           fontFamily: 'Cairo',
@@ -204,6 +203,18 @@ export default function ProviderLayout() {
       />
       <Tabs.Screen
         name="settings"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="subscription"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="broadcast-push"
         options={{
           href: null,
         }}

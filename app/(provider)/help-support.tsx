@@ -3,10 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, I18nManager, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
+import { GlassHeader } from '../../components/ui/GlassHeader';
 import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
 import { useRouter } from 'expo-router';
-import { submitSupportTicket, fetchProviderSupportTickets, fetchTicketMessages, sendTicketMessage } from '../../lib/api';
-import type { SupportTicket, TicketMessage } from '../../lib/types';
+import { submitSupportTicketWithPriority, fetchProviderSupportTickets, fetchTicketMessages, sendTicketMessage, getProviderPlanFeatures } from '../../lib/api';
+import type { SupportTicket, TicketMessage, PlanFeatures } from '../../lib/types';
 
 const FAQ_KEYS = ['faq1', 'faq2', 'faq3', 'faq4', 'faq5'] as const;
 
@@ -24,9 +25,11 @@ export default function HelpSupportScreen() {
   const [ticketMessages, setTicketMessages] = useState<Record<string, TicketMessage[]>>({});
   const [followUpText, setFollowUpText] = useState('');
   const [sendingFollowUp, setSendingFollowUp] = useState<string | null>(null);
+  const [planFeatures, setPlanFeatures] = useState<PlanFeatures | null>(null);
 
   useEffect(() => {
     fetchProviderSupportTickets().then(setTickets).catch(() => {});
+    getProviderPlanFeatures().then(setPlanFeatures).catch(() => {});
   }, []);
 
   const handleSend = async () => {
@@ -37,7 +40,7 @@ export default function HelpSupportScreen() {
 
     setIsSending(true);
     try {
-      await submitSupportTicket(subject.trim(), message.trim());
+      await submitSupportTicketWithPriority(subject.trim(), message.trim());
       setSubject('');
       setMessage('');
       const updated = await fetchProviderSupportTickets();
@@ -86,20 +89,47 @@ export default function HelpSupportScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
       {/* Header */}
-      <View style={{
-        width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8,
-        flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surfaceBg,
-      }}>
+      <GlassHeader
+        style={{
+          width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8,
+          flexDirection: 'row', alignItems: 'center',
+        }}
+      >
         <TouchableOpacity onPress={() => router.back()} style={{ marginEnd: 12 }}>
           <MaterialIcons name={I18nManager.isRTL ? 'chevron-right' : 'chevron-left'} size={24} color={colors.onSurface} />
         </TouchableOpacity>
         <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>
           {t('provider.helpSupport')}
         </Text>
-      </View>
+      </GlassHeader>
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 40 }}>
         <View style={{ paddingHorizontal: 16, gap: 20, paddingTop: 8 }}>
+          {/* Priority Support Badge */}
+          {planFeatures?.has_priority_support && (
+            <AnimatedEntrance index={0} delay={30}>
+              <View style={{
+                backgroundColor: `${colors.success}12`,
+                borderRadius: Radius.xl,
+                borderWidth: 1,
+                borderColor: `${colors.success}30`,
+                padding: 14,
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+                <MaterialIcons name="verified" size={22} color={colors.success} style={{ marginEnd: 12 }} />
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 14, color: colors.success }}>
+                    {t('provider.prioritySupportBadge')}
+                  </Text>
+                  <Text style={{ fontFamily: 'Cairo', fontSize: 12, color: colors.onSurfaceVariant, marginTop: 2 }}>
+                    {t('provider.prioritySupportHint')}
+                  </Text>
+                </View>
+              </View>
+            </AnimatedEntrance>
+          )}
+
           {/* FAQ Section */}
           <AnimatedEntrance index={0} delay={50}>
             <Text style={{
@@ -258,9 +288,14 @@ export default function HelpSupportScreen() {
                       >
                         <MaterialIcons name={statusIcon as any} size={18} color={statusColor} style={{ marginEnd: 10 }} />
                         <View style={{ flex: 1 }}>
-                          <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 13, color: colors.onSurface }} numberOfLines={1}>
-                            {ticket.subject}
-                          </Text>
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                            <Text style={{ fontFamily: 'Cairo_600SemiBold', fontSize: 13, color: colors.onSurface }} numberOfLines={1}>
+                              {ticket.subject}
+                            </Text>
+                            {ticket.is_priority && (
+                              <MaterialIcons name="verified" size={14} color={colors.success} />
+                            )}
+                          </View>
                           <Text style={{ fontFamily: 'Cairo', fontSize: 11, color: colors.onSurfaceVariant, marginTop: 2 }}>
                             {new Date(ticket.created_at).toLocaleDateString()}
                           </Text>

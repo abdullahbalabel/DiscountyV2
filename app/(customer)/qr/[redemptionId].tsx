@@ -5,6 +5,7 @@ import { ActivityIndicator, Alert, Animated as RNAnimated, Easing as RNEasing, I
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
+import { GlassHeader } from '../../../components/ui/GlassHeader';
 import { RejectionReportModal } from '../../../components/ui/RejectionReportModal';
 import { fetchRedemptionById, submitRejectionReport, hasReportedDeal } from '../../../lib/api';
 import { useThemeColors, Radius, Shadows } from '../../../hooks/use-theme-colors';
@@ -94,7 +95,7 @@ export default function QRDisplayScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
       {/* Header */}
-      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.surfaceBg }}>
+      <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
         <AnimatedButton
           style={{ width: 40, height: 40, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}
           onPress={() => router.back()}
@@ -102,7 +103,7 @@ export default function QRDisplayScreen() {
           <MaterialIcons name={I18nManager.isRTL ? "arrow-forward" : "arrow-back"} size={20} color={colors.iconDefault} />
         </AnimatedButton>
         <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface, flexShrink: 1 }}>{t('customer.qrCode')}</Text>
-      </View>
+      </GlassHeader>
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         {/* Deal Info */}

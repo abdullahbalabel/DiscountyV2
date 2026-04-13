@@ -3,6 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Appearance, I18nManager, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
+import { GlassHeader } from '../../components/ui/GlassHeader';
 import { setupRtl, reloadForRtl, saveLanguage } from '../../i18n';
 import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
 import { useRouter } from 'expo-router';
@@ -46,17 +47,19 @@ export default function SettingsScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
       {/* Header */}
-      <View style={{
-        width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8,
-        flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surfaceBg,
-      }}>
+      <GlassHeader
+        style={{
+          width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8,
+          flexDirection: 'row', alignItems: 'center',
+        }}
+      >
         <TouchableOpacity onPress={() => router.back()} style={{ marginEnd: 12 }}>
           <MaterialIcons name={I18nManager.isRTL ? 'chevron-right' : 'chevron-left'} size={24} color={colors.onSurface} />
         </TouchableOpacity>
         <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>
           {t('provider.settingsTitle')}
         </Text>
-      </View>
+      </GlassHeader>
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 40 }}>
         <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>

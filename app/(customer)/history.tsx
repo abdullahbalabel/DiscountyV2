@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
+import { GlassHeader } from '../../components/ui/GlassHeader';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { fetchMyRedemptions } from '../../lib/api';
 import { useThemeColors, Radius, Shadows } from '../../hooks/use-theme-colors';
@@ -62,9 +63,9 @@ export default function HistoryScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      <View style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
+      <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('customer.history')}</Text>
-      </View>
+      </GlassHeader>
 
       <View style={{ paddingHorizontal: 16, paddingTop: 8, flexDirection: 'row', gap: 8, marginBottom: 8 }}>
         {(['all', 'reviewed', 'expired'] as const).map(f => (

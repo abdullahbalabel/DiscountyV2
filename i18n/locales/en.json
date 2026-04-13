@@ -46,7 +46,8 @@
     "daysLeft": "{{count}}d left",
     "hoursLeft": "{{count}}h left",
     "minsLeft": "{{count}}m left",
-    "defaultDescription": "Exclusive deal. Limited stock available for discerning shoppers."
+    "defaultDescription": "Exclusive deal. Limited stock available for discerning shoppers.",
+    "viewDeal": "View Deal"
   },
 
   "feed": {
@@ -510,7 +511,47 @@
     "call": "Call",
     "hoursNotSet": "Hours not specified",
     "noSocialLinks": "No social links",
-    "viewOnMap": "View on Map"
+    "viewOnMap": "View on Map",
+
+    "subscriptionPlan": "Subscription Plan",
+    "currentPlan": "Current Plan",
+    "upgradePlan": "Upgrade Plan",
+    "downgradePlan": "Downgrade",
+    "changePlan": "Change Plan",
+    "dealsUsed": "{{current}} of {{max}} deals used",
+    "dealLimitReached": "You've reached your deal limit. Upgrade to create more.",
+    "upgradeToUnlock": "Upgrade to unlock this feature",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "sar": "ر.س",
+    "perMonth": "/month",
+    "perYear": "/year",
+    "freePlan": "Free",
+    "activeUntil": "Active until {{date}}",
+    "pendingDowngrade": "Your plan will change to {{plan}} on {{date}}",
+    "cancelDowngrade": "Cancel Downgrade",
+    "featuredDeals": "Featured Deals",
+    "maxFeaturedReached": "Featured deal limit reached for your plan",
+    "prioritySupport": "Priority Support",
+    "advancedAnalytics": "Advanced Analytics",
+    "pushNotifications": "Promotional Push",
+    "pushNotificationsUsed": "{{used}} of {{max}} sent this month",
+    "profileBadge": "Plan Badge",
+    "homepagePlacement": "Homepage Placement",
+    "checkoutSuccess": "Your subscription has been updated successfully!",
+    "checkoutFailed": "Failed to process checkout. Please try again.",
+    "processing": "Processing...",
+    "featuredToggle": "Featured Deal",
+    "featuredToggleDesc": "Show this deal in the featured section",
+    "pausedByPlanChange": "Paused by plan change",
+    "reactivate": "Reactivate",
+    "reactivateLimitReached": "Deal limit reached. Upgrade to reactivate.",
+    "prioritySupportBadge": "Priority Support",
+    "prioritySupportHint": "Your tickets receive priority handling",
+    "pushLimitReached": "Push notification limit reached",
+    "pushLocked": "Upgrade to unlock promotional push notifications",
+    "sendPush": "Send Push",
+    "pushCounter": "{{used}} of {{max}} sent this month"
   },
 
   "common": {

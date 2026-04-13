@@ -89,39 +89,12 @@ Reusable components live in `components/ui/`:
 
 Both apps connect to project `yzwwzxffexjwxynnwngw.supabase.co`.
 
-### Tables
+**Detailed reference:** `Docs/REFERENCE.md` — tables, RPCs, subscription system, Stripe integration, edge functions, admin management, migrations.
 
-`user_roles`, `customer_profiles`, `provider_profiles` (has `latitude`/`longitude` — no PostGIS `location` column yet), `discounts`, `redemptions`, `reviews`, `categories`, `notifications`, `push_tokens`, `admin_roles`, `admin_profiles`, `admin_permissions`, `admin_groups`, `admin_group_members`.
-
-### Key RPCs
-
-- `claim_deal(p_deal_id UUID)` — customer claims a deal
-- `redeem_deal(p_qr_code_hash TEXT)` — provider scans QR
-- `submit_review(p_redemption_id UUID, p_rating SMALLINT, p_comment TEXT)` — customer review
-- `get_admin_users()` — returns admin profiles joined with auth.users emails + role names (SECURITY DEFINER)
-
-### Edge Functions
-
-Only `send-push-notification` exists locally in `supabase/functions/`. `manage-admin` is deployed but not in the repo.
-
-- `send-push-notification` — Expo push via service role key. Requires auth JWT.
-- `manage-admin` — admin user CRUD (create/delete/toggle-active) using `supabase.auth.admin` APIs. Requires auth JWT + admin role. Actions: `create`, `delete`, `toggle-active`.
-
-### Admin management system
-
-Admin users are managed through `admin_profiles` (not just `user_roles`). The `manage-admin` Edge Function uses `SUPABASE_SERVICE_ROLE_KEY` for auth admin operations (create user, delete user, ban/unban). Client-side `signUp` must NOT be used for admin creation — it switches the caller's session.
-
-`admin_roles` has 3 seeded roles: `super_admin`, `admin`, `moderator`. `admin_permissions` has a pre-seeded resource×action matrix (77 rows). All admins must have a row in `admin_profiles` — backfill existing admins with:
-```sql
-INSERT INTO admin_profiles (user_id, full_name, role_id, is_active)
-SELECT ur.user_id, u.email, (SELECT id FROM admin_roles WHERE name = 'admin'), true
-FROM user_roles ur JOIN auth.users u ON u.id = ur.user_id
-WHERE ur.role = 'admin' ON CONFLICT (user_id) DO NOTHING;
-```
-
-### Migrations & scripts
-
-No migrations directory. All schema changes are SQL scripts in `scripts/`, run manually in the Supabase SQL Editor. Key scripts: `admin-management-schema.sql`, `notifications-schema.sql`, `fix-rls-policies.sql`, `fix-claim-deal.sql`, `fix-submit-review.sql`.
+Key points to remember:
+- **Edge Function deployment:** Always use `verify_jwt: false` — the runtime's JWT check conflicts with function-level auth and returns 401.
+- **Admin creation:** Use `manage-admin` Edge Function, never client-side `signUp` (it switches the caller's session).
+- **No migrations directory.** Schema changes are SQL scripts in `scripts/`, run manually in Supabase SQL Editor.
 
 ## Environment files
 
