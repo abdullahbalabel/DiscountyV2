@@ -6,7 +6,6 @@ import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  I18nManager,
   KeyboardAvoidingView, Platform,
   Pressable,
   ScrollView,
@@ -17,10 +16,11 @@ import {
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
-import { GlassHeader } from '../../components/ui/GlassHeader';
+import { HeaderBar } from '../../components/ui/HeaderBar';
+import { ScreenWrapper } from '../../components/ui/ScreenWrapper';
 import { ConditionPicker } from '../../components/ui/ConditionPicker';
 import { createDeal, fetchCategories, uploadDealImage, checkProviderDealLimit, fetchOwnProviderProfile, getProviderPlanFeatures } from '../../lib/api';
-import { useThemeColors, Radius, Shadows } from '../../hooks/use-theme-colors';
+import { useThemeColors, Radius, Shadows, TAB_BAR_OFFSET } from '../../hooks/use-theme-colors';
 import type { Category, DiscountType, DealLimitCheck, PlanFeatures } from '../../lib/types';
 
 let LinearGradient: any;
@@ -243,7 +243,7 @@ export default function CreateDealScreen() {
   // ── Step 3: Success ───────────────────────────
   if (step === 3) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.surfaceBg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 }}>
+      <ScreenWrapper style={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 }}>
         <AnimatedEntrance index={0}>
           <View style={{ alignItems: 'center' }}>
             <View style={{ width: 64, height: 64, borderRadius: Radius.glass, backgroundColor: colors.successBg, alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
@@ -277,32 +277,22 @@ export default function CreateDealScreen() {
             </AnimatedButton>
           </View>
         </AnimatedEntrance>
-      </View>
+      </ScreenWrapper>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      {/* Header */}
-      <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <AnimatedButton
-            style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', padding: 0 }}
-            onPress={() => step === 2 ? setStep(1) : router.back()}
-          >
-            <MaterialIcons name="arrow-back" size={18} color={colors.iconDefault} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
-          </AnimatedButton>
-          <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.02, fontSize: 18, color: colors.onSurface }}>
-            {step === 1 ? t('provider.createDeal') : t('provider.reviewAndPublish')}
-          </Text>
-        </View>
-      </GlassHeader>
+    <ScreenWrapper>
+      <HeaderBar
+        title={step === 1 ? t('provider.createDeal') : t('provider.reviewAndPublish')}
+        onBack={() => step === 2 ? setStep(1) : router.back()}
+      />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 16 }}>
+        <ScrollView contentContainerStyle={{ paddingBottom: TAB_BAR_OFFSET, paddingHorizontal: 16 }}>
 
           {/* Progress Stepper */}
           <AnimatedEntrance index={0}>
@@ -321,7 +311,7 @@ export default function CreateDealScreen() {
                     }}>
                       <Text style={{
                         fontWeight: '700', fontSize: 12,
-                        color: step >= s.num ? 'white' : colors.onSurfaceVariant,
+                        color: step >= s.num ? colors.onPrimary : colors.onSurfaceVariant,
                       }}>{s.num}</Text>
                     </View>
                     <Text style={{
@@ -380,8 +370,8 @@ export default function CreateDealScreen() {
                   style={{
                     width: '100%', aspectRatio: imageUri ? undefined : 16 / 9,
                     borderWidth: 2, borderStyle: 'dashed',
-                    borderColor: colors.isDark ? 'rgba(160,141,136,0.3)' : 'rgba(133,115,111,0.3)',
-                    borderRadius: Radius.lg, backgroundColor: colors.isDark ? colors.surfaceContainerLow : '#fff0ed',
+                    borderColor: colors.outlineVariant,
+                    borderRadius: Radius.lg,                     backgroundColor: colors.isDark ? colors.surfaceContainerLow : colors.primaryContainer,
                     alignItems: 'center', justifyContent: 'center', overflow: 'hidden',
                   }}
                   onPress={pickImage}
@@ -641,7 +631,7 @@ export default function CreateDealScreen() {
                   <View style={{ position: 'absolute', bottom: 12, start: 16 }}>
                     {selectedCategoryId && (
                       <View style={{ backgroundColor: colors.primary, alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 4, borderRadius: Radius.full, marginBottom: 4 }}>
-                        <Text style={{ color: 'white', fontFamily: 'Cairo_700Bold', fontSize: 10, textTransform: 'uppercase', letterSpacing: -0.01 }}>
+                        <Text style={{ color: colors.onPrimary, fontFamily: 'Cairo_700Bold', fontSize: 10, textTransform: 'uppercase', letterSpacing: -0.01 }}>
                           {i18n.language === 'ar' ? categories.find(c => c.id === selectedCategoryId)?.name_ar : categories.find(c => c.id === selectedCategoryId)?.name || 'DEAL'}
                         </Text>
                       </View>
@@ -723,6 +713,6 @@ export default function CreateDealScreen() {
           </AnimatedButton>
         </View>
       ) : null}
-    </View>
+    </ScreenWrapper>
   );
 }

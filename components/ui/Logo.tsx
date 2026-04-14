@@ -1,17 +1,20 @@
 import React from 'react';
-import Svg, { Circle, G, Path, Rect, Defs, ClipPath } from 'react-native-svg';
+import Svg, { Circle, G, Path, Rect } from 'react-native-svg';
+import { useTheme } from '../../contexts/theme';
 
 interface LogoProps {
   size?: number;
   color?: string;
 }
 
-export function Logo({ size = 48, color = '#8B0000' }: LogoProps) {
-  const scale = size / 100;
+export function Logo({ size = 48, color = '#862045' }: LogoProps) {
+  const { isDark } = useTheme();
+  const circleFill = isDark ? '#1c1416' : 'white';
+  const circleStroke = isDark ? '#46393b' : '#f0f0f0';
 
   return (
     <Svg width={size} height={size} viewBox="0 0 100 100" fill="none">
-      <Circle cx="50" cy="50" r="48" fill="white" stroke="#f0f0f0" strokeWidth="0.5" />
+      <Circle cx="50" cy="50" r="48" fill={circleFill} stroke={circleStroke} strokeWidth="0.5" />
       <G fill={color}>
         <Path d="M38 22C35.7909 22 34 23.7909 34 26V74C34 76.2091 35.7909 78 38 78H62C64.2091 78 66 76.2091 66 74V26C66 23.7909 64.2091 22 62 22H38ZM37 26H63V71H37V26ZM46 73H54V75H46V73Z" />
         <G transform="rotate(-15, 50, 50)">

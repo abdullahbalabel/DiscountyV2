@@ -13,10 +13,11 @@ import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
 import { BusinessHoursDisplay } from '../../../components/ui/BusinessHoursDisplay';
 import { DealCard } from '../../../components/ui/DealCard';
 import { SocialLinksBar } from '../../../components/ui/SocialLinksBar';
+import { ScreenWrapper } from '../../../components/ui/ScreenWrapper';
 import { fetchProviderById, fetchProviderDeals, fetchProviderReviews } from '../../../lib/api';
 import { getBusinessHoursStatus } from '../../../lib/business-hours';
 import { useSavedDeals } from '../../../contexts/savedDeals';
-import { useThemeColors, Radius } from '../../../hooks/use-theme-colors';
+import { useThemeColors, Radius, TAB_BAR_OFFSET } from '../../../hooks/use-theme-colors';
 import type { Discount, ProviderProfile as ProviderProfileType, Review } from '../../../lib/types';
 
 function timeAgo(date: string, t: (key: string) => string): string {
@@ -55,7 +56,7 @@ function AboutScene({ provider, providerAddress, t, colors }: AboutSceneProps) {
   const businessHours = provider.business_hours as Record<string, unknown> | null;
 
   return (
-    <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 20, paddingBottom: 32 }}>
+    <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 20, paddingBottom: TAB_BAR_OFFSET }}>
       {provider.description && (
         <AnimatedEntrance index={0} delay={50}>
           <View style={{ marginBottom: 24 }}>
@@ -181,7 +182,7 @@ interface DealsSceneProps {
 
 function DealsScene({ deals, provider, savedIds, toggleSave, router, i18nLang, t, colors }: DealsSceneProps) {
   return (
-    <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 20, paddingBottom: 32 }}>
+    <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 20, paddingBottom: TAB_BAR_OFFSET }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
         <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 18, letterSpacing: -0.5, color: colors.onSurface }}>
           {t('provider.myDeals')}
@@ -232,7 +233,7 @@ interface ReviewsSceneProps {
 
 function ReviewsScene({ reviews, t, colors }: ReviewsSceneProps) {
   return (
-    <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 20, paddingBottom: 32 }}>
+    <ScrollView contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 20, paddingBottom: TAB_BAR_OFFSET }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 24 }}>
         <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 18, letterSpacing: -0.5, color: colors.onSurface }}>
           {t('provider.reviewsTab')}
@@ -387,25 +388,25 @@ export default function ProviderProfile() {
   };
 
   if (isLoading) {
-    return <View style={{ flex: 1, backgroundColor: colors.surfaceBg, alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator size="large" color={colors.primary} /></View>;
+    return <ScreenWrapper style={{ alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator size="large" color={colors.primary} /></ScreenWrapper>;
   }
 
   if (!provider) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.surfaceBg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
+      <ScreenWrapper style={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
         <MaterialIcons name="store" size={48} color={colors.iconDefault} />
         <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 20, color: colors.onSurface, marginTop: 16 }}>{t('customer.providerNotFound')}</Text>
         <AnimatedButton style={{ marginTop: 24, paddingHorizontal: 24, paddingVertical: 12, backgroundColor: colors.primary, borderRadius: 8 }} onPress={() => router.back()}>
-          <Text style={{ color: '#fff', fontWeight: '700' }}>{t('customer.goBack')}</Text>
+          <Text style={{ color: colors.onPrimary, fontWeight: '700' }}>{t('customer.goBack')}</Text>
         </AnimatedButton>
-      </View>
+      </ScreenWrapper>
     );
   }
 
   const businessStatus = getBusinessHoursStatus(provider.business_hours as Record<string, unknown> | null, t);
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
+    <ScreenWrapper>
       {/* Top bar */}
       <View style={{ width: '100%', paddingHorizontal: 24, paddingTop: 44, paddingBottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
@@ -439,7 +440,7 @@ export default function ProviderProfile() {
         <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 16, letterSpacing: -0.5, color: colors.onSurface, marginBottom: 4, textAlign: 'center' }}>{provider.business_name}</Text>
         {provider.profile_badge && (
           <View style={{ backgroundColor: colors.primary, paddingHorizontal: 12, paddingVertical: 2, borderRadius: Radius?.full || 20, marginBottom: 6 }}>
-            <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 10, color: 'white' }}>
+            <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 10, color: colors.onPrimary }}>
               {i18n.language === 'ar' ? (provider.profile_badge_ar || provider.profile_badge) : provider.profile_badge}
             </Text>
           </View>
@@ -489,6 +490,6 @@ export default function ProviderProfile() {
           renderTabBar={renderTabBar}
         />
       </View>
-    </View>
+    </ScreenWrapper>
   );
 }

@@ -6,12 +6,13 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
-import { GlassHeader } from '../../components/ui/GlassHeader';
+import { HeaderBar } from '../../components/ui/HeaderBar';
+import { ScreenWrapper } from '../../components/ui/ScreenWrapper';
 import { CircularProgress } from '../../components/ui/CircularProgress';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { useNotifications } from '../../contexts/notifications';
 import { fetchCustomerStats, fetchMyRedemptions, getActiveSlotCount } from '../../lib/api';
-import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
+import { useThemeColors, Radius, TAB_BAR_OFFSET } from '../../hooks/use-theme-colors';
 import { useOfflineWallet } from '../../hooks/use-offline-wallet';
 import type { Redemption } from '../../lib/types';
 
@@ -66,23 +67,14 @@ export default function DashboardScreen() {
   });
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface, flexShrink: 1 }}>{t('customer.myDeals')}</Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }} onPress={() => router.push('/(customer)/history')}>
-            <MaterialIcons name="history" size={18} color={colors.iconDefault} />
-          </AnimatedButton>
-          <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', position: 'relative' }} onPress={() => router.push('/(customer)/notifications' as any)}>
-            <MaterialIcons name="notifications" size={18} color={colors.iconDefault} />
-            {unreadCount > 0 && (
-              <View style={{ position: 'absolute', top: -2, right: -2, width: 16, height: 16, borderRadius: 8, backgroundColor: colors.error, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ color: '#fff', fontSize: 9, fontWeight: '700' }}>{unreadCount > 9 ? '9+' : unreadCount}</Text>
-              </View>
-            )}
-          </AnimatedButton>
-        </View>
-      </GlassHeader>
+    <ScreenWrapper>
+      <HeaderBar
+        title={t('customer.myDeals')}
+        rightActions={[
+          { icon: 'history', onPress: () => router.push('/(customer)/history') },
+          { icon: 'notifications', onPress: () => router.push('/(customer)/notifications' as any), badge: unreadCount },
+        ]}
+      />
 
       {/* Wallet Badge */}
       <View style={{ paddingHorizontal: 16, paddingBottom: 4 }}>
@@ -109,14 +101,14 @@ export default function DashboardScreen() {
         </View>
       </View>
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 12 }}
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: TAB_BAR_OFFSET }}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={colors.primary} colors={[colors.primary]} />}
       >
         <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
           <AnimatedEntrance index={0} delay={100}>
             <View style={{ backgroundColor: colors.primary, padding: 16, borderRadius: Radius.md, marginBottom: 16, marginTop: 8 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <Text style={{ color: '#fff', fontFamily: 'Cairo_700Bold', fontSize: 14 }}>{t('customer.dealSlots')}</Text>
+                <Text style={{ color: colors.onPrimary, fontFamily: 'Cairo_700Bold', fontSize: 14 }}>{t('customer.dealSlots')}</Text>
                 <MaterialIcons name="confirmation-number" size={18} color="#FFD700" />
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 }}>
@@ -125,11 +117,11 @@ export default function DashboardScreen() {
                     <View style={{
                       width: 40, height: 40, borderRadius: Radius.md, alignItems: 'center', justifyContent: 'center', marginBottom: 4,
                       backgroundColor: i < slotCount ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.1)',
-                      borderWidth: i < slotCount ? 2 : 1, borderColor: i < slotCount ? '#fff' : 'rgba(255,255,255,0.2)',
+                      borderWidth: i < slotCount ? 2 : 1, borderColor: i < slotCount ? colors.onPrimary : 'rgba(255,255,255,0.2)',
                     }}>
-                      <MaterialIcons name={i < slotCount ? 'confirmation-number' : 'add'} size={16} color={i < slotCount ? 'white' : 'rgba(255,255,255,0.4)'} />
+                      <MaterialIcons name={i < slotCount ? 'confirmation-number' : 'add'} size={16} color={i < slotCount ? colors.onPrimary : 'rgba(255,255,255,0.4)'} />
                     </View>
-                    <Text style={{ fontSize: 9, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, color: i < slotCount ? '#fff' : 'rgba(255,255,255,0.4)' }}>
+                      <Text style={{ fontSize: 9, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, color: i < slotCount ? colors.onPrimary : 'rgba(255,255,255,0.4)' }}>
                       {t('customer.slot')} {i + 1}
                     </Text>
                   </View>
@@ -225,7 +217,7 @@ export default function DashboardScreen() {
                       </Text>
                       </View>
                       {isActive ? (
-                        <CircularProgress size={44} strokeWidth={3} progress={progress} daysLeft={daysLeft} isDark={colors.isDark} />
+                        <CircularProgress size={44} strokeWidth={3} progress={progress} daysLeft={daysLeft} />
                       ) : (
                         <View style={{ paddingHorizontal: 10, paddingVertical: 6, borderRadius: Radius.sm, backgroundColor: colors.warningBg, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                           <MaterialIcons name="star" size={12} color={colors.warning} />
@@ -251,6 +243,6 @@ export default function DashboardScreen() {
           )}
         </View>
       </ScrollView>
-    </View>
+    </ScreenWrapper>
   );
 }

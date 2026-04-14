@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import {
   ActivityIndicator,
   Alert,
-  I18nManager,
   ScrollView,
   Text,
   TextInput,
@@ -12,8 +11,9 @@ import {
   View,
 } from 'react-native';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
-import { GlassHeader } from '../../components/ui/GlassHeader';
-import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
+import { HeaderBar } from '../../components/ui/HeaderBar';
+import { ScreenWrapper } from '../../components/ui/ScreenWrapper';
+import { useThemeColors, Radius, TAB_BAR_OFFSET } from '../../hooks/use-theme-colors';
 import { useRouter } from 'expo-router';
 import { broadcastPushToCustomers, checkProviderPushLimit } from '../../lib/api';
 import type { PushLimitCheck } from '../../lib/api';
@@ -75,23 +75,13 @@ export default function BroadcastPushScreen() {
   const isLimitReached = pushLimit && !pushLimit.allowed && !isLocked;
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      {/* Header */}
-      <GlassHeader
-        style={{
-          width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8,
-          flexDirection: 'row', alignItems: 'center',
-        }}
-      >
-        <TouchableOpacity onPress={() => router.back()} style={{ marginEnd: 12 }}>
-          <MaterialIcons name={I18nManager.isRTL ? 'chevron-right' : 'chevron-left'} size={24} color={colors.onSurface} />
-        </TouchableOpacity>
-        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>
-          {t('provider.sendPush')}
-        </Text>
-      </GlassHeader>
+    <ScreenWrapper>
+      <HeaderBar
+        title={t('provider.sendPush')}
+        onBack={() => router.back()}
+      />
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 40 }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: TAB_BAR_OFFSET }}>
         <View style={{ paddingHorizontal: 16, gap: 20, paddingTop: 8 }}>
           {/* Push Counter */}
           {loadingLimit ? (
@@ -265,6 +255,6 @@ export default function BroadcastPushScreen() {
           )}
         </View>
       </ScrollView>
-    </View>
+    </ScreenWrapper>
   );
 }

@@ -1,6 +1,8 @@
 import React from 'react';
 import { BlurView } from 'expo-blur';
-import { Platform, StyleSheet, View, ViewProps, useColorScheme } from 'react-native';
+import { Platform, StyleSheet, View, ViewProps } from 'react-native';
+import { useTheme } from '../../contexts/theme';
+import { FunPatternBackground } from './FunPatternBackground';
 
 interface GlassHeaderProps extends ViewProps {
   children: React.ReactNode;
@@ -13,8 +15,7 @@ export function GlassHeader({
   style,
   ...props
 }: GlassHeaderProps) {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const { isDark } = useTheme();
 
   const backgroundColor = isDark
     ? 'rgba(26, 17, 15, 0.72)'
@@ -39,11 +40,33 @@ export function GlassHeader({
         ]}
         {...props}
       >
+        <FunPatternBackground />
         {children}
       </View>
     );
   }
 
+  // Android: BlurView has limited support — use solid View instead.
+  if (Platform.OS === 'android') {
+    const solidBg = isDark ? 'rgba(26, 17, 15, 0.95)' : 'rgba(255, 248, 246, 0.95)';
+    return (
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: solidBg,
+            borderBottomColor: borderColor,
+          },
+          style,
+        ]}
+        {...props}
+      >
+        {children}
+      </View>
+    );
+  }
+
+  // iOS: BlurView works well
   return (
     <BlurView
       intensity={intensity}
@@ -55,6 +78,7 @@ export function GlassHeader({
       ]}
       {...props}
     >
+      <FunPatternBackground />
       {children}
     </BlurView>
   );

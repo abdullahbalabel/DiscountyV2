@@ -1,21 +1,20 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Appearance, I18nManager, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
-import { GlassHeader } from '../../components/ui/GlassHeader';
+import { HeaderBar } from '../../components/ui/HeaderBar';
+import { ScreenWrapper } from '../../components/ui/ScreenWrapper';
 import { setupRtl, reloadForRtl, saveLanguage } from '../../i18n';
-import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
+import { useThemeColors, Radius, TAB_BAR_OFFSET } from '../../hooks/use-theme-colors';
+import { useTheme } from '../../contexts/theme';
 import { useRouter } from 'expo-router';
 
 export default function SettingsScreen() {
   const { t, i18n } = useTranslation();
   const colors = useThemeColors();
+  const { toggleTheme } = useTheme();
   const router = useRouter();
-
-  const toggleTheme = () => {
-    Appearance.setColorScheme(colors.isDark ? 'light' : 'dark');
-  };
 
   const toggleLanguage = async () => {
     const newLang = i18n.language?.startsWith('ar') ? 'en' : 'ar';
@@ -45,23 +44,13 @@ export default function SettingsScreen() {
   ];
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      {/* Header */}
-      <GlassHeader
-        style={{
-          width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8,
-          flexDirection: 'row', alignItems: 'center',
-        }}
-      >
-        <TouchableOpacity onPress={() => router.back()} style={{ marginEnd: 12 }}>
-          <MaterialIcons name={I18nManager.isRTL ? 'chevron-right' : 'chevron-left'} size={24} color={colors.onSurface} />
-        </TouchableOpacity>
-        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>
-          {t('provider.settingsTitle')}
-        </Text>
-      </GlassHeader>
+    <ScreenWrapper>
+      <HeaderBar
+        title={t('provider.settingsTitle')}
+        onBack={() => router.back()}
+      />
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 40 }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: TAB_BAR_OFFSET }}>
         <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
           <AnimatedEntrance index={0} delay={50}>
             <Text style={{
@@ -102,6 +91,6 @@ export default function SettingsScreen() {
           </AnimatedEntrance>
         </View>
       </ScrollView>
-    </View>
+    </ScreenWrapper>
   );
 }

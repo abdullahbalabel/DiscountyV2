@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, ScrollView, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
-import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
+import { ScreenWrapper } from '../../components/ui/ScreenWrapper';
+import { useThemeColors, Radius, TAB_BAR_OFFSET } from '../../hooks/use-theme-colors';
 import { updatePrivacySettings, requestDataExport, requestAccountDeletion, fetchDataRequests, fetchOwnCustomerProfile } from '../../lib/api';
 import type { CustomerProfile, DataRequest } from '../../lib/types';
 
@@ -199,15 +200,15 @@ export default function PrivacyDataScreen() {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.surfaceBg, alignItems: 'center', justifyContent: 'center' }}>
+      <ScreenWrapper style={{ alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+      </ScreenWrapper>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 100 }}>
+    <ScreenWrapper>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: TAB_BAR_OFFSET }}>
         <View style={{ paddingHorizontal: 16, gap: 16, paddingTop: 56 }}>
           {/* Header */}
           <AnimatedEntrance index={0} delay={50}>
@@ -381,6 +382,6 @@ export default function PrivacyDataScreen() {
           ), 4)}
         </View>
       </ScrollView>
-    </View>
+    </ScreenWrapper>
   );
 }

@@ -6,21 +6,22 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
-import { GlassHeader } from '../../components/ui/GlassHeader';
+import { HeaderBar } from '../../components/ui/HeaderBar';
+import { ScreenWrapper } from '../../components/ui/ScreenWrapper';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { fetchMyRedemptions } from '../../lib/api';
-import { useThemeColors, Radius, Shadows } from '../../hooks/use-theme-colors';
+import { useThemeColors, Radius, Shadows, TAB_BAR_OFFSET } from '../../hooks/use-theme-colors';
 import type { Redemption } from '../../lib/types';
 
 function formatDate(date: string, locale: string = 'en-US'): string {
   return new Date(date).toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-function StarRating({ rating, size = 12 }: { rating: number; size?: number }) {
+function StarRating({ rating, size = 12, colors }: { rating: number; size?: number; colors: any }) {
   return (
     <View style={{ flexDirection: 'row', gap: 2 }}>
       {[1, 2, 3, 4, 5].map(i => (
-        <MaterialIcons key={i} name="star" size={size} color={i <= rating ? '#f59e0b' : '#e5e7eb'} />
+        <MaterialIcons key={i} name="star" size={size} color={i <= rating ? colors.warning : colors.surfaceContainerHigh} />
       ))}
     </View>
   );
@@ -62,10 +63,8 @@ export default function HistoryScreen() {
   const filteredDeals = filter === 'all' ? completedDeals : filter === 'reviewed' ? reviewedDeals : expiredDeals;
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('customer.history')}</Text>
-      </GlassHeader>
+    <ScreenWrapper>
+      <HeaderBar title={t('customer.history')} />
 
       <View style={{ paddingHorizontal: 16, paddingTop: 8, flexDirection: 'row', gap: 8, marginBottom: 8 }}>
         {(['all', 'reviewed', 'expired'] as const).map(f => (
@@ -81,7 +80,7 @@ export default function HistoryScreen() {
           >
             <Text style={{
               fontSize: 12, fontFamily: 'Cairo_700Bold', textTransform: 'capitalize',
-              color: filter === f ? '#fff' : colors.onSurfaceVariant,
+              color: filter === f ? colors.onPrimary : colors.onSurfaceVariant,
             }}>
               {f === 'all' ? t('customer.all') : f === 'reviewed' ? t('customer.reviewed') : t('deal.expired')}
             </Text>
@@ -89,7 +88,7 @@ export default function HistoryScreen() {
         ))}
       </View>
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 24, paddingHorizontal: 16 }}
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: TAB_BAR_OFFSET, paddingHorizontal: 16 }}
         refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={colors.primary} colors={[colors.primary]} />}
       >
         {isLoading ? (
@@ -139,12 +138,12 @@ export default function HistoryScreen() {
                       </View>
                       <View style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
                         {isExpired ? (
-                          <View style={{ paddingHorizontal: 8, paddingVertical: 4, borderRadius: Radius.sm, backgroundColor: colors.isDark ? 'rgba(156,163,175,0.2)' : '#f3f4f6' }}>
+                          <View style={{ paddingHorizontal: 8, paddingVertical: 4, borderRadius: Radius.sm, backgroundColor: colors.surfaceContainer }}>
                             <Text style={{ fontSize: 9, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1, color: colors.onSurfaceVariant }}>{t('deal.expired')}</Text>
                           </View>
                         ) : review ? (
                           <View style={{ alignItems: 'flex-end' }}>
-                            <StarRating rating={review.rating} size={10} />
+                            <StarRating rating={review.rating} size={10} colors={colors} />
                             <Text style={{ fontSize: 9, color: colors.onSurfaceVariant, marginTop: 2 }}>{dateStr}</Text>
                           </View>
                         ) : null}
@@ -178,6 +177,6 @@ export default function HistoryScreen() {
           </View>
         )}
       </ScrollView>
-    </View>
+    </ScreenWrapper>
   );
 }

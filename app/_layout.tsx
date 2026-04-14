@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import { useColorScheme, ActivityIndicator, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AuthProvider, useAuth } from '../contexts/auth';
+import { ThemeProvider as AppThemeProvider } from '../contexts/theme';
 import { SavedDealsProvider } from '../contexts/savedDeals';
 import { NotificationsProvider } from '../contexts/notifications';
 import {
@@ -79,15 +80,17 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider value={DefaultTheme}>
-        <AuthProvider>
-          <NotificationsProvider>
-            <SavedDealsProvider>
-              <AppContent />
-            </SavedDealsProvider>
-          </NotificationsProvider>
-        </AuthProvider>
-      </ThemeProvider>
+      <AppThemeProvider>
+        <ThemeProvider value={DefaultTheme}>
+          <AuthProvider>
+            <NotificationsProvider>
+              <SavedDealsProvider>
+                <AppContent />
+              </SavedDealsProvider>
+            </NotificationsProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </AppThemeProvider>
     </GestureHandlerRootView>
   );
 }

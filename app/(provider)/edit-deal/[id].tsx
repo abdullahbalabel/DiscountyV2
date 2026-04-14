@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
 import { ConditionPicker } from '../../../components/ui/ConditionPicker';
+import { ScreenWrapper } from '../../../components/ui/ScreenWrapper';
 import type { DealRedemptionStats } from '../../../lib/api';
 import {
   activateDeal,
@@ -29,7 +30,7 @@ import {
   uploadDealImage,
   getProviderPlanFeatures,
 } from '../../../lib/api';
-import { useThemeColors, Radius } from '../../../hooks/use-theme-colors';
+import { useThemeColors, Radius, TAB_BAR_OFFSET } from '../../../hooks/use-theme-colors';
 import type { Category, Discount, DiscountType, PlanFeatures } from '../../../lib/types';
 
 export default function EditDealScreen() {
@@ -219,17 +220,17 @@ export default function EditDealScreen() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.surfaceBg, alignItems: 'center', justifyContent: 'center' }}>
+      <ScreenWrapper style={{ alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" color={colors.primary} />
         <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', marginTop: 16 }}>{t('provider.loadingDeal')}</Text>
-      </View>
+      </ScreenWrapper>
     );
   }
 
   const displayImageUri = newImageUri || imageUrl;
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
+    <ScreenWrapper>
       {/* Header */}
       <View style={{ width: '100%', paddingHorizontal: 24, paddingTop: 56, paddingBottom: 16, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surfaceBg }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
@@ -244,11 +245,11 @@ export default function EditDealScreen() {
               {t('provider.editDeal')}
             </Text>
             {deal && (
-              <View style={{ alignSelf: 'flex-start', paddingHorizontal: 8, paddingTop: 2, paddingBottom: 2, borderRadius: 9999, marginTop: 2, backgroundColor: deal.status === 'active' ? 'rgba(16,185,129,0.1)' :
-                  deal.status === 'paused' ? 'rgba(245,158,11,0.1)' : isDark ? '#534340' : '#f5ddd9'
+              <View style={{ alignSelf: 'flex-start', paddingHorizontal: 8, paddingTop: 2, paddingBottom: 2, borderRadius: 9999, marginTop: 2, backgroundColor: deal.status === 'active' ? colors.successBg :
+                  deal.status === 'paused' ? colors.warningBg : colors.brownBg
                 }}>
-                <Text style={{ fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.05, color: deal.status === 'active' ? '#16a34a' :
-                    deal.status === 'paused' ? '#d97706' : isDark ? '#d8c2bd' : '#564340'
+                <Text style={{ fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.05, color: deal.status === 'active' ? colors.success :
+                    deal.status === 'paused' ? colors.warningText : colors.brown
                   }}>{deal.status}</Text>
               </View>
             )}
@@ -258,11 +259,11 @@ export default function EditDealScreen() {
         {/* Pause/Activate toggle */}
         {deal && (
           <AnimatedButton
-            style={{ paddingHorizontal: 16, paddingVertical: 8, borderRadius: 9999, backgroundColor: deal.status === 'active' ? 'rgba(245,158,11,0.1)' : 'rgba(16,185,129,0.1)'
+            style={{ paddingHorizontal: 16, paddingVertical: 8, borderRadius: 9999, backgroundColor: deal.status === 'active' ? colors.warningBg : colors.successBg
               }}
             onPress={handleTogglePause}
           >
-            <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 12, textTransform: 'uppercase', color: deal.status === 'active' ? '#d97706' : '#16a34a'
+            <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 12, textTransform: 'uppercase', color: deal.status === 'active' ? colors.warningText : colors.success
               }}>
               {deal.status === 'active' ? t('provider.pauseDeal') : t('provider.activateDeal')}
             </Text>
@@ -274,7 +275,7 @@ export default function EditDealScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 24 }}>
+        <ScrollView contentContainerStyle={{ paddingBottom: TAB_BAR_OFFSET, paddingHorizontal: 24 }}>
 
           {/* Redemption Stats */}
           {redemptionStats && (
@@ -301,7 +302,7 @@ export default function EditDealScreen() {
           <AnimatedEntrance index={1}>
             <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 18, color: colors.onSurface, marginStart: 4, marginBottom: 8 }}>{t('provider.coverImage')}</Text>
             <AnimatedButton
-              style={{ width: '100%', borderWidth: 2, borderStyle: 'dashed', borderColor: colors.isDark ? 'rgba(160,141,136,0.3)' : 'rgba(133,115,111,0.3)', borderRadius: Radius.lg, backgroundColor: colors.isDark ? colors.surfaceContainerLow : '#fff0ed', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginBottom: 24 }}
+              style={{ width: '100%', borderWidth: 2, borderStyle: 'dashed', borderColor: colors.outlineVariant, borderRadius: Radius.lg,               backgroundColor: colors.isDark ? colors.surfaceContainerLow : colors.primaryContainer, alignItems: 'center', justifyContent: 'center', overflow: 'hidden', marginBottom: 24 }}
               onPress={pickImage}
             >
               {displayImageUri ? (
@@ -328,7 +329,7 @@ export default function EditDealScreen() {
               <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: colors.onSurfaceVariant, marginStart: 4, marginBottom: 8 }}>{t('provider.dealTitle')}</Text>
               <TextInput
                 style={{ width: '100%', paddingHorizontal: 24, paddingVertical: 16, borderRadius: Radius.lg, backgroundColor: colors.surfaceContainerLowest, color: colors.onSurface, fontWeight: '500', borderWidth: 1, borderColor: colors.outlineVariant }}
-                placeholderTextColor="#85736f"
+                placeholderTextColor={colors.iconDefault}
                 value={title}
                 onChangeText={setTitle}
               />
@@ -339,7 +340,7 @@ export default function EditDealScreen() {
               <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.05, color: colors.onSurfaceVariant, marginStart: 4, marginBottom: 8 }}>{t('provider.description')}</Text>
               <TextInput
                 style={{ width: '100%', paddingHorizontal: 24, paddingVertical: 16, borderRadius: Radius.lg, backgroundColor: colors.surfaceContainerLowest, color: colors.onSurface, fontWeight: '500', height: 96, borderWidth: 1, borderColor: colors.outlineVariant }}
-                placeholderTextColor="#85736f"
+                placeholderTextColor={colors.iconDefault}
                 placeholder={t('provider.describeDealPlaceholder')}
                 multiline
                 textAlignVertical="top"
@@ -391,7 +392,7 @@ export default function EditDealScreen() {
                     keyboardType="numeric"
                     value={discountValue}
                     onChangeText={setDiscountValue}
-                    placeholderTextColor="#85736f"
+                    placeholderTextColor={colors.iconDefault}
                   />
                   <Text style={{ position: 'absolute', end: 24, fontWeight: '700', color: colors.primary }}>
                     {discountType === 'percentage' ? '%' : '$'}
@@ -405,7 +406,7 @@ export default function EditDealScreen() {
                   value={endDate}
                   onChangeText={setEndDate}
                   placeholder="YYYY-MM-DD"
-                  placeholderTextColor="#85736f"
+                  placeholderTextColor={colors.iconDefault}
                 />
               </View>
             </View>
@@ -418,7 +419,7 @@ export default function EditDealScreen() {
                 keyboardType="number-pad"
                 value={maxRedemptions}
                 onChangeText={setMaxRedemptions}
-                placeholderTextColor="#85736f"
+                placeholderTextColor={colors.iconDefault}
               />
             </View>
 
@@ -504,14 +505,14 @@ export default function EditDealScreen() {
                 style={{ width: '100%', backgroundColor: colors.surfaceContainerHigh, paddingVertical: 16, borderRadius: Radius.full, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}
                 onPress={handleDelete}
               >
-                <MaterialIcons name="delete" size={20} color="#ba1a1a" />
-                <Text style={{ color: '#ba1a1a', fontWeight: '700', fontSize: 18 }}>{t('provider.deleteDeal')}</Text>
+                <MaterialIcons name="delete" size={20} color={colors.error} />
+                <Text style={{ color: colors.error, fontWeight: '700', fontSize: 18 }}>{t('provider.deleteDeal')}</Text>
               </AnimatedButton>
             </View>
           </AnimatedEntrance>
 
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </ScreenWrapper>
   );
 }

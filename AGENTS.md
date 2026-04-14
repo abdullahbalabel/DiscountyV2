@@ -1,5 +1,9 @@
 # AGENTS.md
 
+## Communication Style
+
+Always load `caveman` skill at session start. Use **ultra** mode every response. No filler, no pleasantries. Technical substance only. Code blocks unchanged. Drop articles, abbreviate (DB/auth/config/req/res/fn), arrows for causality (X → Y). Only revert to normal mode if user says "stop caveman" or "normal mode".
+
 ## Repository structure
 
 Two independent apps sharing a Supabase backend — **not** a monorepo with shared packages.

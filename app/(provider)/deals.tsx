@@ -17,7 +17,8 @@ import {
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { EmptyState } from '../../components/ui/EmptyState';
-import { GlassHeader } from '../../components/ui/GlassHeader';
+import { HeaderBar } from '../../components/ui/HeaderBar';
+import { ScreenWrapper } from '../../components/ui/ScreenWrapper';
 import {
   activateDeal,
   deleteDeal,
@@ -28,7 +29,7 @@ import {
 } from '../../lib/api';
 import { resolveMaterialIcon } from '../../lib/iconMapping';
 import type { Discount, DealLimitCheck } from '../../lib/types';
-import { useThemeColors, Radius, Shadows } from '../../hooks/use-theme-colors';
+import { useThemeColors, Radius, Shadows, TAB_BAR_OFFSET } from '../../hooks/use-theme-colors';
 
 type FilterTab = 'all' | 'active' | 'paused' | 'draft' | 'expired';
 type SortOption = 'newest' | 'oldest' | 'mostRedemptions' | 'mostViews' | 'expiringSoon';
@@ -283,14 +284,14 @@ export default function ProviderDealsScreen() {
               <View style={styles.cardThumb}>
                 <Image source={{ uri: item.image_url }} style={styles.cardThumbImg} contentFit="cover" />
                 <View style={[styles.discountBadge, { backgroundColor: colors.primary }]}>
-                  <Text style={styles.discountBadgeText}>
+                  <Text style={[styles.discountBadgeText, { color: colors.onPrimary }]}>
                     {item.type === 'percentage' ? `-${item.discount_value}%` : `$${item.discount_value}`}
                   </Text>
                 </View>
                 {item.is_featured && (
                   <View style={{ position: 'absolute', bottom: 4, end: 4, backgroundColor: 'rgba(255,215,0,0.9)', borderRadius: Radius.sm, paddingHorizontal: 4, paddingVertical: 2, flexDirection: 'row', alignItems: 'center', gap: 2 }}>
-                    <MaterialIcons name="star" size={10} color="#862045" />
-                    <Text style={{ fontSize: 8, fontWeight: '700', color: '#862045' }}>{t('provider.featuredToggle')}</Text>
+                    <MaterialIcons name="star" size={10} color={colors.primary} />
+                    <Text style={{ fontSize: 8, fontWeight: '700', color: colors.primary }}>{t('provider.featuredToggle')}</Text>
                   </View>
                 )}
               </View>
@@ -301,7 +302,7 @@ export default function ProviderDealsScreen() {
                 </Text>
                 {item.is_featured && (
                   <View style={{ position: 'absolute', bottom: 4, end: 4, backgroundColor: 'rgba(255,215,0,0.9)', borderRadius: Radius.sm, paddingHorizontal: 4, paddingVertical: 2, flexDirection: 'row', alignItems: 'center', gap: 2 }}>
-                    <MaterialIcons name="star" size={10} color="#862045" />
+                    <MaterialIcons name="star" size={10} color={colors.primary} />
                   </View>
                 )}
               </View>
@@ -412,41 +413,30 @@ export default function ProviderDealsScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.surfaceBg }]}>
-      {/* Header */}
-      <GlassHeader style={styles.header}>
-        <View style={styles.headerTop}>
-          <Text style={[styles.headerTitle, { color: colors.onSurface }]}>
-            {t('provider.myDeals')}
-          </Text>
-          <View style={styles.headerActions}>
-            <TouchableOpacity
-              style={[styles.iconButton, { backgroundColor: showSearch ? colors.primary : colors.surfaceContainerLowest, borderColor: colors.outlineVariant }]}
-              onPress={() => setShowSearch(!showSearch)}
-            >
-              <MaterialIcons name="search" size={18} color={showSearch ? 'white' : colors.onSurfaceVariant} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.iconButton, { backgroundColor: showSortPicker ? colors.primary : colors.surfaceContainerLowest, borderColor: colors.outlineVariant }]}
-              onPress={() => setShowSortPicker(!showSortPicker)}
-            >
-              <MaterialIcons name="sort" size={18} color={showSortPicker ? 'white' : colors.onSurfaceVariant} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.iconButton, { backgroundColor: (dealLimit && !dealLimit.allowed) ? colors.surfaceContainerHigh : colors.primary, borderColor: 'transparent' }]}
-              onPress={() => {
-                if (dealLimit && !dealLimit.allowed) {
-                  router.push('/(provider)/subscription');
-                } else {
-                  router.push('/(provider)/create-deal');
-                }
-              }}
-            >
-              <MaterialIcons name="add" size={18} color={(dealLimit && !dealLimit.allowed) ? colors.onSurfaceVariant : 'white'} />
-            </TouchableOpacity>
-          </View>
-        </View>
-
+    <ScreenWrapper style={styles.container}>
+      <HeaderBar
+        title={t('provider.myDeals')}
+        rightActions={[
+          {
+            icon: 'search',
+            onPress: () => setShowSearch(!showSearch),
+          },
+          {
+            icon: 'sort',
+            onPress: () => setShowSortPicker(!showSortPicker),
+          },
+          {
+            icon: 'add',
+            onPress: () => {
+              if (dealLimit && !dealLimit.allowed) {
+                router.push('/(provider)/subscription');
+              } else {
+                router.push('/(provider)/create-deal');
+              }
+            },
+          },
+        ]}
+      >
         {/* Search Bar */}
         {showSearch && (
           <Animated.View entering={FadeInDown.duration(200)} style={[styles.searchBar, { backgroundColor: colors.surfaceContainerLowest, borderColor: colors.outlineVariant }]}>
@@ -497,7 +487,7 @@ export default function ProviderDealsScreen() {
               <Text
                 style={[
                   styles.filterTabText,
-                  { color: activeFilter === f.key ? 'white' : colors.onSurfaceVariant },
+                  { color: activeFilter === f.key ? colors.onPrimary : colors.onSurfaceVariant },
                 ]}
               >
                 {f.label}
@@ -514,7 +504,7 @@ export default function ProviderDealsScreen() {
                   <Text
                     style={[
                       styles.filterCountText,
-                      { color: activeFilter === f.key ? 'white' : colors.onSurfaceVariant },
+                      { color: activeFilter === f.key ? colors.onPrimary : colors.onSurfaceVariant },
                     ]}
                   >
                     {f.count}
@@ -549,7 +539,7 @@ export default function ProviderDealsScreen() {
             </View>
           </View>
         )}
-      </GlassHeader>
+      </HeaderBar>
 
       {/* Content */}
       {loading ? (
@@ -567,8 +557,8 @@ export default function ProviderDealsScreen() {
             style={[styles.retryButton, { backgroundColor: colors.primary }]}
             onPress={loadDeals}
           >
-            <MaterialIcons name="refresh" size={16} color="white" />
-            <Text style={styles.retryText}>{t('provider.retry')}</Text>
+            <MaterialIcons name="refresh" size={16} color={colors.onPrimary} />
+            <Text style={[styles.retryText, { color: colors.onPrimary }]}>{t('provider.retry')}</Text>
           </TouchableOpacity>
         </View>
       ) : (
@@ -601,7 +591,7 @@ export default function ProviderDealsScreen() {
           }
         />
       )}
-    </View>
+    </ScreenWrapper>
   );
 }
 
@@ -686,7 +676,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 16,
-    paddingBottom: 24,
+    paddingBottom: TAB_BAR_OFFSET,
     paddingTop: 4,
   },
   dealCard: {

@@ -5,16 +5,18 @@ import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { useThemeColors } from '@/hooks/use-theme-colors';
 
 export default function NotFoundScreen() {
   const { t } = useTranslation();
+  const colors = useThemeColors();
 
   return (
     <>
       <Stack.Screen options={{ title: t('notFound.title') }} />
       <ThemedView style={styles.container}>
         <View style={styles.iconContainer}>
-          <MaterialIcons name="error-outline" size={64} color="#85736f" />
+          <MaterialIcons name="error-outline" size={64} color={colors.tabBarInactive} />
         </View>
         <ThemedText type="title">{t('notFound.pageTitle')}</ThemedText>
         <ThemedText style={styles.description}>

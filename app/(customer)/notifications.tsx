@@ -13,12 +13,11 @@ import {
   View,
 } from 'react-native';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
+import { ScreenWrapper } from '../../components/ui/ScreenWrapper';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { GlassHeader } from '../../components/ui/GlassHeader';
 import { useNotifications } from '../../contexts/notifications';
-import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
-import { createNotification, sendLocalNotification } from '../../lib/notifications';
-import { useAuth } from '../../contexts/auth';
+import { useThemeColors, Radius, TAB_BAR_OFFSET } from '../../hooks/use-theme-colors';
 import type { NotificationType } from '../../lib/notifications';
 
 function getNotificationIcon(type: NotificationType): string {
@@ -63,7 +62,7 @@ function getNotificationColor(type: NotificationType, colors: any): string {
     case 'report_dismissed':
       return colors.iconDefault;
     case 'deal_hidden':
-      return '#ef4444';
+      return colors.error;
     default:
       return colors.iconDefault;
   }
@@ -85,34 +84,8 @@ export default function NotificationsScreen() {
   const colors = useThemeColors();
   const router = useRouter();
   const { t } = useTranslation();
-  const { session } = useAuth();
   const { notifications, unreadCount, isLoading, refreshNotifications, markAsRead, markAllAsRead, deleteAll } =
     useNotifications();
-
-  const handleTestNotification = useCallback(async () => {
-    if (!session?.user?.id) return;
-    try {
-      const types: NotificationType[] = ['deal_redeemed', 'new_deal', 'account_activity'];
-      const type = types[Math.floor(Math.random() * types.length)];
-      const titles: Record<string, string> = {
-        deal_redeemed: 'Deal Redeemed!',
-        new_deal: 'New Deal Available!',
-        account_activity: 'Account Activity',
-      };
-      const bodies: Record<string, string> = {
-        deal_redeemed: 'Your deal "Summer Special" from Coffee Corner has been redeemed.',
-        new_deal: 'Coffee Corner just posted "50% Off Latte". Check it out!',
-        account_activity: 'Your profile was updated successfully.',
-      };
-      // Save to database
-      await createNotification(session.user.id, type, titles[type], bodies[type], { type });
-      // Show native notification on phone
-      await sendLocalNotification(titles[type], bodies[type], { type });
-      await refreshNotifications();
-    } catch (err: any) {
-      Alert.alert('Error', err.message);
-    }
-  }, [session, refreshNotifications]);
 
   const handleRefresh = useCallback(async () => {
     await refreshNotifications();
@@ -136,7 +109,7 @@ export default function NotificationsScreen() {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
+    <ScreenWrapper>
       {/* Header */}
       <GlassHeader
         style={{
@@ -177,7 +150,7 @@ export default function NotificationsScreen() {
                 paddingHorizontal: 6,
               }}
             >
-              <Text style={{ color: '#fff', fontSize: 11, fontWeight: '700' }}>
+              <Text style={{ color: colors.onPrimary, fontSize: 11, fontWeight: '700' }}>
                 {unreadCount > 99 ? '99+' : unreadCount}
               </Text>
             </View>
@@ -213,7 +186,7 @@ export default function NotificationsScreen() {
             >
               <Text
                 style={{
-                  color: '#E53935',
+                  color: colors.error,
                   fontFamily: 'Cairo',
                   fontWeight: '600',
                   fontSize: 13,
@@ -223,33 +196,11 @@ export default function NotificationsScreen() {
               </Text>
             </TouchableOpacity>
           )}
-          {unreadCount === 0 && (
-            <TouchableOpacity
-              onPress={handleTestNotification}
-              style={{
-                paddingHorizontal: 12,
-                paddingVertical: 6,
-                borderRadius: Radius.md,
-                backgroundColor: colors.surfaceContainerHigh,
-              }}
-            >
-              <Text
-                style={{
-                  color: colors.onSurfaceVariant,
-                  fontFamily: 'Cairo',
-                  fontWeight: '600',
-                  fontSize: 12,
-                }}
-              >
-                Test
-              </Text>
-            </TouchableOpacity>
-          )}
         </View>
       </GlassHeader>
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 24 }}
+        contentContainerStyle={{ paddingBottom: TAB_BAR_OFFSET }}
         refreshControl={
           <RefreshControl
             refreshing={isLoading}
@@ -375,6 +326,6 @@ export default function NotificationsScreen() {
           </View>
         )}
       </ScrollView>
-    </View>
+    </ScreenWrapper>
   );
 }

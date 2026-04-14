@@ -12,12 +12,11 @@ import {
   View,
 } from 'react-native';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
+import { ScreenWrapper } from '../../components/ui/ScreenWrapper';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { GlassHeader } from '../../components/ui/GlassHeader';
-import { useAuth } from '../../contexts/auth';
 import { useNotifications } from '../../contexts/notifications';
-import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
-import { createNotification, sendLocalNotification } from '../../lib/notifications';
+import { useThemeColors, Radius, TAB_BAR_OFFSET } from '../../hooks/use-theme-colors';
 import type { NotificationType } from '../../lib/notifications';
 
 function getNotificationIcon(type: NotificationType): string {
@@ -70,24 +69,8 @@ export default function ProviderNotificationsScreen() {
   const colors = useThemeColors();
   const router = useRouter();
   const { t } = useTranslation();
-  const { session } = useAuth();
   const { notifications, unreadCount, isLoading, refreshNotifications, markAsRead, markAllAsRead, deleteAll } =
     useNotifications();
-
-  const handleTestNotification = useCallback(async () => {
-    if (!session?.user?.id) return;
-    try {
-      const title = 'Deal Redeemed!';
-      const body = 'Your deal "Summer Special" has been redeemed by a customer.';
-      // Save to database (also sends push notification)
-      await createNotification(session.user.id, 'deal_redeemed', title, body, { type: 'deal_redeemed' });
-      // Show native notification on device
-      await sendLocalNotification(title, body, { type: 'deal_redeemed' });
-      await refreshNotifications();
-    } catch (err: any) {
-      Alert.alert('Error', err.message);
-    }
-  }, [session, refreshNotifications]);
 
   const handleRefresh = useCallback(async () => {
     await refreshNotifications();
@@ -103,7 +86,7 @@ export default function ProviderNotificationsScreen() {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
+    <ScreenWrapper>
       {/* Header */}
       <GlassHeader
         style={{
@@ -143,7 +126,7 @@ export default function ProviderNotificationsScreen() {
                 paddingHorizontal: 6,
               }}
             >
-              <Text style={{ color: '#fff', fontSize: 11, fontWeight: '700' }}>
+              <Text style={{ color: colors.onPrimary, fontSize: 11, fontWeight: '700' }}>
                 {unreadCount > 99 ? '99+' : unreadCount}
               </Text>
             </View>
@@ -179,7 +162,7 @@ export default function ProviderNotificationsScreen() {
             >
               <Text
                 style={{
-                  color: '#E53935',
+                  color: colors.error,
                   fontFamily: 'Cairo',
                   fontWeight: '600',
                   fontSize: 13,
@@ -189,33 +172,13 @@ export default function ProviderNotificationsScreen() {
               </Text>
             </TouchableOpacity>
           )}
-          <TouchableOpacity
-            onPress={handleTestNotification}
-            style={{
-              paddingHorizontal: 12,
-              paddingVertical: 6,
-              borderRadius: Radius.md,
-              backgroundColor: colors.surfaceContainerHigh,
-            }}
-          >
-            <Text
-              style={{
-                color: colors.onSurfaceVariant,
-                fontFamily: 'Cairo',
-                fontWeight: '600',
-                fontSize: 12,
-              }}
-            >
-              Test
-            </Text>
-          </TouchableOpacity>
         </View>
       </GlassHeader>
 
       {/* Notifications List */}
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 24 }}
+        contentContainerStyle={{ paddingBottom: TAB_BAR_OFFSET }}
         refreshControl={
           <RefreshControl
             refreshing={isLoading}
@@ -341,6 +304,6 @@ export default function ProviderNotificationsScreen() {
           </View>
         )}
       </ScrollView>
-    </View>
+    </ScreenWrapper>
   );
 }

@@ -1,5 +1,5 @@
-import { useColorScheme } from 'react-native';
-import { LightColors, DarkColors, Brand, Semantic, Fonts, Spacing, Radius, Shadows, type ThemeColors } from '../constants/theme';
+import { useTheme } from '../contexts/theme';
+import { LightColors, DarkColors, Brand, Semantic, Fonts, Spacing, Radius, Shadows, TAB_BAR_OFFSET, type ThemeColors } from '../constants/theme';
 
 /**
  * Returns the complete color palette for the current color scheme.
@@ -11,8 +11,7 @@ import { LightColors, DarkColors, Brand, Semantic, Fonts, Spacing, Radius, Shado
  *   </View>
  */
 export function useThemeColors() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const { isDark } = useTheme();
 
   return {
     isDark,
@@ -29,5 +28,5 @@ export function useDesignTokens() {
   return { fonts: Fonts, spacing: Spacing, radius: Radius };
 }
 
-export { Brand, Semantic, Fonts, Spacing, Radius, Shadows, LightColors, DarkColors };
+export { Brand, Semantic, Fonts, Spacing, Radius, Shadows, TAB_BAR_OFFSET, LightColors, DarkColors };
 export type { ThemeColors };

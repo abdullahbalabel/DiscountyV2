@@ -30,6 +30,21 @@
   "language": "Language",
   "arabic": "العربية",
   "english": "English",
+  "signInWithGoogle": "Continue with Google",
+  "continueWithEmail": "Continue with Email",
+  "or": "or",
+
+  "onboarding": {
+    "skip": "Skip",
+    "next": "Next",
+    "getStarted": "Get Started",
+    "slide1Title": "Discover Deals",
+    "slide1Desc": "Browse exclusive discounts from top businesses near you. Claim deals and save big on your favorite products.",
+    "slide2Title": "Grow Your Business",
+    "slide2Desc": "List your deals, attract new customers, and manage redemptions with our easy-to-use provider dashboard.",
+    "slide3Title": "Scan & Redeem",
+    "slide3Desc": "Claim deals instantly, get a QR code, and show it at the store to redeem your exclusive discount."
+  },
 
   "tabs": {
     "deals": "Deals",
@@ -128,7 +143,52 @@
     "accountSuspendedDesc": "Your account has been suspended by an administrator. You can no longer access the app.",
     "suspendedStatus": "Account Suspended",
     "suspendedNotice": "Your account has been suspended due to a violation of our terms of service. All active deal claims have been frozen.",
-    "contactSupportIfMistake": "If you believe this is a mistake, please contact our support team."
+    "contactSupportIfMistake": "If you believe this is a mistake, please contact our support team.",
+
+    "forgotPassword": "Forgot Password",
+    "resetPassword": "Reset Password",
+    "forgotPasswordDesc": "Enter the email address associated with your account and we'll send you a link to reset your password.",
+    "sendResetLink": "Send Reset Link",
+    "enterEmail": "Please enter your email address",
+    "checkYourEmail": "Check Your Email",
+    "resetLinkSent": "We've sent a password reset link to your email. Click the link to set a new password.",
+    "resetLinkExpired": "Link Expired or Invalid",
+    "resetLinkInvalid": "This reset link is invalid or has expired. Please request a new one.",
+    "backToLogin": "Back to Login",
+    "newPassword": "New Password",
+    "createNewPassword": "Create New Password",
+    "newPasswordDesc": "Your new password must be different from your previous password.",
+    "confirmPassword": "Confirm Password",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "fillAllFields": "Please fill in all fields",
+    "updatePassword": "Update Password",
+    "updating": "Updating...",
+    "passwordUpdated": "Password Updated!",
+    "passwordUpdatedDesc": "Your password has been successfully updated. You can now sign in with your new password.",
+
+    "verifyYourEmail": "Verify Your Email",
+    "verificationSent": "We've sent a verification email to:",
+    "waitingConfirmation": "Waiting for Confirmation",
+    "verificationInstructions": "Click the verification link in your email to confirm your account. This page will update automatically once confirmed.",
+    "verificationResent": "Verification email resent!",
+    "resendEmail": "Resend Email",
+
+    "termsTitle": "Terms & Privacy",
+    "termsDesc": "Please review and accept our terms to continue using Discounty.",
+    "acceptTerms": "I accept the Terms of Service",
+    "acceptTermsDesc": "By accepting, you agree to our terms of service including usage rules, content policies, and account responsibilities.",
+    "acceptPrivacy": "I accept the Privacy Policy",
+    "acceptPrivacyDesc": "We collect and process your data as described in our privacy policy. Your data is encrypted and protected.",
+    "dataProtected": "Your personal data is protected by industry-standard encryption and Row Level Security policies.",
+
+    "profileSetup": "Set Up Your Profile",
+    "enterFullName": "Please enter your full name",
+    "fullName": "Full Name",
+    "fullNamePlaceholder": "e.g. Ahmed Al-Rashid",
+    "tapToAddPhoto": "Tap to add a photo",
+    "profileInfoHint": "Your name and photo will be visible to businesses when you claim deals.",
+
+    "ssoComplete": "Complete your account"
   },
 
   "customer": {

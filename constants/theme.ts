@@ -23,33 +23,56 @@ export const Semantic = {
   success: '#10b981',
   successText: '#16a34a',
   successBg: 'rgba(16,185,129,0.1)',
+  successContainer: '#dcfce7',
+  successContainerDark: 'rgba(16,185,129,0.15)',
+  successOnContainer: '#15803d',
   warning: '#f59e0b',
   warningText: '#d97706',
   warningBg: 'rgba(245,158,11,0.1)',
+  warningContainer: '#fef3c7',
+  warningContainerDark: 'rgba(245,158,11,0.15)',
+  warningOnContainer: '#92400e',
   info: '#0ea5e9',
   brown: '#7b5733',
   brownBg: 'rgba(123,87,51,0.1)',
   purple: '#8b5cf6',
   iconDefault: '#85736f',
   iconDefaultDark: '#a08d88',
+  link: '#0a7ea4',
+  navy: '#2c1600',
+  navyDark: '#f5e6d0',
 } as const;
 
 // ─── Light Theme ─────────────────────────────────────────────────────────────
 
 export const LightColors = {
+  // Overrides for mode-independent Brand/Semantic tokens (spread after Semantic)
+  primary: '#862045',
+
   // Surfaces
   surfaceBg: '#fff8f6',
   surfaceContainerLowest: '#ffffff',
   surfaceContainerLow: '#fff0ed',
   surfaceContainer: '#f0e0dc',
   surfaceContainerHigh: '#f5ddd9',
+  surfaceContainerHighest: '#ead5d0',
 
   // Text
   onSurface: '#231917',
   onSurfaceVariant: '#564340',
 
-  // Borders
+  // Borders / Dividers
+  outline: '#85736f',
   outlineVariant: 'rgba(133,115,111,0.1)',
+  divider: '#e5d5d0',
+
+  // Inputs
+  inputBorder: '#d4c2bc',
+  inputIcon: '#9E9E9E',
+
+  // Inverse (for overlays, glass cards)
+  inverseSurface: '#372e2c',
+  inverseOnSurface: '#faeeec',
 
   // Tab bar
   tabBarBg: '#ffffff',
@@ -62,23 +85,42 @@ export const LightColors = {
 // ─── Dark Theme ──────────────────────────────────────────────────────────────
 
 export const DarkColors = {
-  // Surfaces
-  surfaceBg: '#1a110f',
-  surfaceContainerLowest: '#322825',
-  surfaceContainerLow: '#271d1b',
-  surfaceContainer: '#3d3230',
-  surfaceContainerHigh: '#534340',
+  // Dark mode overrides for Brand/Semantic tokens (spread after Semantic, wins)
+  primary: '#e07a95',
+  error: '#f87171',
+  successOnContainer: '#4ade80',
+  warningOnContainer: '#fbbf24',
+  link: '#38bdf8',
+  iconDefault: '#c4b0ac',
 
-  // Text
-  onSurface: '#f1dfda',
-  onSurfaceVariant: '#d8c2bd',
+  // Surfaces — warm near-black with burgundy undertone
+  surfaceBg: '#1c1416',
+  surfaceContainerLowest: '#161012',
+  surfaceContainerLow: '#231b1d',
+  surfaceContainer: '#2d2325',
+  surfaceContainerHigh: '#3a2e30',
+  surfaceContainerHighest: '#46393b',
 
-  // Borders
-  outlineVariant: 'rgba(160,141,136,0.1)',
+  // Text — warm off-white with high contrast
+  onSurface: '#ede0df',
+  onSurfaceVariant: '#a89998',
+
+  // Borders / Dividers
+  outline: '#a89998',
+  outlineVariant: 'rgba(168,153,152,0.12)',
+  divider: 'rgba(168,153,152,0.12)',
+
+  // Inputs
+  inputBorder: 'rgba(168,153,152,0.24)',
+  inputIcon: 'rgba(237,224,223,0.5)',
+
+  // Inverse (for overlays, glass cards)
+  inverseSurface: '#ede0df',
+  inverseOnSurface: '#372e2c',
 
   // Tab bar
-  tabBarBg: '#271d1b',
-  tabBarInactive: '#a08d88',
+  tabBarBg: '#231b1d',
+  tabBarInactive: '#a89998',
 
   // Shadows
   shadowColor: '#000',
@@ -102,6 +144,9 @@ export const Spacing = {
   xxl: 24,
   xxxl: 32,
 } as const;
+
+// Bottom offset to clear the floating AnimatedTabBar (60 bar + ~40 safe area)
+export const TAB_BAR_OFFSET = 100;
 
 // ─── Border Radius Scale ─────────────────────────────────────────────────────
 //
@@ -197,9 +242,9 @@ export const Colors = {
   dark: {
     text: DarkColors.onSurface,
     background: DarkColors.surfaceBg,
-    tint: '#fff',
+    tint: Brand.onPrimary,
     icon: DarkColors.tabBarInactive,
     tabIconDefault: DarkColors.tabBarInactive,
-    tabIconSelected: '#fff',
+    tabIconSelected: Brand.onPrimary,
   },
 } as const;

@@ -4,19 +4,22 @@ import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Appearance, Alert, I18nManager, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, I18nManager, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { setupRtl, reloadForRtl, saveLanguage } from '../../i18n';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
-import { GlassHeader } from '../../components/ui/GlassHeader';
+import { HeaderBar } from '../../components/ui/HeaderBar';
+import { ScreenWrapper } from '../../components/ui/ScreenWrapper';
 import { useAuth } from '../../contexts/auth';
 import { useNotifications } from '../../contexts/notifications';
-import { useThemeColors, Radius, Shadows } from '../../hooks/use-theme-colors';
+import { useTheme } from '../../contexts/theme';
+import { useThemeColors, Radius, Shadows, TAB_BAR_OFFSET } from '../../hooks/use-theme-colors';
 import { fetchOwnCustomerProfile, fetchCustomerStats, uploadAvatar, updateCustomerProfile } from '../../lib/api';
 import type { CustomerProfile } from '../../lib/types';
 
 export default function ProfileScreen() {
   const { signOut, session } = useAuth();
   const colors = useThemeColors();
+  const { toggleTheme } = useTheme();
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const { unreadCount } = useNotifications();
@@ -97,10 +100,6 @@ export default function ProfileScreen() {
     } catch (err: any) {
       Alert.alert('Error', err?.message || 'Failed to update name');
     }
-  };
-
-  const toggleTheme = () => {
-    Appearance.setColorScheme(colors.isDark ? 'light' : 'dark');
   };
 
   const toggleLanguage = async () => {
@@ -188,27 +187,24 @@ export default function ProfileScreen() {
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.surfaceBg, alignItems: 'center', justifyContent: 'center' }}>
+      <ScreenWrapper style={{ alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+      </ScreenWrapper>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface, flexShrink: 1 }}>{t('customer.profile')}</Text>
-        <TouchableOpacity style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', position: 'relative' }} onPress={() => router.push('/(customer)/notifications' as any)}>
-          <MaterialIcons name="notifications" size={18} color={colors.onSurfaceVariant} />
-          {unreadCount > 0 && (
-            <View style={{ position: 'absolute', top: -2, right: -2, width: 16, height: 16, borderRadius: 8, backgroundColor: colors.error, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ color: '#fff', fontSize: 9, fontWeight: '700' }}>{unreadCount > 9 ? '9+' : unreadCount}</Text>
-            </View>
-          )}
-        </TouchableOpacity>
-      </GlassHeader>
+    <ScreenWrapper>
+      <HeaderBar
+        title={t('customer.profile')}
+        rightActions={[{
+          icon: 'notifications',
+          onPress: () => router.push('/(customer)/notifications' as any),
+          badge: unreadCount,
+        }]}
+      />
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 100 }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: TAB_BAR_OFFSET }}>
         <View style={{ paddingHorizontal: 16, gap: 16, paddingTop: 8 }}>
           {/* Profile Hero */}
           <AnimatedEntrance index={0} delay={100}>
@@ -304,7 +300,7 @@ export default function ProfileScreen() {
                 borderRadius: Radius.xl,
                 ...Shadows.md,
               }}>
-                <Text style={{ fontFamily: 'Cairo_900Black', fontSize: 28, color: '#ffffff', letterSpacing: -1 }}>{stats.activeDeals}</Text>
+                <Text style={{ fontFamily: 'Cairo_900Black', fontSize: 28, color: colors.onPrimary, letterSpacing: -1 }}>{stats.activeDeals}</Text>
                 <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 10, textTransform: 'uppercase', letterSpacing: 1.2, color: 'rgba(255,255,255,0.7)', marginTop: 4 }}>{t('customer.activeDeals')}</Text>
               </View>
             </View>
@@ -389,6 +385,6 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
-    </View>
+    </ScreenWrapper>
   );
 }

@@ -1,162 +1,41 @@
-import { MaterialIcons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useThemeColors, Shadows } from '../../hooks/use-theme-colors';
-import { GlassTabBar } from '../../components/ui/GlassTabBar';
+import { AnimatedTabBar, TabConfig } from '../../components/ui/AnimatedTabBar';
 
 export default function CustomerLayout() {
-  const colors = useThemeColors();
   const { t } = useTranslation();
+
+  const tabs: TabConfig[] = [
+    { name: 'feed', title: t('tabs.deals'), icon: 'local-offer' },
+    { name: 'dashboard', title: t('tabs.myDeals'), icon: 'confirmation-number' },
+    { name: 'saved', title: t('tabs.saved'), icon: 'bookmark' },
+    { name: 'profile', title: t('tabs.profile'), icon: 'person' },
+  ];
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.tabBarInactive,
-        tabBarBackground: () => <GlassTabBar />,
-        tabBarStyle: {
-          backgroundColor: 'transparent',
-          borderTopWidth: 0,
-          height: 104,
-          paddingBottom: 12,
-          paddingTop: 12,
-        },
-        tabBarLabelStyle: {
-          fontFamily: 'Cairo',
-          fontSize: 10,
-          fontWeight: '600',
-          textTransform: 'uppercase',
-          letterSpacing: 0.3,
-          marginTop: 2,
-        },
-        tabBarItemStyle: {
-          paddingTop: 4,
-        },
+        tabBarStyle: { display: 'none' },
       }}
+      tabBar={(props) => (
+        <AnimatedTabBar tabs={tabs} {...props} />
+      )}
     >
-      <Tabs.Screen
-        name="feed"
-        options={{
-          title: t('tabs.deals'),
-          tabBarIcon: ({ color, size, focused }) => (
-            <View style={{ alignItems: 'center' }}>
-              {focused && (
-                <View style={{
-                  width: 4, height: 4, borderRadius: 2,
-                  backgroundColor: colors.primary,
-                  marginBottom: 2,
-                }} />
-              )}
-              <MaterialIcons name="local-offer" size={size} color={color} />
-            </View>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="dashboard"
-        options={{
-          title: t('tabs.myDeals'),
-          tabBarIcon: ({ color, size, focused }) => (
-            <View style={{ alignItems: 'center' }}>
-              {focused && (
-                <View style={{
-                  width: 4, height: 4, borderRadius: 2,
-                  backgroundColor: colors.primary,
-                  marginBottom: 2,
-                }} />
-              )}
-              <MaterialIcons name="confirmation-number" size={size} color={color} />
-            </View>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="history"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="saved"
-        options={{
-          title: t('tabs.saved'),
-          tabBarIcon: ({ color, size, focused }) => (
-            <View style={{ alignItems: 'center' }}>
-              {focused && (
-                <View style={{
-                  width: 4, height: 4, borderRadius: 2,
-                  backgroundColor: colors.primary,
-                  marginBottom: 2,
-                }} />
-              )}
-              <MaterialIcons name="bookmark" size={size} color={color} />
-            </View>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: t('tabs.profile'),
-          tabBarIcon: ({ color, size, focused }) => (
-            <View style={{ alignItems: 'center' }}>
-              {focused && (
-                <View style={{
-                  width: 4, height: 4, borderRadius: 2,
-                  backgroundColor: colors.primary,
-                  marginBottom: 2,
-                }} />
-              )}
-              <MaterialIcons name="person" size={size} color={color} />
-            </View>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="deals/[id]"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="provider/[id]"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="qr/[redemptionId]"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="rate/[redemptionId]"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="tamagui-demo"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="notifications"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="privacy-data"
-        options={{
-          href: null,
-        }}
-      />
+      <Tabs.Screen name="feed" />
+      <Tabs.Screen name="dashboard" />
+      <Tabs.Screen name="saved" />
+      <Tabs.Screen name="profile" />
+      {/* Hidden screens */}
+      <Tabs.Screen name="history" options={{ href: null }} />
+      <Tabs.Screen name="deals/[id]" options={{ href: null }} />
+      <Tabs.Screen name="provider/[id]" options={{ href: null }} />
+      <Tabs.Screen name="qr/[redemptionId]" options={{ href: null }} />
+      <Tabs.Screen name="rate/[redemptionId]" options={{ href: null }} />
+      <Tabs.Screen name="tamagui-demo" options={{ href: null }} />
+      <Tabs.Screen name="notifications" options={{ href: null }} />
+      <Tabs.Screen name="privacy-data" options={{ href: null }} />
     </Tabs>
   );
 }

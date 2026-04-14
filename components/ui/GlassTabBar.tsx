@@ -1,18 +1,16 @@
 import React from 'react';
 import { BlurView } from 'expo-blur';
-import { Platform, StyleSheet, useColorScheme, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
+import { useThemeColors } from '../../hooks/use-theme-colors';
 
-interface GlassTabBarProps {
-  isDark?: boolean;
-}
+export function GlassTabBar() {
+  const colors = useThemeColors();
 
-export function GlassTabBar({ isDark }: GlassTabBarProps) {
-  const colorScheme = useColorScheme();
-  const dark = isDark ?? colorScheme === 'dark';
-
-  const bg = dark ? 'rgba(39, 29, 27, 0.82)' : 'rgba(255, 255, 255, 0.82)';
-  const borderColor = dark
-    ? 'rgba(255, 255, 255, 0.08)'
+  const bg = colors.isDark
+    ? `${colors.tabBarBg}d1`
+    : 'rgba(255, 255, 255, 0.82)';
+  const borderColor = colors.isDark
+    ? 'rgba(168,153,152,0.08)'
     : 'rgba(0, 0, 0, 0.06)';
 
   if (Platform.OS === 'web') {
@@ -40,7 +38,7 @@ export function GlassTabBar({ isDark }: GlassTabBarProps) {
           StyleSheet.absoluteFill,
           {
             overflow: 'hidden',
-            backgroundColor: dark ? '#271d1b' : '#ffffff',
+            backgroundColor: colors.tabBarBg,
             borderTopColor: borderColor,
             borderTopWidth: StyleSheet.hairlineWidth,
           },
@@ -52,7 +50,7 @@ export function GlassTabBar({ isDark }: GlassTabBarProps) {
   return (
     <BlurView
       intensity={24}
-      tint={dark ? 'dark' : 'light'}
+      tint={colors.isDark ? 'dark' : 'light'}
       style={[
         StyleSheet.absoluteFill,
         {

@@ -1,13 +1,15 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Platform, StyleSheet, Text, TextInput, useColorScheme, View } from 'react-native';
+import { Alert, Platform, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
+import { ScreenWrapper } from '../../components/ui/ScreenWrapper';
 import { redeemDeal, fetchRedemptionByQrHash } from '../../lib/api';
 import { notifyDealRedeemed, notifyProviderDealRedeemed, sendLocalNotification } from '../../lib/notifications';
 import { supabase } from '../../lib/supabase';
+import { useThemeColors } from '../../hooks/use-theme-colors';
 import type { RedeemDealResult } from '../../lib/types';
 
 // Camera is only available on native platforms
@@ -24,8 +26,7 @@ try {
 export default function ScanScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const colors = useThemeColors();
 
   const [scanned, setScanned] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -39,12 +40,12 @@ export default function ScanScreen() {
   const permission = permissionHook[0];
   const requestPermission = permissionHook[1];
 
-  const bgSurface = isDark ? '#1a110f' : '#fff8f6';
-  const bgSurfaceContainerLowest = isDark ? '#322825' : '#ffffff';
-  const bgSurfaceContainer = isDark ? '#3d3230' : '#f0e0dc';
-  const textOnSurface = isDark ? '#f1dfda' : '#231917';
-  const textOnSurfaceVariant = isDark ? '#d8c2bd' : '#564340';
-  const borderOutlineVariant10 = isDark ? 'rgba(160,141,136,0.1)' : 'rgba(133,115,111,0.1)';
+  const bgSurface = colors.surfaceBg;
+  const bgSurfaceContainerLowest = colors.surfaceContainerLowest;
+  const bgSurfaceContainer = colors.surfaceContainer;
+  const textOnSurface = colors.onSurface;
+  const textOnSurfaceVariant = colors.onSurfaceVariant;
+  const borderOutlineVariant10 = colors.outlineVariant;
 
   const s = StyleSheet.create({
     flex1: { flex: 1 },
@@ -60,7 +61,7 @@ export default function ScanScreen() {
     textOnSurface: { color: textOnSurface },
     textOnSurfaceVariant: { color: textOnSurfaceVariant },
     textWhite: { color: 'white' },
-    textPrimary: { color: '#862045' },
+    textPrimary: { color: colors.primary },
     fontHeadline: { fontFamily: 'Cairo' },
     fontBody: { fontFamily: 'Cairo' },
     absolute: { position: 'absolute' as const },
@@ -209,8 +210,8 @@ export default function ScanScreen() {
   // Web or camera not available — show manual entry
   if (Platform.OS === 'web' || !CameraView) {
     return (
-      <View style={[s.flex1, s.bgSurface]}>
-        <View style={[s.wFull, s.px6, s.pt14, s.pb4, s.flexRow, s.justifyBetween, s.itemsCenter, s.bgSurface]}>
+      <ScreenWrapper>
+        <View style={[s.wFull, s.px6, s.pt14, s.pb4, s.flexRow, s.justifyBetween, s.itemsCenter]}>
           <Text style={[s.fontHeadline, s.fontBold, s.trackingTight, s.textXl, s.textOnSurface]}>
             {t('provider.scanQRCode')}
           </Text>
@@ -220,7 +221,7 @@ export default function ScanScreen() {
           <AnimatedEntrance index={0} delay={100}>
             <View style={[s.itemsCenter, s.mb8]}>
               <View style={[s.w24, s.h24, s.roundedFull, s.bgPrimary10, s.itemsCenter, s.justifyCenter, s.mb6]}>
-                <MaterialIcons name="qr-code-scanner" size={48} color="#862045" />
+                <MaterialIcons name="qr-code-scanner" size={48} color={colors.primary} />
               </View>
               <Text style={[s.fontHeadline, s.fontBold, s.text2xl, s.textOnSurface, s.textCenter, s.trackingTight]}>
                 {t('provider.manualEntry')}
@@ -236,7 +237,7 @@ export default function ScanScreen() {
               <TextInput
                 style={[s.rounded2xl, s.p4, s.textBase, s.fontBody, s.textCenter, s.bgSurfaceContainerLowest, s.textOnSurface, s.borderOutlineVariant10]}
                 placeholder={t('provider.enterCode')}
-                placeholderTextColor="#85736f"
+                placeholderTextColor={colors.iconDefault}
                 value={manualCode}
                 onChangeText={setManualCode}
                 autoCapitalize="none"
@@ -256,28 +257,28 @@ export default function ScanScreen() {
                 </View>
               </AnimatedButton>
             </View>
-          </AnimatedEntrance>
+           </AnimatedEntrance>
         </View>
-      </View>
+      </ScreenWrapper>
     );
   }
 
   // Camera permission handling (native)
   if (!permission) {
     return (
-      <View style={[s.flex1, s.bgSurface, s.itemsCenter, s.justifyCenter]}>
+      <ScreenWrapper style={{ alignItems: 'center', justifyContent: 'center' }}>
         <Text style={[s.textOnSurfaceVariant]}>{t('feed.loading')}</Text>
-      </View>
+      </ScreenWrapper>
     );
   }
 
   if (!permission.granted) {
     return (
-      <View style={[s.flex1, s.bgSurface, s.itemsCenter, s.justifyCenter, s.px8]}>
+      <ScreenWrapper style={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
         <AnimatedEntrance index={0} delay={100}>
           <View style={[s.itemsCenter]}>
             <View style={[s.w24, s.h24, s.roundedFull, s.bgPrimary10, s.itemsCenter, s.justifyCenter, s.mb6]}>
-              <MaterialIcons name="camera-alt" size={48} color="#862045" />
+               <MaterialIcons name="camera-alt" size={48} color={colors.primary} />
             </View>
             <Text style={[s.fontHeadline, s.fontBold, s.text2xl, s.textOnSurface, s.textCenter]}>
               {t('provider.cameraAccess')}
@@ -300,7 +301,7 @@ export default function ScanScreen() {
             </AnimatedButton>
           </View>
         </AnimatedEntrance>
-      </View>
+      </ScreenWrapper>
     );
   }
 
@@ -401,7 +402,7 @@ export default function ScanScreen() {
             <TextInput
               style={[s.rounded2xl, s.p4, s.textBase, s.fontBody, s.textCenter, s.mb4, s.bgSurfaceContainer, s.textOnSurface, s.borderOutlineVariant10]}
               placeholder={t('provider.redemptionCodePlaceholder')}
-              placeholderTextColor="#85736f"
+              placeholderTextColor={colors.iconDefault}
               value={manualCode}
               onChangeText={setManualCode}
               autoCapitalize="none"
@@ -422,10 +423,10 @@ export default function ScanScreen() {
               onPress={() => setShowManualEntry(false)}
             >
               <Text style={[s.textOnSurfaceVariant, s.fontBody, s.textSm]}>{t('provider.backToCamera')}</Text>
-            </AnimatedButton>
-          </View>
-        </View>
-      )}
-    </View>
-  );
-}
+             </AnimatedButton>
+           </View>
+         </View>
+       )}
+     </View>
+   );
+ }

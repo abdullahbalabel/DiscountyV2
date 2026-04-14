@@ -1,10 +1,11 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Alert, I18nManager, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
-import { GlassHeader } from '../../components/ui/GlassHeader';
-import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
+import { HeaderBar } from '../../components/ui/HeaderBar';
+import { ScreenWrapper } from '../../components/ui/ScreenWrapper';
+import { useThemeColors, Radius, TAB_BAR_OFFSET } from '../../hooks/use-theme-colors';
 import { useRouter } from 'expo-router';
 import { submitSupportTicketWithPriority, fetchProviderSupportTickets, fetchTicketMessages, sendTicketMessage, getProviderPlanFeatures } from '../../lib/api';
 import type { SupportTicket, TicketMessage, PlanFeatures } from '../../lib/types';
@@ -87,23 +88,13 @@ export default function HelpSupportScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      {/* Header */}
-      <GlassHeader
-        style={{
-          width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8,
-          flexDirection: 'row', alignItems: 'center',
-        }}
-      >
-        <TouchableOpacity onPress={() => router.back()} style={{ marginEnd: 12 }}>
-          <MaterialIcons name={I18nManager.isRTL ? 'chevron-right' : 'chevron-left'} size={24} color={colors.onSurface} />
-        </TouchableOpacity>
-        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>
-          {t('provider.helpSupport')}
-        </Text>
-      </GlassHeader>
+    <ScreenWrapper>
+      <HeaderBar
+        title={t('provider.helpSupport')}
+        onBack={() => router.back()}
+      />
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 40 }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: TAB_BAR_OFFSET }}>
         <View style={{ paddingHorizontal: 16, gap: 20, paddingTop: 8 }}>
           {/* Priority Support Badge */}
           {planFeatures?.has_priority_support && (
@@ -273,7 +264,7 @@ export default function HelpSupportScreen() {
               }}>
                 {tickets.map((ticket, idx) => {
                   const isExpanded = expandedTicket === ticket.id;
-                  const statusColor = ticket.status === 'open' ? '#b45309' : ticket.status === 'replied' ? '#16a34a' : '#85736f';
+                  const statusColor = ticket.status === 'open' ? colors.warningText : ticket.status === 'replied' ? colors.success : colors.iconDefault;
                   const statusIcon = ticket.status === 'open' ? 'hourglass-empty' : ticket.status === 'replied' ? 'check-circle' : 'lock';
                   const msgs = ticketMessages[ticket.id] || [];
                   return (
@@ -334,12 +325,12 @@ export default function HelpSupportScreen() {
                                 marginTop: 8, padding: 10, borderRadius: Radius.md,
                                 backgroundColor: msg.sender_role === 'admin' ? colors.surfaceContainerHigh : 'transparent',
                                 borderStartWidth: msg.sender_role === 'admin' ? 3 : 0,
-                                borderStartColor: '#16a34a',
+                                borderStartColor: colors.success,
                               }}
                             >
                               <Text style={{
                                 fontFamily: 'Cairo_700Bold', fontSize: 11,
-                                color: msg.sender_role === 'admin' ? '#16a34a' : colors.primary,
+                                color: msg.sender_role === 'admin' ? colors.success : colors.primary,
                                 marginBottom: 4,
                               }}>
                                 {msg.sender_role === 'admin' ? t('provider.adminReply') : t('provider.you')}
@@ -379,9 +370,9 @@ export default function HelpSupportScreen() {
                                 }}
                               >
                                 {sendingFollowUp === ticket.id ? (
-                                  <ActivityIndicator size="small" color="#fff" />
+                                  <ActivityIndicator size="small" color={colors.onPrimary} />
                                 ) : (
-                                  <MaterialIcons name="send" size={16} color={followUpText.trim() ? '#fff' : colors.iconDefault} />
+                                  <MaterialIcons name="send" size={16} color={followUpText.trim() ? colors.onPrimary : colors.iconDefault} />
                                 )}
                               </TouchableOpacity>
                             </View>
@@ -396,6 +387,6 @@ export default function HelpSupportScreen() {
           )}
         </View>
       </ScrollView>
-    </View>
+    </ScreenWrapper>
   );
 }

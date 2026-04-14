@@ -6,8 +6,9 @@ import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { EmptyState } from '../../components/ui/EmptyState';
-import { GlassHeader } from '../../components/ui/GlassHeader';
-import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
+import { HeaderBar } from '../../components/ui/HeaderBar';
+import { ScreenWrapper } from '../../components/ui/ScreenWrapper';
+import { useThemeColors, Radius, TAB_BAR_OFFSET } from '../../hooks/use-theme-colors';
 import { fetchProviderOwnReviews, replyToReview } from '../../lib/api';
 import type { Review } from '../../lib/types';
 
@@ -95,22 +96,22 @@ export default function ProviderReviewsScreen() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.surfaceBg, alignItems: 'center', justifyContent: 'center' }}>
+      <ScreenWrapper style={{ alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+      </ScreenWrapper>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('provider.reviews')}</Text>
-        {unrepliedCount > 0 && (
+    <ScreenWrapper>
+      <HeaderBar
+        title={t('provider.reviews')}
+        rightContent={unrepliedCount > 0 ? (
           <View style={{ backgroundColor: colors.primary, paddingHorizontal: 8, paddingVertical: 2, borderRadius: Radius.full }}>
-            <Text style={{ color: '#fff', fontSize: 11, fontFamily: 'Cairo_700Bold' }}>{t('provider.unrepliedReviews', { count: unrepliedCount })}</Text>
+            <Text style={{ color: colors.onPrimary, fontSize: 11, fontFamily: 'Cairo_700Bold' }}>{t('provider.unrepliedReviews', { count: unrepliedCount })}</Text>
           </View>
-        )}
-      </GlassHeader>
+        ) : undefined}
+      />
 
       <View style={{ flexDirection: 'row', paddingHorizontal: 16, paddingVertical: 8, gap: 8 }}>
         {filterTabs.map(tab => (
@@ -132,7 +133,7 @@ export default function ProviderReviewsScreen() {
               fontSize: 12,
               fontWeight: '600',
               fontFamily: 'Cairo',
-              color: filter === tab.key ? '#fff' : colors.onSurfaceVariant,
+              color: filter === tab.key ? colors.onPrimary : colors.onSurfaceVariant,
             }}>
               {tab.label}
             </Text>
@@ -147,7 +148,7 @@ export default function ProviderReviewsScreen() {
                 <Text style={{
                   fontSize: 10,
                   fontWeight: '700',
-                  color: filter === tab.key ? '#fff' : colors.onSurfaceVariant,
+                  color: filter === tab.key ? colors.onPrimary : colors.onSurfaceVariant,
                 }}>{tab.count}</Text>
               </View>
             )}
@@ -157,7 +158,7 @@ export default function ProviderReviewsScreen() {
 
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: TAB_BAR_OFFSET }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
       >
         {filteredReviews.length === 0 ? (
@@ -324,9 +325,9 @@ export default function ProviderReviewsScreen() {
                           disabled={!replyText.trim() || submitting}
                         >
                           {submitting ? (
-                            <ActivityIndicator size="small" color="#fff" />
+                            <ActivityIndicator size="small" color={colors.onPrimary} />
                           ) : (
-                            <MaterialIcons name="send" size={18} color={replyText.trim() ? '#fff' : colors.onSurfaceVariant} />
+                            <MaterialIcons name="send" size={18} color={replyText.trim() ? colors.onPrimary : colors.onSurfaceVariant} />
                           )}
                         </AnimatedButton>
                       </View>
@@ -345,6 +346,6 @@ export default function ProviderReviewsScreen() {
           })
         )}
       </ScrollView>
-    </View>
+    </ScreenWrapper>
   );
 }

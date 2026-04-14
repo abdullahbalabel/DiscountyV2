@@ -43,7 +43,7 @@ export function AnimatedButton({
       ...Shadows.glow,
     },
     navy: {
-      backgroundColor: colors.isDark ? colors.surfaceContainerHigh : '#2c1600',
+      backgroundColor: colors.inverseSurface,
       borderRadius: Radius.lg,
       flexDirection: 'row',
       alignItems: 'center',

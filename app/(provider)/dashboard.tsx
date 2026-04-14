@@ -5,12 +5,13 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, I18nManager, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
-import { GlassHeader } from '../../components/ui/GlassHeader';
+import { HeaderBar } from '../../components/ui/HeaderBar';
+import { ScreenWrapper } from '../../components/ui/ScreenWrapper';
 import { useAuth } from '../../contexts/auth';
 import { useNotifications } from '../../contexts/notifications';
 import type { ProviderStats } from '../../lib/api';
 import { fetchOwnProviderProfile, fetchProviderStats, getProviderPlanFeatures } from '../../lib/api';
-import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
+import { useThemeColors, Radius, TAB_BAR_OFFSET } from '../../hooks/use-theme-colors';
 import type { ProviderProfile, PlanFeatures } from '../../lib/types';
 
 export default function ProviderDashboard() {
@@ -47,46 +48,35 @@ export default function ProviderDashboard() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.surfaceBg, alignItems: 'center', justifyContent: 'center' }}>
+      <ScreenWrapper style={{ alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" color={colors.primary} />
         <Text style={{ color: colors.onSurfaceVariant, fontFamily: 'Cairo', marginTop: 12, fontSize: 14 }}>{t('provider.loadingDashboard')}</Text>
-      </View>
+      </ScreenWrapper>
     );
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <View>
-          <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('provider.dashboard')}</Text>
-          {profile && <Text style={{ color: colors.onSurfaceVariant, fontSize: 10, fontFamily: 'Cairo', marginTop: 2 }}>{profile.business_name}</Text>}
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center', position: 'relative' }} onPress={() => router.push('/(provider)/notifications' as any)}>
-            <MaterialIcons name="notifications" size={18} color={colors.iconDefault} />
-            {unreadCount > 0 && (
-              <View style={{ position: 'absolute', top: -2, end: -2, width: 16, height: 16, borderRadius: 8, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ color: '#fff', fontSize: 9, fontWeight: '700' }}>{unreadCount > 9 ? '9+' : unreadCount}</Text>
-              </View>
-            )}
-          </AnimatedButton>
-          <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }} onPress={() => signOut()}>
-            <MaterialIcons name="logout" size={18} color={colors.iconDefault} />
-          </AnimatedButton>
-        </View>
-      </GlassHeader>
+    <ScreenWrapper>
+      <HeaderBar
+        title={t('provider.dashboard')}
+        subtitle={profile?.business_name || undefined}
+        rightActions={[
+          { icon: 'notifications', onPress: () => router.push('/(provider)/notifications' as any), badge: unreadCount },
+          { icon: 'logout', onPress: () => signOut() },
+        ]}
+      />
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 12 }}
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: TAB_BAR_OFFSET }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />}
       >
         <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
           <AnimatedEntrance index={0} delay={100}>
             <View style={{ backgroundColor: colors.primary, padding: 16, borderRadius: Radius.md, marginBottom: 16, marginTop: 8 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                <Text style={{ color: '#fff', fontFamily: 'Cairo_700Bold', fontSize: 14 }}>{t('provider.yourRating')}</Text>
+                <Text style={{ color: colors.onPrimary, fontFamily: 'Cairo_700Bold', fontSize: 14 }}>{t('provider.yourRating')}</Text>
                 <MaterialIcons name="star" size={18} color="#FFD700" />
               </View>
-              <Text style={{ color: '#fff', fontFamily: 'Cairo_800ExtraBold', fontSize: 30, letterSpacing: -0.5, marginBottom: 4 }}>
+              <Text style={{ color: colors.onPrimary, fontFamily: 'Cairo_800ExtraBold', fontSize: 30, letterSpacing: -0.5, marginBottom: 4 }}>
                 {(stats?.averageRating || 0) > 0 ? stats!.averageRating.toFixed(1) : '—'}
               </Text>
               <Text style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'Cairo', fontSize: 12 }}>
@@ -210,6 +200,6 @@ export default function ProviderDashboard() {
           </AnimatedEntrance>
         </View>
       </ScrollView>
-    </View>
+    </ScreenWrapper>
   );
 }

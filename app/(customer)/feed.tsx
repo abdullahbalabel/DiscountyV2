@@ -8,14 +8,14 @@ import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { DealCard } from '../../components/ui/DealCard';
 import { EmptyState } from '../../components/ui/EmptyState';
 import { FeaturedDealCard } from '../../components/ui/FeaturedDealCard';
-import { GlassHeader } from '../../components/ui/GlassHeader';
-import { Logo } from '../../components/ui/Logo';
+import { HeaderBar } from '../../components/ui/HeaderBar';
+import { ScreenWrapper } from '../../components/ui/ScreenWrapper';
 import { useNotifications } from '../../contexts/notifications';
 import { fetchActiveDeals, fetchCategories, fetchFeaturedDeals } from '../../lib/api';
 import { supabase } from '../../lib/supabase';
 import { resolveMaterialIcon } from '../../lib/iconMapping';
 import { useSavedDeals } from '../../contexts/savedDeals';
-import { useThemeColors, Radius, Shadows, Spacing } from '../../hooks/use-theme-colors';
+import { useThemeColors, Radius, Shadows, Spacing, TAB_BAR_OFFSET } from '../../hooks/use-theme-colors';
 import type { Category, Discount } from '../../lib/types';
 
 const CATEGORY_PILL_HEIGHT = 36;
@@ -171,7 +171,7 @@ export default function CustomerFeed() {
           <Carousel
             loop={featuredDeals.length > 1}
             width={screenWidth * 0.99}
-            height={300}
+            height={225}
             data={featuredDeals}
             scrollAnimationDuration={400}
             onSnapToItem={setCarouselIndex}
@@ -236,42 +236,19 @@ export default function CustomerFeed() {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
+    <ScreenWrapper>
 
       {/* ── Fixed header + search (outside FlatList so keyboard stays open) ── */}
 
-      {/* Brand bar */}
-      <GlassHeader
-        style={{
-          paddingHorizontal: Spacing.lg,
-          paddingTop: 48,
-          paddingBottom: Spacing.sm,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, flexShrink: 1 }}>
-          <Logo size={32} color={colors.primary} />
-          <Text style={{
-            fontFamily: 'Cairo_700Bold',
-            letterSpacing: -0.5, fontSize: 18, color: colors.onSurface,
-          }}>Discounty</Text>
-        </View>
-        <AnimatedButton style={{
-          width: 32, height: 32, borderRadius: Radius.md,
-          backgroundColor: colors.surfaceContainerHigh,
-          alignItems: 'center', justifyContent: 'center',
-          position: 'relative',
-        }} onPress={() => router.push('/(customer)/notifications' as any)}>
-          <MaterialIcons name="notifications" size={18} color={colors.iconDefault} />
-          {unreadCount > 0 && (
-            <View style={{ position: 'absolute', top: -2, right: -2, width: 16, height: 16, borderRadius: 8, backgroundColor: colors.error, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ color: '#fff', fontSize: 9, fontWeight: '700' }}>{unreadCount > 9 ? '9+' : unreadCount}</Text>
-            </View>
-          )}
-        </AnimatedButton>
-      </GlassHeader>
+      <HeaderBar
+        title={t('discounty')}
+        showLogo
+        rightActions={[{
+          icon: 'notifications',
+          onPress: () => router.push('/(customer)/notifications' as any),
+          badge: unreadCount,
+        }]}
+      />
 
       {/* Tagline + Search */}
       <View style={{ paddingHorizontal: Spacing.lg, paddingTop: Spacing.lg, paddingBottom: Spacing.xs }}>
@@ -345,7 +322,7 @@ export default function CustomerFeed() {
           </View>
         )}
         ListEmptyComponent={renderEmpty}
-        contentContainerStyle={{ paddingBottom: Spacing.md }}
+        contentContainerStyle={{ paddingBottom: TAB_BAR_OFFSET }}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="always"
         refreshControl={
@@ -357,7 +334,7 @@ export default function CustomerFeed() {
           />
         }
       />
-    </View>
+    </ScreenWrapper>
   );
 }
 
@@ -389,13 +366,13 @@ function CategoryPill({ label, icon, isActive, colors, onPress }: CategoryPillPr
         <MaterialIcons
           name={icon as any}
           size={14}
-          color={isActive ? '#fff' : colors.iconDefault}
+          color={isActive ? colors.onPrimary : colors.iconDefault}
         />
       )}
       <Text style={{
         fontWeight: '700',
         fontSize: 13,
-        color: isActive ? '#fff' : colors.onSurface,
+        color: isActive ? colors.onPrimary : colors.onSurface,
       }}>
         {label}
       </Text>

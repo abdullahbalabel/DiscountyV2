@@ -144,7 +144,7 @@ export function RejectionReportModal({ visible, onClose, onSubmit }: RejectionRe
             }}
             onPress={handleSubmit}
           >
-            <Text style={{ color: '#fff', fontFamily: 'Cairo_700Bold', fontSize: 15 }}>
+            <Text style={{ color: colors.onPrimary, fontFamily: 'Cairo_700Bold', fontSize: 15 }}>
               {isSubmitting ? t('common.sending') || '...' : t('rejection.submit')}
             </Text>
           </AnimatedButton>

@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from '../../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../../components/ui/AnimatedEntrance';
 import { GlassHeader } from '../../../components/ui/GlassHeader';
+import { ScreenWrapper } from '../../../components/ui/ScreenWrapper';
 import { claimDeal, fetchDealById, getActiveSlotCount, hasClaimedDeal } from '../../../lib/api';
 import { getBusinessHoursStatus } from '../../../lib/business-hours';
 import { useSavedDeals } from '../../../contexts/savedDeals';
@@ -199,19 +200,19 @@ export default function DealDetails() {
   };
 
   if (isLoading) {
-    return <View style={{ flex: 1, backgroundColor: colors.surfaceBg, alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator size="large" color={colors.primary} /></View>;
+    return <ScreenWrapper style={{ alignItems: 'center', justifyContent: 'center' }}><ActivityIndicator size="large" color={colors.primary} /></ScreenWrapper>;
   }
 
   if (!deal) {
     return (
-      <View style={{ flex: 1, backgroundColor: colors.surfaceBg, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 }}>
+      <ScreenWrapper style={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 }}>
         <MaterialIcons name="error-outline" size={36} color={colors.iconDefault} />
         <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 16, color: colors.onSurface, marginTop: 12 }}>{t('customer.dealNotFound')}</Text>
         <Text style={{ fontFamily: 'Cairo', color: colors.onSurfaceVariant, textAlign: 'center', fontSize: 14, marginTop: 4 }}>{t('customer.dealRemovedOrExpired')}</Text>
         <AnimatedButton style={{ marginTop: 16, paddingHorizontal: 20, paddingVertical: 8, backgroundColor: colors.primary, borderRadius: Radius.md }} onPress={() => router.back()}>
-          <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>{t('customer.goBack')}</Text>
+          <Text style={{ color: colors.onPrimary, fontWeight: '700', fontSize: 14 }}>{t('customer.goBack')}</Text>
         </AnimatedButton>
-      </View>
+      </ScreenWrapper>
     );
   }
 
@@ -223,7 +224,7 @@ export default function DealDetails() {
   const businessStatus = getBusinessHoursStatus(provider?.business_hours, t);
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
+    <ScreenWrapper>
       <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <AnimatedButton style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: 'rgba(0,0,0,0.55)', alignItems: 'center', justifyContent: 'center' }} onPress={() => router.back()}>
@@ -241,25 +242,25 @@ export default function DealDetails() {
         </View>
       </GlassHeader>
 
-      <ScrollView contentContainerStyle={{ paddingBottom: 24 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
         <View style={{ position: 'relative', width: '100%', aspectRatio: 16/10, backgroundColor: colors.surfaceContainerHigh }}>
           <Image source={{ uri: deal.image_url || 'https://images.unsplash.com/photo-1607082349566-187342175e2f?w=800' }} style={{ width: '100%', height: '100%' }} contentFit="cover" />
           <LinearGradient colors={['transparent', 'rgba(26,17,15,0.9)']} style={{ position: 'absolute', bottom: 0, start: 0, end: 0, height: '60%' }} />
           <View style={{ position: 'absolute', top: 64, end: 16, backgroundColor: colors.primary, padding: 12, borderRadius: Radius.lg, alignItems: 'center' }}>
-            <Text style={{ fontFamily: 'Cairo_800ExtraBold', fontSize: 18, color: '#fff', letterSpacing: -0.5 }}>{formattedDiscount}</Text>
-            <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 8, color: '#fff', textTransform: 'uppercase', letterSpacing: 0.5,  }}>{t('customer.discount')}</Text>
+            <Text style={{ fontFamily: 'Cairo_800ExtraBold', fontSize: 18, color: colors.onPrimary, letterSpacing: -0.5 }}>{formattedDiscount}</Text>
+            <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 8, color: colors.onPrimary, textTransform: 'uppercase', letterSpacing: 0.5,  }}>{t('customer.discount')}</Text>
           </View>
           <View style={{ position: 'absolute', bottom: 16, left: 16, right: 16 }}>
             {deal.is_featured && (
               <View style={{ backgroundColor: 'rgba(255,215,0,0.9)', alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 3, borderRadius: Radius.sm, marginBottom: 8, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                <MaterialIcons name="star" size={12} color="#862045" />
-                <Text style={{ color: '#862045', fontFamily: 'Cairo_700Bold', fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}>{t('provider.featuredToggle')}</Text>
+                <MaterialIcons name="star" size={12} color={colors.primary} />
+                <Text style={{ color: colors.primary, fontFamily: 'Cairo_700Bold', fontSize: 10, textTransform: 'uppercase', letterSpacing: 0.5 }}>{t('provider.featuredToggle')}</Text>
               </View>
             )}
             {category && (
               <View style={{ backgroundColor: colors.brown, alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: Radius.sm, marginBottom: 8, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                <MaterialIcons name={resolveMaterialIcon(category.icon)} size={10} color="white" />
-                <Text style={{ color: '#fff', fontFamily: 'Cairo', fontSize: 9, textTransform: 'uppercase', letterSpacing: 0.5 }}>{i18n.language === 'ar' ? category.name_ar : category.name}</Text>
+                <MaterialIcons name={resolveMaterialIcon(category.icon)} size={10} color={colors.onPrimary} />
+                <Text style={{ color: colors.onPrimary, fontFamily: 'Cairo', fontSize: 9, textTransform: 'uppercase', letterSpacing: 0.5 }}>{i18n.language === 'ar' ? category.name_ar : category.name}</Text>
               </View>
             )}
             <Text style={{ fontFamily: 'Cairo_800ExtraBold', color: '#fff', fontSize: 20, letterSpacing: -0.5 }}>{deal.title}</Text>
@@ -473,7 +474,7 @@ export default function DealDetails() {
                 onPress={handleClaim}
                 disabled={isClaiming || slotCount >= 3}
               >
-                <Text style={{ color: '#fff', fontFamily: 'Cairo_700Bold', fontSize: 14, textAlign: 'center' }}>
+                <Text style={{ color: colors.onPrimary, fontFamily: 'Cairo_700Bold', fontSize: 14, textAlign: 'center' }}>
                   {isClaiming ? t('customer.claiming') : slotCount >= 3 ? t('customer.slotsFullReview') : t('customer.claimDealNow')}
                 </Text>
               </AnimatedButton>
@@ -485,8 +486,8 @@ export default function DealDetails() {
       <Modal visible={showSuccess} transparent animationType="fade" onRequestClose={() => setShowSuccess(false)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
           <View style={{ backgroundColor: colors.surfaceBg, borderRadius: 24, padding: 32, alignItems: 'center', width: '100%', maxWidth: 340, ...Shadows.lg }}>
-            <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: '#dcfce7', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
-              <MaterialIcons name="celebration" size={40} color="#16a34a" />
+            <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: colors.successContainer, alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+              <MaterialIcons name="celebration" size={40} color={colors.success} />
             </View>
             <Text style={{ fontFamily: 'Cairo_800ExtraBold', fontSize: 22, color: colors.onSurface, textAlign: 'center', letterSpacing: -0.5 }}>
               {t('customer.dealClaimed')}
@@ -501,8 +502,8 @@ export default function DealDetails() {
                 onPress={handleViewQR}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                  <MaterialIcons name="qr-code" size={20} color="#fff" />
-                  <Text style={{ color: '#fff', fontFamily: 'Cairo_700Bold', fontSize: 15 }}>
+                  <MaterialIcons name="qr-code" size={20} color={colors.onPrimary} />
+                  <Text style={{ color: colors.onPrimary, fontFamily: 'Cairo_700Bold', fontSize: 15 }}>
                     {t('customer.viewQRCode')}
                   </Text>
                 </View>
@@ -520,6 +521,6 @@ export default function DealDetails() {
           </View>
         </View>
       </Modal>
-    </View>
+    </ScreenWrapper>
   );
 }

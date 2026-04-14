@@ -1,7 +1,7 @@
 import React from 'react';
 import { BlurView } from 'expo-blur';
 import { Platform, View, ViewProps } from 'react-native';
-import { useColorScheme } from 'react-native';
+import { useTheme } from '../../contexts/theme';
 
 interface GlassViewProps extends ViewProps {
   children: React.ReactNode;
@@ -16,13 +16,13 @@ export function GlassView({
   style,
   ...props
 }: GlassViewProps) {
-  const colorScheme = useColorScheme();
-  const defaultTint = colorScheme === 'dark' ? 'dark' : 'light';
+  const { isDark } = useTheme();
+  const defaultTint = isDark ? 'dark' : 'light';
 
   const webStyle = Platform.OS === 'web' ? {
     backdropFilter: `blur(${intensity}px)`,
     WebkitBackdropFilter: `blur(${intensity}px)`,
-    backgroundColor: colorScheme === 'dark'
+    backgroundColor: isDark
       ? 'rgba(30, 39, 46, 0.75)'
       : 'rgba(255, 255, 255, 0.75)',
   } : {};
@@ -45,7 +45,7 @@ export function GlassView({
       style={[
         {
           overflow: 'hidden',
-          backgroundColor: colorScheme === 'dark'
+          backgroundColor: isDark
             ? 'rgba(30, 39, 46, 0.75)'
             : 'rgba(255, 255, 255, 0.75)',
         },

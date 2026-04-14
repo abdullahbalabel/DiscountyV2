@@ -85,7 +85,7 @@ export function DealCard({
     >
       <View style={{ width: '100%' }}>
         {/* Image Section */}
-        <View style={{ position: 'relative', width: '100%', height: 140 }}>
+        <View style={{ position: 'relative', width: '100%', height: 105 }}>
           <Image
             source={{ uri: imageUri }}
             style={StyleSheet.absoluteFillObject}
@@ -117,7 +117,7 @@ export function DealCard({
               borderRadius: Radius.md, flexDirection: 'row', alignItems: 'center', gap: 4,
             }}>
               <MaterialIcons name="timer" size={10} color="white" />
-              <Text style={{ color: '#fff', fontFamily: 'Cairo_700Bold', fontSize: 9, textTransform: 'uppercase' }}>
+              <Text style={{ color: colors.onPrimary, fontFamily: 'Cairo_700Bold', fontSize: 9, textTransform: 'uppercase' }}>
                 {formatTimeLeft(endTime, t)}
               </Text>
             </View>
@@ -133,7 +133,7 @@ export function DealCard({
                 backgroundColor: 'rgba(0,0,0,0.4)', alignItems: 'center', justifyContent: 'center',
               }}
             >
-              <MaterialIcons name={isSaved ? 'bookmark' : 'bookmark-border'} size={16} color={isSaved ? colors.warning : 'white'} />
+              <MaterialIcons name={isSaved ? 'bookmark' : 'bookmark-border'} size={16} color={isSaved ? colors.warning : colors.onPrimary} />
             </AnimatedButton>
           )}
 
@@ -145,10 +145,10 @@ export function DealCard({
               borderRadius: Radius.md, flexDirection: 'row', alignItems: 'center', gap: 4,
             }}>
               {categoryIcon && (
-                <MaterialIcons name={resolveMaterialIcon(categoryIcon)} size={10} color="white" />
+                <MaterialIcons name={resolveMaterialIcon(categoryIcon)} size={10} color={colors.onPrimary} />
               )}
               <Text style={{
-                color: '#fff', fontFamily: 'Cairo_700Bold', fontSize: 9,
+                color: colors.onPrimary, fontFamily: 'Cairo_700Bold', fontSize: 9,
                 textTransform: 'uppercase', letterSpacing: 1.5,
               }}>
                 {categoryName}
@@ -164,8 +164,8 @@ export function DealCard({
               paddingHorizontal: 6, paddingVertical: 3,
               flexDirection: 'row', alignItems: 'center', gap: 3,
             }}>
-              <MaterialIcons name="star" size={10} color="#862045" />
-              <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 8, color: '#862045' }}>
+              <MaterialIcons name="star" size={10} color={colors.primary} />
+              <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 8, color: colors.primary }}>
                 {t('provider.featuredToggle')}
               </Text>
             </View>
@@ -173,7 +173,7 @@ export function DealCard({
         </View>
 
         {/* Content Section */}
-        <View style={{ padding: 12, backgroundColor: colors.surfaceContainerLowest }}>
+        <View style={{ padding: 9, backgroundColor: colors.surfaceContainerLowest }}>
           {/* Provider Row */}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 }}>
             {providerLogo ? (
@@ -184,7 +184,7 @@ export function DealCard({
               />
             ) : null}
             <Text style={{
-              color: colors.isDark ? '#d4a0b0' : colors.primary, fontWeight: '700', fontSize: 9,
+              color: colors.onSurfaceVariant, fontWeight: '700', fontSize: 9,
               textTransform: 'uppercase', letterSpacing: 1.5,
             }}>
               {provider}
@@ -194,7 +194,7 @@ export function DealCard({
                 backgroundColor: colors.primary, paddingHorizontal: 5, paddingVertical: 1,
                 borderRadius: Radius.sm,
               }}>
-                <Text style={{ color: 'white', fontFamily: 'Cairo_700Bold', fontSize: 7 }}>
+                <Text style={{ color: colors.onPrimary, fontFamily: 'Cairo_700Bold', fontSize: 7 }}>
                   {i18n.language === 'ar' ? (providerBadgeAr || providerBadge) : providerBadge}
                 </Text>
               </View>
@@ -235,42 +235,43 @@ export function DealCard({
           </View>
 
           <Text style={{
-            fontFamily: 'Cairo_700Bold', fontSize: 14,
-            color: colors.onSurface, marginBottom: 4,
+            fontFamily: 'Cairo_700Bold', fontSize: 12,
+            color: colors.onSurface, marginBottom: 2,
           }}>
             {title}
           </Text>
 
-          <Text
-            style={{
-              color: colors.isDark ? colors.onSurfaceVariant : colors.brown, fontSize: 12, fontFamily: 'Cairo',
-              marginBottom: 10,
-            }}
-            numberOfLines={2}
-          >
-            {description || t('deal.defaultDescription')}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+            <Text
+              style={{
+                flex: 1,
+                color: colors.isDark ? colors.onSurfaceVariant : colors.brown, fontSize: 10, fontFamily: 'Cairo',
+              }}
+              numberOfLines={1}
+            >
+              {description || t('deal.defaultDescription')}
+            </Text>
+            <View style={{
+              backgroundColor: colors.primary, width: 24, height: 24,
+              borderRadius: Radius.md, alignItems: 'center', justifyContent: 'center',
+              marginStart: 8,
+            }}>
+              <MaterialIcons name="arrow-forward" size={12} color={colors.onPrimary} />
+            </View>
+          </View>
 
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 6 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 6 }}>
               {currentPrice && (
-                <Text style={{ fontSize: 16, fontWeight: '700', color: colors.onSurface }}>
+                <Text style={{ fontSize: 14, fontWeight: '700', color: colors.onSurface }}>
                   {currentPrice}
                 </Text>
               )}
               {originalPrice && (
-                <Text style={{ color: colors.isDark ? colors.onSurfaceVariant : colors.brown, fontSize: 12, textDecorationLine: 'line-through' }}>
+                <Text style={{ color: colors.isDark ? colors.onSurfaceVariant : colors.brown, fontSize: 10, textDecorationLine: 'line-through' }}>
                   {originalPrice}
                 </Text>
               )}
             </View>
-            <View style={{
-              backgroundColor: colors.primary, width: 28, height: 28,
-              borderRadius: Radius.md, alignItems: 'center', justifyContent: 'center',
-            }}>
-              <MaterialIcons name="arrow-forward" size={14} color="white" />
-            </View>
-          </View>
         </View>
       </View>
     </AnimatedButton>

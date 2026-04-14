@@ -92,7 +92,7 @@ export function EmptyState({ icon, title, message, ctaLabel, onCtaPress, primary
             }}
             onPress={onCtaPress}
           >
-            <Text style={{ color: '#fff', fontFamily: 'Cairo_700Bold', fontSize: 14 }}>
+            <Text style={{ color: colors.onPrimary, fontFamily: 'Cairo_700Bold', fontSize: 14 }}>
               {ctaLabel}
             </Text>
           </AnimatedButton>

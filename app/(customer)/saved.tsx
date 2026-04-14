@@ -8,11 +8,12 @@ import { DealCard } from '../../components/ui/DealCard';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { EmptyState } from '../../components/ui/EmptyState';
-import { GlassHeader } from '../../components/ui/GlassHeader';
+import { HeaderBar } from '../../components/ui/HeaderBar';
+import { ScreenWrapper } from '../../components/ui/ScreenWrapper';
 import { fetchSavedDeals } from '../../lib/api';
 import { supabase } from '../../lib/supabase';
 import { useSavedDeals } from '../../contexts/savedDeals';
-import { useThemeColors, Radius, Shadows, Spacing } from '../../hooks/use-theme-colors';
+import { useThemeColors, Radius, Shadows, Spacing, TAB_BAR_OFFSET } from '../../hooks/use-theme-colors';
 import type { Discount } from '../../lib/types';
 
 export default function SavedScreen() {
@@ -117,14 +118,12 @@ export default function SavedScreen() {
   );
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-          <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface, flexShrink: 1 }}>{t('customer.saved')}</Text>
-        </View>
-        <AnimatedButton
-          style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}
-          onPress={() => {
+    <ScreenWrapper>
+      <HeaderBar
+        title={t('customer.saved')}
+        rightActions={[{
+          icon: showSearch ? 'close' : 'search',
+          onPress: () => {
             setShowSearch((prev) => {
               if (!prev) {
                 setTimeout(() => searchInputRef.current?.focus(), 100);
@@ -133,11 +132,9 @@ export default function SavedScreen() {
               }
               return !prev;
             });
-          }}
-        >
-          <MaterialIcons name={showSearch ? 'close' : 'search'} size={18} color={colors.iconDefault} />
-        </AnimatedButton>
-      </GlassHeader>
+          },
+        }]}
+      />
 
       {showSearch && (
         <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
@@ -222,13 +219,13 @@ export default function SavedScreen() {
             );
           }}
           ListEmptyComponent={renderEmptyState}
-          contentContainerStyle={{ paddingBottom: 12, flexGrow: 1 }}
+          contentContainerStyle={{ paddingBottom: TAB_BAR_OFFSET, flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={colors.primary} colors={[colors.primary]} />
           }
         />
       )}
-    </View>
+    </ScreenWrapper>
   );
 }

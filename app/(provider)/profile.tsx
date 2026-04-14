@@ -3,13 +3,13 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { I18nManager, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
-import { GlassHeader } from '../../components/ui/GlassHeader';
+import { HeaderBar } from '../../components/ui/HeaderBar';
+import { ScreenWrapper } from '../../components/ui/ScreenWrapper';
 import { useAuth } from '../../contexts/auth';
 import { supabase } from '../../lib/supabase';
 import { fetchProviderSubscription } from '../../lib/api';
-import { useThemeColors, Radius } from '../../hooks/use-theme-colors';
+import { useThemeColors, Radius, TAB_BAR_OFFSET } from '../../hooks/use-theme-colors';
 import type { ProviderProfile, ProviderSubscription } from '../../lib/types';
 
 export default function ProviderProfileScreen() {
@@ -46,15 +46,16 @@ export default function ProviderProfileScreen() {
   ];
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg }}>
-      <GlassHeader style={{ width: '100%', paddingHorizontal: 16, paddingTop: 48, paddingBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text style={{ fontFamily: 'Cairo_700Bold', letterSpacing: -0.5, fontSize: 18, color: colors.onSurface }}>{t('provider.profile')}</Text>
-        <AnimatedButton onPress={() => router.push('/(provider)/settings')} style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: colors.surfaceContainerHigh, alignItems: 'center', justifyContent: 'center' }}>
-          <MaterialIcons name="settings" size={18} color={colors.iconDefault} />
-        </AnimatedButton>
-      </GlassHeader>
+    <ScreenWrapper>
+      <HeaderBar
+        title={t('provider.profile')}
+        rightActions={[{
+          icon: 'settings',
+          onPress: () => router.push('/(provider)/settings'),
+        }]}
+      />
 
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 12 }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: TAB_BAR_OFFSET }}>
         <View style={{ paddingHorizontal: 16, gap: 16, paddingTop: 8 }}>
           <AnimatedEntrance index={0} delay={100}>
             <View style={{ backgroundColor: colors.surfaceContainerLowest, padding: 16, borderRadius: Radius.xl, borderWidth: 1, borderColor: colors.outlineVariant, marginBottom: 20, flexDirection: 'row', alignItems: 'center' }}>
@@ -111,6 +112,6 @@ export default function ProviderProfileScreen() {
           </AnimatedEntrance>
         </View>
       </ScrollView>
-    </View>
+    </ScreenWrapper>
   );
 }

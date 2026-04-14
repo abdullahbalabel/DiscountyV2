@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { AnimatedButton } from './AnimatedButton';
 import { useThemeColors, Radius, Shadows, Spacing } from '../../hooks/use-theme-colors';
 
-const IMAGE_HEIGHT = 200;
+const IMAGE_HEIGHT = 150;
 
 interface FeaturedDealCardProps {
   id: string;
@@ -90,9 +90,9 @@ export function FeaturedDealCard({
               backgroundColor: 'rgba(0,0,0,0.55)', paddingHorizontal: 10, paddingVertical: 5,
               borderRadius: Radius.md, flexDirection: 'row', alignItems: 'center', gap: 4,
             }}>
-              <MaterialIcons name="timer" size={12} color="white" />
+              <MaterialIcons name="timer" size={12} color={colors.onPrimary} />
               <Text style={{
-                color: '#fff', fontFamily: 'Cairo_700Bold', fontSize: 11,
+                color: colors.onPrimary, fontFamily: 'Cairo_700Bold', fontSize: 11,
                 textTransform: 'uppercase',
               }}>
                 {formatTimeLeft(endTime, t)}
@@ -123,7 +123,7 @@ export function FeaturedDealCard({
               borderRadius: Radius.sm,
             }}>
               <Text style={{
-                color: '#fff', fontFamily: 'Cairo_700Bold', fontSize: 9,
+                color: colors.onPrimary, fontFamily: 'Cairo_700Bold', fontSize: 9,
                 textTransform: 'uppercase', letterSpacing: 1,
               }}>
                 {categoryName}
@@ -145,7 +145,7 @@ export function FeaturedDealCard({
               <MaterialIcons
                 name={isSaved ? 'bookmark' : 'bookmark-border'}
                 size={18}
-                color={isSaved ? colors.warning : 'white'}
+                color={isSaved ? colors.warning : colors.onPrimary}
               />
             </AnimatedButton>
           )}
@@ -167,7 +167,7 @@ export function FeaturedDealCard({
                 />
               ) : null}
               <Text style={{
-                color: 'rgba(255,255,255,0.9)', fontFamily: 'Cairo_700Bold',
+                color: colors.onPrimary, fontFamily: 'Cairo_700Bold',
                 fontSize: 10, textTransform: 'uppercase', letterSpacing: 1.2,
               }}>
                 {provider}
@@ -177,7 +177,7 @@ export function FeaturedDealCard({
                   backgroundColor: colors.primary, paddingHorizontal: 6, paddingVertical: 1,
                   borderRadius: Radius.sm,
                 }}>
-                  <Text style={{ color: 'white', fontFamily: 'Cairo_700Bold', fontSize: 8 }}>
+                  <Text style={{ color: colors.onPrimary, fontFamily: 'Cairo_700Bold', fontSize: 8 }}>
                     {i18n.language === 'ar' ? (providerBadgeAr || providerBadge) : providerBadge}
                   </Text>
                 </View>
@@ -187,7 +187,7 @@ export function FeaturedDealCard({
             {/* Title */}
             <Text style={{
               fontFamily: 'Cairo_700Bold', fontSize: 18,
-              color: '#fff', marginBottom: 4, letterSpacing: -0.3,
+              color: colors.onPrimary, marginBottom: 4, letterSpacing: -0.3,
             }} numberOfLines={2}>
               {title}
             </Text>
@@ -195,7 +195,7 @@ export function FeaturedDealCard({
             {/* Description */}
             {description && (
               <Text style={{
-                color: 'rgba(255,255,255,0.75)', fontFamily: 'Cairo',
+                color: colors.onPrimary, fontFamily: 'Cairo',
                 fontSize: 12, lineHeight: 18,
               }} numberOfLines={2}>
                 {description}
@@ -237,12 +237,12 @@ export function FeaturedDealCard({
             }}
           >
             <Text style={{
-              color: '#fff', fontFamily: 'Cairo_700Bold', fontSize: 12,
+              color: colors.onPrimary, fontFamily: 'Cairo_700Bold', fontSize: 12,
               marginEnd: 4,
             }}>
               {t('deal.viewDeal')}
             </Text>
-            <MaterialIcons name="arrow-forward" size={14} color="#fff" />
+            <MaterialIcons name="arrow-forward" size={14} color={colors.onPrimary} />
           </AnimatedButton>
         </View>
       </View>
