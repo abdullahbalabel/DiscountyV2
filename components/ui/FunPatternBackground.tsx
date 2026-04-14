@@ -1,135 +1,119 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import Svg, { Defs, G, Path, Circle, Text, Rect, Pattern } from 'react-native-svg';
-import { StyleSheet, View, Dimensions, Platform } from 'react-native';
+import React, { memo, useMemo } from 'react';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '../../contexts/theme';
 
 const LIGHT_COLOR = '#862045';
 const DARK_COLOR = '#e07a95';
-const TILE_W = 120;
-const TILE_H = 100;
+
+/** Icon names themed around fun, entertainment, shopping, discounts & food. */
+const ICONS: (keyof typeof MaterialCommunityIcons.glyphMap)[] = [
+  'tag-outline',              // discount
+  'pizza',                    // food
+  'star-outline',             // star
+  'coffee',                   // food
+  'cart-outline',             // shopping
+  'gamepad-variant',          // entertainment
+  'gift-outline',             // gift
+  'hamburger',                // food
+  'emoticon-wink-outline',    // fun
+  'party-popper',             // entertainment
+  'percent-outline',          // discount
+  'circle-multiple-outline',  // coins
+];
+
+const CELL_SIZE = 64;
+const ICON_SIZE = 18;
+const PATTERN_OPACITY = 0.07;
+
+/** Deterministic rotation per icon index — keeps the pattern lively but stable. */
+const ROTATIONS = [-18, 15, -10, 20, 12, 5, -25, 8, -15, 22, -8, 30];
 
 interface FunPatternBackgroundProps {
   children?: React.ReactNode;
 }
 
-/** Single tile defined once inside <Defs><Pattern> — the SVG renderer tiles it natively. */
-function TileContent({ color, tileW, tileH }: { color: string; tileW: number; tileH: number }) {
+/* ── Memoised grid of icon glyphs ───────────────────────────── */
+
+const PatternGrid = memo(function PatternGrid({
+  width,
+  height,
+  color,
+}: {
+  width: number;
+  height: number;
+  color: string;
+}) {
+  const items = useMemo(() => {
+    if (width <= 0 || height <= 0) return [];
+    const cols = Math.ceil(width / CELL_SIZE) + 1;
+    const rows = Math.ceil(height / CELL_SIZE) + 1;
+    const result: {
+      key: string;
+      icon: (typeof ICONS)[number];
+      left: number;
+      top: number;
+      rotation: number;
+    }[] = [];
+
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col < cols; col++) {
+        const idx = row * cols + col;
+        const offsetX = row % 2 === 1 ? CELL_SIZE / 2 : 0;
+        result.push({
+          key: `${row}-${col}`,
+          icon: ICONS[idx % ICONS.length],
+          left: col * CELL_SIZE + offsetX,
+          top: row * CELL_SIZE,
+          rotation: ROTATIONS[idx % ROTATIONS.length],
+        });
+      }
+    }
+    return result;
+  }, [width, height]);
+
+  if (items.length === 0) return null;
+
   return (
-    <>
-      {/* Discount tag */}
-      <G transform={`translate(${tileW * 0.08}, ${tileH * 0.05}) rotate(-18)`} opacity={0.07}>
-        <Path d="M0 0 L18 0 L22 7 L22 18 L0 18 Z" fill={color} stroke={color} strokeWidth={0.4} />
-        <Circle cx="15" cy="4" r="2" fill="white" opacity={0.6} />
-        <Text x="3" y="14" fontSize="8" fill="white" fontWeight="bold">%</Text>
-      </G>
-
-      {/* Star */}
-      <G transform={`translate(${tileW * 0.45}, ${tileH * 0.12}) rotate(15)`} opacity={0.06}>
-        <Path d="M0 -7 L2 -2 L8 -2 L3 1.5 L5 8 L0 4 L-5 8 L-3 1.5 L-8 -2 L-2 -2 Z" fill={color} />
-      </G>
-
-      {/* Shopping cart */}
-      <G transform={`translate(${tileW * 0.7}, ${tileH * 0.08}) rotate(-10)`} opacity={0.05}>
-        <Path d="M2 3L5 3L9 16H18L22 7H7" stroke={color} strokeWidth={1.8} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-        <Circle cx="10" cy="19" r="2" fill={color} />
-        <Circle cx="19" cy="19" r="2" fill={color} />
-      </G>
-
-      {/* Coin */}
-      <G transform={`translate(${tileW * 0.05}, ${tileH * 0.55}) rotate(20)`} opacity={0.06}>
-        <Circle cx="7" cy="7" r="7" fill={color} />
-        <Text x="3.5" y="11" fontSize="8" fill="white" fontWeight="bold">$</Text>
-      </G>
-
-      {/* Gift box */}
-      <G transform={`translate(${tileW * 0.55}, ${tileH * 0.45}) rotate(12)`} opacity={0.05}>
-        <Rect x="0" y="4" width="18" height="14" rx="2" fill={color} />
-        <Path d="M9 4 L9 0 Q12 2 15 0 L15 4" stroke={color} strokeWidth={1.5} fill="none" />
-        <Path d="M0 10 L18" stroke="white" strokeWidth={1.5} opacity={0.5} />
-      </G>
-
-      {/* Winking face */}
-      <G transform={`translate(${tileW * 0.3}, ${tileH * 0.55}) rotate(5)`} opacity={0.04}>
-        <Circle cx="10" cy="10" r="9" fill={color} />
-        <Circle cx="6" cy="8" r="1.5" fill="white" />
-        <Path d="M12 7 Q14.5 5 17 7" stroke="white" strokeWidth={1.5} fill="none" strokeLinecap="round" />
-        <Path d="M4 13 Q10 18 16 13" stroke="white" strokeWidth={1.5} fill="none" strokeLinecap="round" />
-      </G>
-
-      {/* Small star */}
-      <G transform={`translate(${tileW * 0.82}, ${tileH * 0.35}) rotate(-25)`} opacity={0.05}>
-        <Path d="M0 -4 L1.2 -1.2 L4.8 -1.2 L1.8 1.2 L3 4.8 L0 2.4 L-3 4.8 L-1.8 1.2 L-4.8 -1.2 L-1.2 -1.2 Z" fill={color} />
-      </G>
-
-      {/* Percent small */}
-      <G transform={`translate(${tileW * 0.1}, ${tileH * 0.82}) rotate(15)`} opacity={0.04}>
-        <Text x="0" y="0" fontSize="12" fill={color} fontWeight="bold">%</Text>
-      </G>
-    </>
+    <View
+      style={[StyleSheet.absoluteFill, { opacity: PATTERN_OPACITY, overflow: 'hidden' }]}
+      pointerEvents="none"
+    >
+      {items.map(({ key, icon, left, top, rotation }) => (
+        <MaterialCommunityIcons
+          key={key}
+          name={icon}
+          size={ICON_SIZE}
+          color={color}
+          style={{
+            position: 'absolute',
+            left,
+            top,
+            transform: [{ rotate: `${rotation}deg` }],
+          }}
+        />
+      ))}
+    </View>
   );
-}
+});
+
+/* ── Public component ───────────────────────────────────────── */
 
 export function FunPatternBackground({ children }: FunPatternBackgroundProps) {
   const { isDark } = useTheme();
   const color = isDark ? DARK_COLOR : LIGHT_COLOR;
-  const [size, setSize] = useState({ w: 0, h: 0 });
+  const { width, height } = useWindowDimensions();
 
-  const onLayout = useCallback((e: any) => {
-    const { width, height } = e.nativeEvent.layout;
-    if (width > 0 && height > 0) {
-      setSize({ w: width, h: height });
-    }
-  }, []);
+  const pattern = <PatternGrid width={width} height={height} color={color} />;
 
-  useEffect(() => {
-    const { width, height } = Dimensions.get('window');
-    if (width > 0 && height > 0 && size.w === 0) {
-      setSize({ w: width, h: height });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Android: react-native-svg crashes Expo Go when rendering the tile grid
-  // (too many elements) or even a <Pattern> definition.  Skip the SVG
-  // entirely — the pattern is decorative and the app looks fine without it.
-  // Return null when no children so the component takes zero layout space
-  // (ScreenWrapper, GlassHeader, AnimatedTabBar all call without children).
-  if (Platform.OS === 'android') {
-    return children ? (
-      <View style={styles.container}>
-        <View style={styles.content}>{children}</View>
-      </View>
-    ) : null;
+  if (!children) {
+    return pattern;
   }
 
   return (
     <View style={styles.container}>
-      <View style={StyleSheet.absoluteFill} pointerEvents="none" onLayout={onLayout}>
-        {size.w > 0 && (
-          <Svg width={size.w} height={size.h}>
-            <Defs>
-              <Pattern
-                id="funTile"
-                x="0"
-                y="0"
-                width={TILE_W}
-                height={TILE_H}
-                patternUnits="userSpaceOnUse"
-              >
-                <TileContent color={color} tileW={TILE_W} tileH={TILE_H} />
-              </Pattern>
-            </Defs>
-            <Rect
-              x="0"
-              y="0"
-              width={size.w}
-              height={size.h}
-              fill="url(#funTile)"
-            />
-          </Svg>
-        )}
-      </View>
-      {children && <View style={styles.content}>{children}</View>}
+      {pattern}
+      <View style={styles.content}>{children}</View>
     </View>
   );
 }
