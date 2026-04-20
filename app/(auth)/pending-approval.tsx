@@ -1,70 +1,74 @@
-import { MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, useColorScheme, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
 import { AnimatedEntrance } from '../../components/ui/AnimatedEntrance';
 import { useAuth } from '../../contexts/auth';
-import { Radius } from '../../hooks/use-theme-colors';
+import { Shadows } from '../../hooks/use-theme-colors';
 
 export default function PendingApprovalScreen() {
   const { t } = useTranslation();
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
   const { signOut } = useAuth();
 
   return (
-    <View style={{ flex: 1, backgroundColor: isDark ? '#1a110f' : '#fff8f6', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 }}>
+    <View style={{ flex: 1, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 }}>
       <AnimatedEntrance index={0}>
-        <View style={{ alignItems: 'center' }}>
-          {/* Animated Icon */}
-          <View style={{ width: 112, height: 112, borderRadius: 56, alignItems: 'center', justifyContent: 'center', marginBottom: 32, backgroundColor: isDark ? '#534340' : '#f5ddd9' }}>
-            <View style={{ width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center', backgroundColor: isDark ? 'rgba(120,53,15,0.4)' : '#fef3c7' }}>
-              <MaterialIcons name="hourglass-top" size={40} color="#f59e0b" />
-            </View>
+        <View style={{ alignItems: 'center', width: '100%', maxWidth: 360 }}>
+          {/* Clock Icon */}
+          <View style={{
+            width: 80, height: 80, borderRadius: 40,
+            alignItems: 'center', justifyContent: 'center', marginBottom: 24,
+            backgroundColor: '#F4F4F5',
+          }}>
+            <Ionicons name="time-outline" size={48} color="#18181B" />
           </View>
 
           {/* Title */}
-          <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 30, color: isDark ? '#f1dfda' : '#231917', textAlign: 'center', marginBottom: 12 }}>
+          <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 24, color: '#18181B', textAlign: 'center', marginBottom: 8 }}>
             {t('auth.applicationSubmitted')}
           </Text>
 
           {/* Description */}
-          <Text style={{ fontFamily: 'Cairo', color: isDark ? '#d8c2bd' : '#564340', textAlign: 'center', fontSize: 16, lineHeight: 24, marginBottom: 32, maxWidth: 300 }}>
+          <Text style={{ fontFamily: 'Cairo', color: '#71717A', textAlign: 'center', fontSize: 15, lineHeight: 22, marginBottom: 32 }}>
             {t('auth.businessRegReview')}
           </Text>
 
           {/* Status Card */}
-          <View style={{ width: '100%', borderRadius: 24, padding: 24, marginBottom: 32, backgroundColor: isDark ? '#322825' : '#ffffff', borderWidth: 1, borderColor: 'rgba(133,115,111,0.1)' }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-              <View style={{ width: 32, height: 32, borderRadius: Radius.md, backgroundColor: '#fef3c7', alignItems: 'center', justifyContent: 'center' }}>
-                <MaterialIcons name="pending" size={18} color="#f59e0b" />
+          <View style={{
+            width: '100%', borderRadius: 12, padding: 20, marginBottom: 24,
+            backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#E4E4E7',
+            ...Shadows.sm,
+          }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+              <View style={{ width: 28, height: 28, borderRadius: 8, backgroundColor: '#FEF3C7', alignItems: 'center', justifyContent: 'center' }}>
+                <MaterialIcons name="pending" size={16} color="#F59E0B" />
               </View>
-              <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 16, color: isDark ? '#f1dfda' : '#231917' }}>
+              <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 15, color: '#18181B' }}>
                 {t('auth.statusPendingReview')}
               </Text>
             </View>
 
-            <View style={{ gap: 12 }}>
+            <View style={{ gap: 10 }}>
               {[
                 { label: t('auth.applicationReceived'), done: true },
                 { label: t('auth.underReview'), done: false, active: true },
                 { label: t('auth.approvedReady'), done: false },
               ].map((item, idx) => (
-                <View key={idx} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <View key={idx} style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                   <View style={{
-                    width: 24, height: 24, borderRadius: 12, alignItems: 'center', justifyContent: 'center',
-                    backgroundColor: item.done ? '#22c55e' : item.active ? '#fbbf24' : (isDark ? '#534340' : '#f5ddd9'),
+                    width: 22, height: 22, borderRadius: 11, alignItems: 'center', justifyContent: 'center',
+                    backgroundColor: item.done ? '#DCFCE7' : item.active ? '#FEF9C3' : '#F4F4F5',
                   }}>
                     {item.done ? (
-                      <MaterialIcons name="check" size={14} color="white" />
+                      <MaterialIcons name="check" size={14} color="#16A34A" />
                     ) : item.active ? (
-                      <MaterialIcons name="more-horiz" size={14} color="white" />
+                      <MaterialIcons name="more-horiz" size={14} color="#CA8A04" />
                     ) : null}
                   </View>
                   <Text style={{
-                    fontFamily: 'Cairo', fontSize: 14,
-                    color: item.done ? '#16a34a' : item.active ? '#d97706' : (isDark ? '#d8c2bd' : '#564340'),
+                    fontFamily: 'Cairo', fontSize: 13,
+                    color: item.done ? '#16A34A' : item.active ? '#A16207' : '#A1A1AA',
                     fontWeight: (item.done || item.active) ? '600' : '400',
                   }}>
                     {item.label}
@@ -75,17 +79,20 @@ export default function PendingApprovalScreen() {
           </View>
 
           {/* Info */}
-          <Text style={{ fontFamily: 'Cairo', color: isDark ? '#d8c2bd' : '#564340', textAlign: 'center', fontSize: 12, lineHeight: 20, marginBottom: 32 }}>
+          <Text style={{ fontFamily: 'Cairo', color: '#A1A1AA', textAlign: 'center', fontSize: 12, lineHeight: 18, marginBottom: 32 }}>
             {t('auth.notifyWhenApproved')}{'\n'}
             {t('auth.startPostingAfterApproval')}
           </Text>
 
           {/* Sign Out */}
           <AnimatedButton
-            style={{ paddingHorizontal: 32, paddingVertical: 12, borderRadius: 999, borderWidth: 1, borderColor: isDark ? 'rgba(160,141,136,0.3)' : 'rgba(133,115,111,0.3)' }}
+            style={{
+              paddingHorizontal: 32, paddingVertical: 12, borderRadius: 12,
+              borderWidth: 1, borderColor: '#E4E4E7', backgroundColor: '#FFFFFF',
+            }}
             onPress={() => signOut()}
           >
-            <Text style={{ fontFamily: 'Cairo_600SemiBold', color: isDark ? '#d8c2bd' : '#564340' }}>{t('auth.signOut')}</Text>
+            <Text style={{ fontFamily: 'Cairo_600SemiBold', color: '#18181B', fontSize: 14 }}>{t('auth.signOut')}</Text>
           </AnimatedButton>
         </View>
       </AnimatedEntrance>

@@ -29,6 +29,8 @@ export interface UserRoleRecord {
 export interface CustomerProfile {
   id: string;
   user_id: string;
+  first_name: string | null;
+  last_name: string | null;
   display_name: string | null;
   avatar_url: string | null;
   preferences: string[];

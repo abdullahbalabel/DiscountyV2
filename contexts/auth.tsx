@@ -1,9 +1,21 @@
 import { useRouter, useSegments } from 'expo-router';
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
+import { AppState, type AppStateStatus } from 'react-native';
+import { supabase, supabaseUrl } from '../lib/supabase';
 import { unregisterAllGeofences } from '../lib/geofence';
 import type { Session } from '@supabase/supabase-js';
 import type { UserRole } from '../lib/types';
+
+interface MaintenanceStatus {
+  is_enabled: boolean;
+  message_title: string;
+  message_body: string;
+  estimated_duration: string | null;
+  scheduled_start: string | null;
+  scheduled_end: string | null;
+}
+
+const MAINTENANCE_EDGE_FUNCTION_URL = `${supabaseUrl}/functions/v1/check-maintenance`;
 
 interface AuthState {
   session: Session | null;
@@ -12,10 +24,15 @@ interface AuthState {
   isNewUser: boolean;
   approvalStatus: string | null;
   isBanned: boolean;
-  signInWithOtp: (phone: string) => Promise<{ error: string | null }>;
-  verifyOtp: (phone: string, token: string) => Promise<{ error: string | null }>;
+  isMaintenanceActive: boolean;
+  maintenanceTitle: string | null;
+  maintenanceMessage: string | null;
+  maintenanceDuration: string | null;
+  refreshMaintenanceStatus: () => Promise<void>;
+  signInWithGoogle: () => Promise<{ error: string | null }>;
+  signInWithApple: () => Promise<{ error: string | null }>;
   signInWithEmail: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUpWithEmail: (email: string, password: string) => Promise<{ error: string | null }>;
+  signUpWithEmail: (email: string, password: string, firstName: string, lastName: string) => Promise<{ error: string | null }>;
   setUserRole: (role: UserRole) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
 }
@@ -27,8 +44,13 @@ const AuthContext = createContext<AuthState>({
   isNewUser: false,
   approvalStatus: null,
   isBanned: false,
-  signInWithOtp: async () => ({ error: null }),
-  verifyOtp: async () => ({ error: null }),
+  isMaintenanceActive: false,
+  maintenanceTitle: null,
+  maintenanceMessage: null,
+  maintenanceDuration: null,
+  refreshMaintenanceStatus: async () => {},
+  signInWithGoogle: async () => ({ error: null }),
+  signInWithApple: async () => ({ error: null }),
   signInWithEmail: async () => ({ error: null }),
   signUpWithEmail: async () => ({ error: null }),
   setUserRole: async () => ({ error: null }),
@@ -39,7 +61,7 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
-function useProtectedRoute(session: Session | null, role: UserRole | null, isLoading: boolean, isNewUser: boolean, approvalStatus: string | null, isBanned: boolean) {
+function useProtectedRoute(session: Session | null, role: UserRole | null, isLoading: boolean, isNewUser: boolean, approvalStatus: string | null, isBanned: boolean, isMaintenanceActive: boolean) {
   const segments = useSegments();
   const router = useRouter();
 
@@ -48,14 +70,40 @@ function useProtectedRoute(session: Session | null, role: UserRole | null, isLoa
     if (!segments.length) return;
 
     const inAuthGroup = segments[0] === '(auth)';
+    const currentScreen = segments[1] || 'index';
+
+    // Maintenance takes priority over all other redirects (HC-02, HC-05)
+    if (isMaintenanceActive && currentScreen !== 'maintenance') {
+      router.replace('/(auth)/maintenance');
+      return;
+    }
+
+    // If maintenance is active and user is on maintenance screen, stay there
+    if (isMaintenanceActive && currentScreen === 'maintenance') {
+      return;
+    }
+
+    // If maintenance just ended and user is on maintenance screen, redirect appropriately
+    if (!isMaintenanceActive && currentScreen === 'maintenance') {
+      if (session && role) {
+        if (role === 'customer') {
+          router.replace('/(customer)/feed');
+        } else if (role === 'provider' && approvalStatus === 'approved') {
+          router.replace('/(provider)/dashboard');
+        }
+      } else if (!session) {
+        router.replace('/(auth)');
+      }
+      return;
+    }
 
     if (!session && !inAuthGroup) {
-      // Not logged in and outside auth → go to auth
+      // Not logged in and outside auth → go to welcome
       router.replace('/(auth)');
     } else if (!session && inAuthGroup) {
-      // Not logged in but inside auth → go to login page
-      const currentScreen = segments[1] || 'index';
-      if (currentScreen !== 'index') {
+      // Not logged in but inside auth → allow welcome, sign-in, sign-up, forgot-password
+      const allowedScreens = ['index', 'sign-in', 'sign-up', 'forgot-password'];
+      if (!allowedScreens.includes(currentScreen)) {
         router.replace('/(auth)');
       }
     } else if (session && !inAuthGroup) {
@@ -72,12 +120,10 @@ function useProtectedRoute(session: Session | null, role: UserRole | null, isLoa
       }
       // If they have a role and are not banned, let them stay where they are
     } else if (session && inAuthGroup) {
-      // Determine the current auth sub-screen
-      const currentScreen = segments[1] || 'index';
-
       if (isNewUser || (!role && !isLoading)) {
         // New user OR user without a role → guide to role selection
-        if (currentScreen === 'index' || currentScreen === 'otp-verify') {
+        const authScreens = ['index', 'sign-in', 'sign-up', 'forgot-password'];
+        if (authScreens.includes(currentScreen)) {
           router.replace('/(auth)/role-select');
         }
         // Let them stay on role-select, provider-signup, pending-approval
@@ -94,7 +140,7 @@ function useProtectedRoute(session: Session | null, role: UserRole | null, isLoa
         router.replace('/(provider)/dashboard');
       }
     }
-  }, [session, role, isLoading, isNewUser, approvalStatus, isBanned, segments]);
+  }, [session, role, isLoading, isNewUser, approvalStatus, isBanned, isMaintenanceActive, segments]);
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -104,6 +150,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isNewUser, setIsNewUser] = useState(false);
   const [approvalStatus, setApprovalStatus] = useState<string | null>(null);
   const [isBanned, setIsBanned] = useState(false);
+  const [isMaintenanceActive, setIsMaintenanceActive] = useState(false);
+  const [maintenanceTitle, setMaintenanceTitle] = useState<string | null>(null);
+  const [maintenanceMessage, setMaintenanceMessage] = useState<string | null>(null);
+  const [maintenanceDuration, setMaintenanceDuration] = useState<string | null>(null);
+
+  // Temporarily store name fields from signUpWithEmail for use in setUserRole
+  const pendingSignUpName = useRef<{ firstName: string; lastName: string } | null>(null);
+
+  // Keep a ref to session for use in callbacks without stale closures
+  const sessionRef = useRef<Session | null>(null);
+  useEffect(() => { sessionRef.current = session; }, [session]);
+
+  // Check maintenance status from Edge Function
+  const checkMaintenanceStatus = useCallback(async (): Promise<boolean> => {
+    try {
+      const response = await fetch(MAINTENANCE_EDGE_FUNCTION_URL, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!response.ok) {
+        // Edge Function error — don't block app, assume no maintenance
+        return false;
+      }
+
+      const data: MaintenanceStatus = await response.json();
+      const wasActive = isMaintenanceActive;
+      setIsMaintenanceActive(data.is_enabled);
+      setMaintenanceTitle(data.message_title || null);
+      setMaintenanceMessage(data.message_body || null);
+      setMaintenanceDuration(data.estimated_duration || null);
+
+      // If maintenance just ended and we have a session but no role yet, fetch role
+      // Uses sessionRef to avoid stale closures during init
+      const currentSession = sessionRef.current;
+      if (wasActive && !data.is_enabled && currentSession?.user && !role) {
+        await fetchUserRole(currentSession.user.id, currentSession.user.created_at);
+      }
+
+      return data.is_enabled;
+    } catch {
+      // Network error — don't block app, assume no maintenance
+      return false;
+    }
+  }, [isMaintenanceActive, role, fetchUserRole]);
+
+  // Exposed for "Try Again" button on maintenance screen
+  const refreshMaintenanceStatus = useCallback(async () => {
+    await checkMaintenanceStatus();
+  }, [checkMaintenanceStatus]);
 
   // Fetch user role from database
   const fetchUserRole = useCallback(async (userId: string, sessionCreatedAt?: string) => {
@@ -166,10 +262,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initAuth = async () => {
       try {
+        // Check maintenance before role fetch (HC-02, FR-05)
+        const maintenanceActive = await checkMaintenanceStatus();
+
         const { data: { session: currentSession } } = await supabase.auth.getSession();
         setSession(currentSession);
 
-        if (currentSession?.user) {
+        // Only fetch role if maintenance is not active (avoid unnecessary work)
+        if (currentSession?.user && !maintenanceActive) {
           await fetchUserRole(currentSession.user.id, currentSession.user.created_at);
         }
       } catch (err: any) {
@@ -216,34 +316,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     return () => subscription.unsubscribe();
-  }, [fetchUserRole]);
+  }, [fetchUserRole, checkMaintenanceStatus]);
 
-  // Send OTP
-  const signInWithOtp = useCallback(async (phone: string) => {
-    const { error } = await supabase.auth.signInWithOtp({ phone });
-    return { error: error?.message || null };
+  // Re-check maintenance when app returns to foreground (FR-05)
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (nextAppState === 'active') {
+        checkMaintenanceStatus();
+      }
+    };
+
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+    return () => subscription.remove();
+  }, [checkMaintenanceStatus]);
+
+  // Google sign-in (temporarily disabled — missing iosUrlScheme config)
+  const signInWithGoogle = useCallback(async () => {
+    return { error: 'Google sign-in is temporarily unavailable' };
+    // try {
+    //   await GoogleSignin.signIn();
+    //   const { idToken } = await GoogleSignin.getTokens();
+    //   if (!idToken) return { error: 'Failed to get Google ID token' };
+    //   const { error } = await supabase.auth.signInWithIdToken({
+    //     provider: 'google',
+    //     token: idToken,
+    //   });
+    //   return { error: error?.message || null };
+    // } catch (err: any) {
+    //   // User cancelled — not an error
+    //   if (err?.code === 'SIGN_IN_CANCELLED') return { error: null };
+    //   return { error: err?.message || 'Google sign-in failed' };
+    // }
   }, []);
 
-  // Verify OTP
-  const verifyOtp = useCallback(async (phone: string, token: string) => {
-    const { error } = await supabase.auth.verifyOtp({
-      phone,
-      token,
-      type: 'sms',
-    });
-    return { error: error?.message || null };
+  // Apple sign-in (temporarily disabled)
+  const signInWithApple = useCallback(async () => {
+    return { error: 'Apple sign-in is temporarily unavailable' };
   }, []);
 
-  // Email sign-in (for dev/testing without Twilio)
+  // Email sign-in
   const signInWithEmail = useCallback(async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error: error?.message || null };
   }, []);
 
-  // Email sign-up (for dev/testing without Twilio)
-  const signUpWithEmail = useCallback(async (email: string, password: string) => {
+  // Email sign-up with name fields
+  const signUpWithEmail = useCallback(async (email: string, password: string, firstName: string, lastName: string) => {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) return { error: error.message };
+    // Store name for setUserRole to consume
+    pendingSignUpName.current = { firstName, lastName };
     // If email confirmation is disabled, the user is immediately signed in
     if (data.session) {
       setSession(data.session);
@@ -268,11 +390,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Create profile based on role
     if (newRole === 'customer') {
+      const nameData = pendingSignUpName.current;
+      const firstName = nameData?.firstName || null;
+      const lastName = nameData?.lastName || null;
+      const displayName = firstName && lastName ? `${firstName} ${lastName}` : null;
+
       const { error: profileError } = await supabase
         .from('customer_profiles')
-        .upsert({ user_id: userId }, { onConflict: 'user_id' });
+        .upsert({
+          user_id: userId,
+          first_name: firstName,
+          last_name: lastName,
+          display_name: displayName,
+        }, { onConflict: 'user_id' });
 
       if (profileError) return { error: profileError.message };
+      pendingSignUpName.current = null;
     }
 
     setRole(newRole);
@@ -291,7 +424,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsBanned(false);
   }, []);
 
-  useProtectedRoute(session, role, isLoading, isNewUser, approvalStatus, isBanned);
+  useProtectedRoute(session, role, isLoading, isNewUser, approvalStatus, isBanned, isMaintenanceActive);
 
   return (
     <AuthContext.Provider
@@ -302,8 +435,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isNewUser,
         approvalStatus,
         isBanned,
-        signInWithOtp,
-        verifyOtp,
+        isMaintenanceActive,
+        maintenanceTitle,
+        maintenanceMessage,
+        maintenanceDuration,
+        refreshMaintenanceStatus,
+        signInWithGoogle,
+        signInWithApple,
         signInWithEmail,
         signUpWithEmail,
         setUserRole,

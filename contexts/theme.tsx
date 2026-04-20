@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { Appearance, ColorSchemeName } from 'react-native';
+import React, { createContext, useContext, useState, useCallback } from 'react';
+import { ColorSchemeName } from 'react-native';
 
 interface ThemeContextValue {
   colorScheme: ColorSchemeName;
@@ -14,20 +14,11 @@ const ThemeContext = createContext<ThemeContextValue>({
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [colorScheme, setColorScheme] = useState<ColorSchemeName>(
-    () => Appearance.getColorScheme()
-  );
-
-  useEffect(() => {
-    const sub = Appearance.addChangeListener(({ colorScheme: scheme }) => {
-      setColorScheme(scheme);
-    });
-    return () => sub.remove();
-  }, []);
+  const [colorScheme, setColorScheme] = useState<ColorSchemeName>('light');
 
   const toggleTheme = useCallback(() => {
     const next = colorScheme === 'dark' ? 'light' : 'dark';
-    Appearance.setColorScheme(next);
+    setColorScheme(next);
   }, [colorScheme]);
 
   return (

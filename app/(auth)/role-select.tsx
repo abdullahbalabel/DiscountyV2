@@ -1,33 +1,18 @@
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { Image } from 'expo-image';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { I18nManager, ScrollView, Text, View } from 'react-native';
 import { AnimatedButton } from '../../components/ui/AnimatedButton';
-import { GlassView } from '../../components/ui/GlassView';
 import { useAuth } from '../../contexts/auth';
-import { useThemeColors } from '../../hooks/use-theme-colors';
+import { Shadows } from '../../hooks/use-theme-colors';
 
 export default function RoleSelectScreen() {
   const { t } = useTranslation();
-  const colors = useThemeColors();
   const router = useRouter();
   const { setUserRole } = useAuth();
   const [isSettingRole, setIsSettingRole] = React.useState(false);
   const [error, setError] = React.useState('');
-
-  // Theme-aware glass card colors
-  const isDark = colors.isDark;
-  const textPrimary = isDark ? '#fff' : colors.onSurface;
-  const textSecondary = isDark ? 'rgba(255,255,255,0.7)' : colors.onSurfaceVariant;
-  const textMuted = isDark ? 'rgba(255,255,255,0.6)' : colors.onSurfaceVariant;
-  const textFaint = isDark ? 'rgba(255,255,255,0.4)' : colors.onSurfaceVariant;
-  const textVeryFaint = isDark ? 'rgba(255,255,255,0.5)' : colors.onSurfaceVariant;
-  const glassBorder = isDark ? 'rgba(255,255,255,0.2)' : colors.outlineVariant;
-  const cardBg = isDark ? 'rgba(255,255,255,0.1)' : colors.surfaceContainerHigh;
-  const iconColor = isDark ? 'white' : colors.onSurfaceVariant;
 
   const handleSelectCustomer = async () => {
     setIsSettingRole(true);
@@ -45,29 +30,16 @@ export default function RoleSelectScreen() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.surfaceBg, position: 'relative' }}>
-      <Image
-        source={{ uri: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop' }}
-        style={{ position: 'absolute', top: 0, start: 0, end: 0, bottom: 0, zIndex: 0 }}
-        contentFit="cover"
-      />
-      <View style={{ position: 'absolute', top: 0, start: 0, end: 0, bottom: 0, zIndex: 0, backgroundColor: 'rgba(0,0,0,0.6)' }} />
-
-      <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <GlassView
-          intensity={colors.isDark ? 30 : 50}
-          style={{ width: '100%', maxWidth: 512, marginHorizontal: 24, borderRadius: 32, padding: 40, zIndex: 10, borderWidth: 1, borderColor: glassBorder }}
-        >
+    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
+        <View style={{ width: '100%', maxWidth: 512 }}>
           {/* Header */}
-          <View style={{ marginBottom: 40, alignItems: 'center' }}>
-            <View style={{ width: 64, height: 64, borderRadius: 16, backgroundColor: cardBg, borderWidth: 1, borderColor: glassBorder, alignItems: 'center', justifyContent: 'center', marginBottom: 24 }}>
-              <MaterialIcons name="person-add" size={32} color={iconColor} />
-            </View>
-            <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 30, color: textPrimary, textAlign: 'center', marginBottom: 8 }}>
-              {t('auth.welcomeToDiscounty')}
+          <View style={{ marginBottom: 32, alignItems: 'center' }}>
+            <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 24, color: '#18181B', textAlign: 'center', marginBottom: 8 }}>
+              {t('auth.chooseYourRole')}
             </Text>
-            <Text style={{ fontFamily: 'Cairo', color: textSecondary, textAlign: 'center', fontSize: 16 }}>
-              {t('auth.howUseApp')}
+            <Text style={{ fontFamily: 'Cairo', color: '#71717A', textAlign: 'center', fontSize: 15 }}>
+              {t('auth.roleQuestion')}
             </Text>
           </View>
 
@@ -78,28 +50,42 @@ export default function RoleSelectScreen() {
               onPress={handleSelectCustomer}
               disabled={isSettingRole}
               style={{
-                backgroundColor: cardBg, borderWidth: 2, borderColor: glassBorder,
-                borderRadius: 24, padding: 24, flexDirection: 'row', alignItems: 'center', gap: 20,
+                backgroundColor: '#FFFFFF',
+                borderWidth: 1,
+                borderColor: '#E4E4E7',
+                borderRadius: 12,
+                padding: 20,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 16,
                 opacity: isSettingRole ? 0.5 : 1,
+                ...Shadows.sm,
               }}
             >
-              <View style={{ width: 56, height: 56, borderRadius: 16, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
-                <LinearGradient
-                  colors={['#862045', '#a01840']}
-                  style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <MaterialIcons name="local-offer" size={28} color="white" />
-                </LinearGradient>
+              <View style={{
+                width: 48,
+                height: 48,
+                borderRadius: 12,
+                backgroundColor: '#F4F4F5',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <MaterialIcons name="local-offer" size={24} color="#18181B" />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 20, color: textPrimary, marginBottom: 4 }}>
-                  {isSettingRole ? t('auth.settingUp') : t('auth.imCustomer')}
+                <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 17, color: '#18181B', marginBottom: 2 }}>
+                  {isSettingRole ? t('auth.settingUp') : t('auth.customer')}
                 </Text>
-                <Text style={{ fontFamily: 'Cairo', color: textMuted, fontSize: 14, lineHeight: 20 }}>
-                  {t('auth.customerDesc')}
+                <Text style={{ fontFamily: 'Cairo', color: '#71717A', fontSize: 13, lineHeight: 18 }}>
+                  {t('auth.customerRoleDesc')}
                 </Text>
               </View>
-              <MaterialIcons name="chevron-right" size={24} color={textVeryFaint} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
+              <MaterialIcons
+                name="chevron-right"
+                size={22}
+                color="#A1A1AA"
+                style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined}
+              />
             </AnimatedButton>
 
             {/* Provider Card */}
@@ -107,45 +93,59 @@ export default function RoleSelectScreen() {
               onPress={handleSelectProvider}
               disabled={isSettingRole}
               style={{
-                backgroundColor: cardBg, borderWidth: 2, borderColor: glassBorder,
-                borderRadius: 24, padding: 24, flexDirection: 'row', alignItems: 'center', gap: 20,
+                backgroundColor: '#FFFFFF',
+                borderWidth: 1,
+                borderColor: '#E4E4E7',
+                borderRadius: 12,
+                padding: 20,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 16,
                 opacity: isSettingRole ? 0.5 : 1,
+                ...Shadows.sm,
               }}
             >
-              <View style={{ width: 56, height: 56, borderRadius: 16, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
-                <LinearGradient
-                  colors={['#00694d', '#0f9d6e']}
-                  style={{ width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }}
-                >
-                  <MaterialCommunityIcons name="store" size={28} color="white" />
-                </LinearGradient>
+              <View style={{
+                width: 48,
+                height: 48,
+                borderRadius: 12,
+                backgroundColor: '#F4F4F5',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <MaterialCommunityIcons name="store" size={24} color="#18181B" />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 20, color: textPrimary, marginBottom: 4 }}>
-                  {t('auth.imBusiness')}
+                <Text style={{ fontFamily: 'Cairo_700Bold', fontSize: 17, color: '#18181B', marginBottom: 2 }}>
+                  {t('auth.providerRole')}
                 </Text>
-                <Text style={{ fontFamily: 'Cairo', color: textMuted, fontSize: 14, lineHeight: 20 }}>
-                  {t('auth.businessDesc')}
+                <Text style={{ fontFamily: 'Cairo', color: '#71717A', fontSize: 13, lineHeight: 18 }}>
+                  {t('auth.providerRoleDesc')}
                 </Text>
               </View>
-              <MaterialIcons name="chevron-right" size={24} color={textVeryFaint} style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined} />
+              <MaterialIcons
+                name="chevron-right"
+                size={22}
+                color="#A1A1AA"
+                style={I18nManager.isRTL ? { transform: [{ scaleX: -1 }] } : undefined}
+              />
             </AnimatedButton>
           </View>
 
           {/* Error Message */}
           {error ? (
-            <View style={{ marginTop: 16, backgroundColor: 'rgba(239,68,68,0.2)', borderWidth: 1, borderColor: 'rgba(248,113,113,0.3)', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12 }}>
-              <Text style={{ color: '#ef4444', fontFamily: 'Cairo', fontSize: 14, textAlign: 'center' }}>{error}</Text>
+            <View style={{ marginTop: 16, backgroundColor: '#FEF2F2', borderWidth: 1, borderColor: '#FECACA', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12 }}>
+              <Text style={{ color: '#EF4444', fontFamily: 'Cairo', fontSize: 14, textAlign: 'center' }}>{error}</Text>
             </View>
           ) : null}
 
           {/* Footer */}
-          <View style={{ marginTop: 32, paddingTop: 24, borderTopWidth: 1, borderColor: glassBorder, alignItems: 'center' }}>
-            <Text style={{ fontFamily: 'Cairo', color: textFaint, fontSize: 12, textAlign: 'center', lineHeight: 20 }}>
-              {t('auth.changeRoleLater')}
+          <View style={{ marginTop: 24, alignItems: 'center' }}>
+            <Text style={{ fontFamily: 'Cairo', color: '#A1A1AA', fontSize: 12, textAlign: 'center', lineHeight: 18 }}>
+              {t('auth.canChangeLater')}
             </Text>
           </View>
-        </GlassView>
+        </View>
       </ScrollView>
     </View>
   );
